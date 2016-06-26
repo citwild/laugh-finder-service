@@ -1,11 +1,12 @@
 package com.uwb.wfe;
 
-import org.springframework.stereotype.Component;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Component
+@SpringBootApplication
 public class Main {
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(Main.class, args);
     }
 }
