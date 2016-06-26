@@ -1,0 +1,8 @@
+# Develop
+spring:
+  profiles: dev
+dependencies:
+  ffmpeg:
+    location: "C:\\Program Files (x86)\\ffmpeg\\bin"
+server:
+  port: 8080
