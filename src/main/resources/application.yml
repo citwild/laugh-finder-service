@@ -3,6 +3,9 @@ spring:
   profiles: dev
 dependencies:
   ffmpeg:
-    location: "C:\\Program Files (x86)\\ffmpeg\\bin"
+    win:
+      location: "C:\\Program Files (x86)\\ffmpeg\\bin"
+    nix:
+      location: "/bin/ffmpeg"
 server:
   port: 8080
