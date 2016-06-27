@@ -1,5 +1,7 @@
 package com.uwb.wfe;
 
+import com.uwb.wfe.util.EnvUtil;
+import com.uwb.wfe.util.extract.FfmpegAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -1,10 +1,10 @@
 # Develop
 spring:
-  profiles: dev
+  profiles: "dev"
 dependencies:
   ffmpeg:
     win:
-      location: "C:\\Program Files (x86)\\ffmpeg\\bin"
+      location: "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe"
     nix:
       location: "/bin/ffmpeg"
 server:
