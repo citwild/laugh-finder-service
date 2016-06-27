@@ -33,13 +33,17 @@ public class FfmpegAdapterTest {
     // TODO: don't hardcode things like this...
     @Test
     public void extractAudio_ShouldCallTheCorrectPathIfWindows() throws Exception {
+        // set arguments
         String input =  "../test-videos/test-vid.mp4";
         String output = "../test-videos/test-audio.wav";
         when(envUtil.isWindows()).thenReturn(true);
 
+        // test method
         unitUnderTest.extractAudio(input, output);
-
         File result = new File("../test-videos/test-audio.wav");
         Assert.assertTrue(result.canRead());
+
+        // remove file after testing
+        result.delete();
     }
 }

@@ -1,6 +1,13 @@
 # Develop
 spring:
   profiles: "dev"
+assets:
+  video:
+    # where video files are located for extracting (multiple variables for multiple S3 buckets? not very maintainable...)
+    inputPath: "../test-videos/"
+  audio:
+    # where audio files are placed for scanning
+    outputPath: "../test-videos/"
 dependencies:
   ffmpeg:
     win:

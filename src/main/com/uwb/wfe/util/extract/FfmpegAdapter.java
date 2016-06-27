@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -34,7 +35,7 @@ public class FfmpegAdapter {
     /**
      * Extracts audio from MP4 to WAV.
      */
-    public void extractAudio(String inputVideo, String outputAudio)
+    public void extractAudio(@NotNull String inputVideo, @NotNull String outputAudio)
             throws InterruptedException, IOException {
         log.info("Extracting audio from {} to {}", inputVideo, outputAudio);
 
@@ -44,6 +45,7 @@ public class FfmpegAdapter {
         String[] cmd = {cmdLocation, "-i", inputVideo, outputAudio};
         Process proc = Runtime.getRuntime().exec(cmd);
         proc.waitFor();
+        log.info("Finished extracting audio");
     }
 
     public String getWinFfmpegCmd() {
