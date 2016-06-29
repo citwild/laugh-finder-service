@@ -2,7 +2,8 @@ package com.uwb.wfe.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.uwb.wfe.util.extract.FfmpegAdapter;
+import com.uwb.wfe.service.extract.ExtractService;
+import com.uwb.wfe.service.extract.impl.ExtractServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,12 @@ public class ExtractController {
     @Value("${assets.audio.outputPath}")
     private String outputPath;
 
-    private FfmpegAdapter ffmpeg;
+    private ExtractService extractService;
     private ObjectMapper mapper;
 
     @Autowired
-    public ExtractController(FfmpegAdapter ffmpeg, ObjectMapper mapper) {
-        this.ffmpeg = ffmpeg;
+    public ExtractController(ExtractServiceImpl extractService, ObjectMapper mapper) {
+        this.extractService = extractService;
         this.mapper = mapper;
     }
 
@@ -50,7 +51,7 @@ public class ExtractController {
     ) throws JsonProcessingException {
         String vid = inputPath + vidId + VIDEO_FILE_TYPE;
         try {
-            ffmpeg.extractAudio(vid, outputPath);
+            extractService.extractAudio(vid, outputPath);
         } catch (IOException | InterruptedException e) {
             log.error("Failed to extract audio", e);
         }

@@ -1,5 +1,6 @@
-package com.uwb.wfe.util.extract;
+package com.uwb.wfe.service.extract;
 
+import com.uwb.wfe.service.extract.impl.ExtractServiceImpl;
 import com.uwb.wfe.util.EnvUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,14 +17,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class FfmpegAdapterTest {
 
-    FfmpegAdapter unitUnderTest;
+    ExtractServiceImpl unitUnderTest;
 
     EnvUtil envUtil;
 
     @Before
     public void setUp() {
         this.envUtil = Mockito.mock(EnvUtil.class);
-        this.unitUnderTest = new FfmpegAdapter(envUtil);
+        this.unitUnderTest = new ExtractServiceImpl(envUtil);
 
         // initialize @Value fields
         ReflectionTestUtils.setField(unitUnderTest, "winFfmpegCmd", "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");

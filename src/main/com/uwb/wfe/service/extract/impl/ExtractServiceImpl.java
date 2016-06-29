@@ -1,5 +1,6 @@
-package com.uwb.wfe.util.extract;
+package com.uwb.wfe.service.extract.impl;
 
+import com.uwb.wfe.service.extract.ExtractService;
 import com.uwb.wfe.util.EnvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +17,9 @@ import java.io.IOException;
  * Created by Miles on 6/26/2016.
  */
 @Service
-public class FfmpegAdapter {
+public class ExtractServiceImpl implements ExtractService {
 
-    Logger log = LoggerFactory.getLogger(FfmpegAdapter.class);
+    Logger log = LoggerFactory.getLogger(ExtractServiceImpl.class);
 
     EnvUtil envUtil;
 
@@ -28,7 +29,7 @@ public class FfmpegAdapter {
     private String nixFfmpegCmd;
 
     @Autowired
-    public FfmpegAdapter(EnvUtil envUtil) {
+    public ExtractServiceImpl(EnvUtil envUtil) {
         this.envUtil = envUtil;
     }
 
@@ -45,7 +46,11 @@ public class FfmpegAdapter {
         String[] cmd = {cmdLocation, "-i", inputVideo, outputAudio};
         Process proc = Runtime.getRuntime().exec(cmd);
         proc.waitFor();
-        log.info("Finished extracting audio");
+
+        if (proc.exitValue() != 0)
+            log.warn("There was a failure running FFMPEG");
+        else
+            log.info("Finished extracting audio");
     }
 
     public String getWinFfmpegCmd() {

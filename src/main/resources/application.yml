@@ -13,6 +13,6 @@ dependencies:
     win:
       location: "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe"
     nix:
-      location: "/bin/ffmpeg"
+      location: "/usr/local/Cellar/ffmpeg/2.8.4/bin/ffmpeg"
 server:
   port: 8080
