@@ -6,4 +6,6 @@ package com.uwb.wfe.service.train;
  * Created by Miles on 7/2/2016.
  */
 public interface TrainService {
+
+    void trainModel();
 }

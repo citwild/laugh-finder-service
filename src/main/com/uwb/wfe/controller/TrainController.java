@@ -1,5 +1,6 @@
 package com.uwb.wfe.controller;
 
+import com.uwb.wfe.service.train.TrainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
