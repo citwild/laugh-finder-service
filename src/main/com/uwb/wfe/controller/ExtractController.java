@@ -1,7 +1,9 @@
 package com.uwb.wfe.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.uwb.wfe.service.extract.ExtractService;
 import com.uwb.wfe.service.extract.impl.ExtractServiceImpl;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ public class ExtractController {
     private static final Logger log = LoggerFactory.getLogger(ExtractController.class);
 
     private static final String VIDEO_FILE_TYPE = ".mp4";
+    private static final String AUDIO_FILE_TYPE = ".wav";
 
     @Value("${assets.video.inputPath}")
     private String inputPath;
@@ -46,15 +49,17 @@ public class ExtractController {
                     produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @NotNull
-    public String extractAudioFromVideo(
+    public JsonNode extractAudioFromVideo(
             @PathVariable @NotNull String vidId
-    ) throws JsonProcessingException {
+    ) throws JsonProcessingException, IOException {
         String vid = inputPath + vidId + VIDEO_FILE_TYPE;
+        String result = outputPath + "result" + AUDIO_FILE_TYPE;
         try {
-            extractService.extractAudio(vid, outputPath);
+            extractService.extractAudio(vid, result);
         } catch (IOException | InterruptedException e) {
             log.error("Failed to extract audio", e);
+            return mapper.readValue("{\"status\":\"failure\", \"message\":\"" + e + "\"}", ObjectNode.class);
         }
-        return mapper.writeValueAsString("{\"status\":\"success\"}");
+        return mapper.readValue("{\"status\":\"success\"}", ObjectNode.class);
     }
 }
