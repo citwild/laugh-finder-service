@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.IBk;
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
@@ -21,21 +22,25 @@ import java.io.ObjectOutputStream;
 public class WekaModelUtil {
 
     // copied from the Weka app when building the model manually
-    private static final String KNN_OPTIONS = "-K 5 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
+    private static final String KNN_OPTIONS = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
                                               "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
 
     @Value("${training.model.path}")
     private String modelOutputPath;
 
-    private Instances data;
 
-    public void readArffFile(String filepath) throws Exception {
+    public Instances readArffFile(String filepath) throws Exception {
         ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
-        data = source.getDataSet();
+
+        Instances data = source.getDataSet();
         data.setClassIndex(data.numAttributes() - 1);
+        data.setRelationName("Laughter_detection_capture_training");
+        return data;
     }
 
-    public void classifyAndSaveModel() throws Exception {
+    public void classifyAndSaveModel(String filepath) throws Exception {
+        Instances data = readArffFile(filepath);
+
         // set classifier
         IBk iBk = new IBk();
 

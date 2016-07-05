@@ -28,7 +28,7 @@ public class TrainServiceImpl implements TrainService {
     @Value("${training.nonLaughterSamples}")
     private String nonLaughterSampleLocation;
     @Value("${training.arff.path}")
-    private String outputLocation;
+    private String arffLocation;
 
     @Value("${training.program.location}")
     private String learningScriptLocation;
@@ -50,7 +50,7 @@ public class TrainServiceImpl implements TrainService {
                 learningScriptLocation,
                 laughterSampleLocation,
                 nonLaughterSampleLocation,
-                outputLocation
+                arffLocation
         };
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -63,8 +63,7 @@ public class TrainServiceImpl implements TrainService {
             log.info("Training complete");
 
         try {
-            wekaUtil.readArffFile(outputLocation);
-            wekaUtil.classifyAndSaveModel();
+            wekaUtil.classifyAndSaveModel(arffLocation);
         } catch (Exception e) {
             log.error("There was a failure converting the .arff file to a .model file", e);
         }
