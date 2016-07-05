@@ -63,6 +63,16 @@
             <artifactId>spring-boot-starter-ws</artifactId>
         </dependency>
 
+        <!-- TODO: figure out maven settings so I can pull this from mvnrepository.com; just d/l'd the thing into my classpath for now -->
+        <!-- Also, needs to be 3.8 because that's when IBk class was included in API -->
+        <!-- Weka API -->
+        <!--<dependency>-->
+            <!--<groupId>nz.ac.waikato.cms.weka</groupId>-->
+            <!--<artifactId>weka-stable</artifactId>-->
+            <!--<version>3.8.0</version>-->
+        <!--</dependency>-->
+
+
         <!-- For testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
