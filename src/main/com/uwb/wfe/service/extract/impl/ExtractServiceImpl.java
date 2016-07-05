@@ -19,13 +19,13 @@ import java.io.IOException;
 @Service
 public class ExtractServiceImpl implements ExtractService {
 
-    Logger log = LoggerFactory.getLogger(ExtractServiceImpl.class);
+    private Logger log = LoggerFactory.getLogger(ExtractServiceImpl.class);
 
-    EnvUtil envUtil;
+    private EnvUtil envUtil;
 
-    @Value("${dependencies.ffmpeg.win.location}")
+    @Value("${extract.ffmpeg.win.location}")
     private String winFfmpegCmd;
-    @Value("${dependencies.ffmpeg.nix.location}")
+    @Value("${extract.ffmpeg.nix.location}")
     private String nixFfmpegCmd;
 
     @Autowired

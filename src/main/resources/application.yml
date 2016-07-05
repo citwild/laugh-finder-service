@@ -1,6 +1,7 @@
 # Develop
 spring:
   profiles: "dev"
+
 assets:
   video:
     # where video files are located for extracting (multiple variables for multiple S3 buckets? not very maintainable...)
@@ -8,11 +9,29 @@ assets:
   audio:
     # where audio files are placed for scanning
     outputPath: "../test-videos/"
-dependencies:
+
+extract:
   ffmpeg:
     win:
       location: "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe"
     nix:
       location: "/usr/local/Cellar/ffmpeg/2.8.4/bin/ffmpeg"
+
+# Location of assets required for learning program
+training:
+  laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
+  nonLaughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/non_laughter_filenames.txt"
+  # Location of the Python script to run
+  program:
+    location: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
+  output:
+    path: "/Users/milesdowe/Documents/workspace/school/lf-output/"
+
+python:
+  win:
+    location: ""
+  nix:
+    location: "/usr/local/bin/python3"
+
 server:
   port: 8080

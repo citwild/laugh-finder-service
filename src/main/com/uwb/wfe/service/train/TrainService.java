@@ -1,5 +1,7 @@
 package com.uwb.wfe.service.train;
 
+import java.io.IOException;
+
 /**
  * Handles work executing the Laugh Finder algorithm with supervised data.
  *
@@ -7,5 +9,5 @@ package com.uwb.wfe.service.train;
  */
 public interface TrainService {
 
-    void trainModel();
+    void trainModel() throws IOException, InterruptedException;
 }
