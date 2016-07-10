@@ -1,4 +1,4 @@
-package com.uwb.wfe.service.extract;
+package edu.uw.citw.service.extract;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;

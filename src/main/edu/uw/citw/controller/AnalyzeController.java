@@ -1,4 +1,4 @@
-package com.uwb.wfe.controller;
+package edu.uw.citw.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

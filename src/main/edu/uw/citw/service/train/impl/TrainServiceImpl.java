@@ -1,7 +1,7 @@
-package com.uwb.wfe.service.train.impl;
+package edu.uw.citw.service.train.impl;
 
-import com.uwb.wfe.service.train.TrainService;
-import com.uwb.wfe.util.weka.WekaModelUtil;
+import edu.uw.citw.service.train.TrainService;
+import edu.uw.citw.util.weka.WekaModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

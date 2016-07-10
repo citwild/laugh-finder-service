@@ -1,7 +1,7 @@
-package com.uwb.wfe.service.extract.impl;
+package edu.uw.citw.service.extract.impl;
 
-import com.uwb.wfe.service.extract.ExtractService;
-import com.uwb.wfe.util.EnvUtil;
+import edu.uw.citw.service.extract.ExtractService;
+import edu.uw.citw.util.EnvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,6 @@
-package com.uwb.wfe.util;
+package edu.uw.citw.util;
 
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 public class EnvUtilTest {
 

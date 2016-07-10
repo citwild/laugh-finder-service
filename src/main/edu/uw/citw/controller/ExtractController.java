@@ -1,11 +1,11 @@
-package com.uwb.wfe.controller;
+package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.uwb.wfe.service.extract.ExtractService;
-import com.uwb.wfe.service.extract.impl.ExtractServiceImpl;
+import edu.uw.citw.service.extract.ExtractService;
+import edu.uw.citw.service.extract.impl.ExtractServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class ExtractController {
     private String outputPath;
 
     private ExtractService extractService;
-    private ObjectMapper mapper;
+    private ObjectMapper   mapper;
 
     @Autowired
     public ExtractController(ExtractServiceImpl extractService, ObjectMapper mapper) {

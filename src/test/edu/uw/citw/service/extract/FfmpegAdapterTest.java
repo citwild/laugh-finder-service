@@ -1,7 +1,7 @@
-package com.uwb.wfe.service.extract;
+package edu.uw.citw.service.extract;
 
-import com.uwb.wfe.service.extract.impl.ExtractServiceImpl;
-import com.uwb.wfe.util.EnvUtil;
+import edu.uw.citw.service.extract.impl.ExtractServiceImpl;
+import edu.uw.citw.util.EnvUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

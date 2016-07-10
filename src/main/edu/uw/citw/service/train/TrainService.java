@@ -1,4 +1,4 @@
-package com.uwb.wfe.service.train;
+package edu.uw.citw.service.train;
 
 import java.io.IOException;
 

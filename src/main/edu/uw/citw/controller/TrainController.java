@@ -1,9 +1,9 @@
-package com.uwb.wfe.controller;
+package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.uwb.wfe.service.train.TrainService;
+import edu.uw.citw.service.train.TrainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

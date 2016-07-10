@@ -1,4 +1,4 @@
-package com.uwb.wfe.util.weka;
+package edu.uw.citw.util.weka;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -6,6 +6,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.lazy.IBk;
 import weka.core.Attribute;
 import weka.core.Instances;
+import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
 import java.io.FileOutputStream;
@@ -51,7 +52,8 @@ public class WekaModelUtil {
         iBk.buildClassifier(data);
 
         // serialize as *.model file
-        saveModel(iBk);
+        SerializationHelper.write(modelOutputPath, iBk);
+//        saveModel(iBk);
     }
 
     private void saveModel(Classifier classifier) throws IOException {

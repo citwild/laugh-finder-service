@@ -1,4 +1,4 @@
-package com.uwb.wfe.util;
+package edu.uw.citw.util;
 
 import org.springframework.stereotype.Service;
 

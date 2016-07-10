@@ -1,12 +1,12 @@
-package com.uwb.wfe.controller;
+package edu.uw.citw.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Test and refine the model.
+ * View model, check version, interface with Weka API, etc.
  *
  * Created by Miles on 6/26/2016.
  */
 @RestController
-public class TestController {
+public class ModelController {
 }
