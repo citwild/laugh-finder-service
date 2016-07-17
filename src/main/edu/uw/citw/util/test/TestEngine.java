@@ -3,6 +3,7 @@ package edu.uw.citw.util.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -20,6 +21,7 @@ import java.util.List;
  * <p>
  * Created by milesdowe on 7/12/16.
  */
+@Component("testEngine")
 public class TestEngine {
 
     private static final Logger log = LoggerFactory.getLogger(TestEngine.class);
@@ -36,14 +38,6 @@ public class TestEngine {
     private String        arffPath;
     private Instances     instances;
     private List<Boolean> isPresentList;
-
-    /**
-     * Initializes a new instance of TestEngine
-     */
-    public TestEngine(String arffPath) {
-        this.arffPath = arffPath;
-        log.debug("ARFF path: " + this.arffPath);
-    }
 
     /**
      * Get the laughter segments from the ARFF files.
@@ -162,5 +156,13 @@ public class TestEngine {
         int    minute  = (int) (seconds / 60);
         double second  = seconds % 60;
         return minute + ":" + String.format("%.3f", second);
+    }
+
+    public String getArffPath() {
+        return arffPath;
+    }
+
+    public void setArffPath(String arffPath) {
+        this.arffPath = arffPath;
     }
 }

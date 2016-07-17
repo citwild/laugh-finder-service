@@ -71,7 +71,12 @@
             <!--<artifactId>weka-stable</artifactId>-->
             <!--<version>3.8.0</version>-->
         <!--</dependency>-->
-
+        <!-- For Nullable annotation, etc. -->
+        <!--<dependency>-->
+            <!--<groupId>com.google.code.findbugs</groupId>-->
+            <!--<artifactId>jsr305</artifactId>-->
+            <!--<version>3.0.0</version>-->
+        <!--</dependency>-->
 
         <!-- For testing -->
         <dependency>

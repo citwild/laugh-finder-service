@@ -1,16 +1,12 @@
 package edu.uw.citw.util.weka;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import weka.classifiers.Classifier;
+import org.springframework.stereotype.Component;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 /**
  * Weka is a data-mining tool developed by the University of Waikato. This util uses the Weka API to translate
@@ -18,7 +14,7 @@ import java.io.ObjectOutputStream;
  *
  * Created by milesdowe on 7/4/16.
  */
-@Service
+@Component
 public class WekaModelUtil {
 
     // copied from the Weka app when building the model manually
@@ -40,25 +36,14 @@ public class WekaModelUtil {
 
     public void classifyAndSaveModel(String filepath) throws Exception {
         Instances data = readArffFile(filepath);
-
         // set classifier
         IBk iBk = new IBk();
-
         // establish algorithm options
         iBk.setOptions(weka.core.Utils.splitOptions(KNN_OPTIONS));
-
         // train
         iBk.buildClassifier(data);
-
         // serialize as *.model file
         SerializationHelper.write(modelOutputPath, iBk);
-//        saveModel(iBk);
     }
 
-    private void saveModel(Classifier classifier) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(modelOutputPath));
-        oos.writeObject(classifier);
-        oos.flush();
-        oos.close();
-    }
 }

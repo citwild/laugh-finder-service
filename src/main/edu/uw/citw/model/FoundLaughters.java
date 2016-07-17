@@ -1,5 +1,6 @@
 package edu.uw.citw.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,15 @@ public class FoundLaughters {
 
     private String          filename;
     private List<StartStop> timestamps;
+
+    public FoundLaughters(String filename) {
+        this.filename = filename;
+        this.timestamps = new ArrayList<>();
+    }
+
+    public void addStartStop(long start, long stop) {
+        timestamps.add(new StartStop(start, stop));
+    }
 
     public String getFilename() {
         return filename;
@@ -31,6 +41,11 @@ public class FoundLaughters {
     private class StartStop {
         private long start;
         private long stop;
+
+        private StartStop(long start, long stop) {
+            this.start = start;
+            this.stop = stop;
+        }
 
         public long getStart() {
             return start;

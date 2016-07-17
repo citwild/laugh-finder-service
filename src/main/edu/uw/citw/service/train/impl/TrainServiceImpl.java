@@ -15,12 +15,12 @@ import java.io.IOException;
  *
  * Created by Miles on 7/3/2016.
  */
-@Service
+@Service("trainService")
 public class TrainServiceImpl implements TrainService {
 
     private static Logger log = LoggerFactory.getLogger(TrainServiceImpl.class);
 
-    WekaModelUtil wekaUtil;
+    private WekaModelUtil wekaUtil;
 
     // supervised learning samples and resulting ARFF file
     @Value("${training.laughterSamples}")

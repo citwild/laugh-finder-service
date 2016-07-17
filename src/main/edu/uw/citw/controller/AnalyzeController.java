@@ -15,14 +15,14 @@ import java.io.IOException;
 
 /**
  * For simply checking audio streams for laughter instances; not intended to refine model.
- *
+ * <p>
  * Created by Miles on 6/26/2016.
  */
 @RestController
 @RequestMapping(value = "/analyze")
 public class AnalyzeController {
 
-    private static final Logger log          = LoggerFactory.getLogger(AnalyzeController.class);
+    private static final Logger log = LoggerFactory.getLogger(AnalyzeController.class);
 
     private static final String AUDIO_FILE_TYPE = ".wav";
 
@@ -39,14 +39,15 @@ public class AnalyzeController {
     }
 
     @RequestMapping(value = "/video/id/{vidId}",
-                    method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @NotNull
     public JsonNode analyzeVideo(
             @PathVariable @NotNull String vidId
     ) throws IOException {
+        // extract audio from video, then use audio's path
         String audio = audioPath + vidId + AUDIO_FILE_TYPE;
-        return analyzeService.getLaughterInstancesFromVideo(audio);
+        return analyzeService.getLaughterInstancesFromAudio(audio);
     }
 }
