@@ -51,7 +51,7 @@ public class ExtractController {
     @NotNull
     public JsonNode extractAudioFromVideo(
             @PathVariable @NotNull String vidId
-    ) throws JsonProcessingException, IOException {
+    ) throws IOException {
         String vid = inputPath + vidId + VIDEO_FILE_TYPE;
         String result = outputPath + "result" + AUDIO_FILE_TYPE;
         try {

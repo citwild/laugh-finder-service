@@ -30,10 +30,10 @@ public class TrainServiceImpl implements TrainService {
     @Value("${training.arff.path}")
     private String arffLocation;
 
-    @Value("${training.program.location}")
-    private String learningScriptLocation;
+    @Value("${training.program.path}")
+    private String trainingScriptLocation;
 
-    @Value("${python.nix.location}")
+    @Value("${python.nix.path}")
     private String pythonLocation;
 
     @Autowired
@@ -47,7 +47,7 @@ public class TrainServiceImpl implements TrainService {
 
         String[] cmd = {
                 pythonLocation,
-                learningScriptLocation,
+                trainingScriptLocation,
                 laughterSampleLocation,
                 nonLaughterSampleLocation,
                 arffLocation

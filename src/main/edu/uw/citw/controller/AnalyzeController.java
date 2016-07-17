@@ -2,11 +2,11 @@ package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,12 @@ import java.io.IOException;
 @RequestMapping(value = "/analyze")
 public class AnalyzeController {
 
-    private static final Logger log = LoggerFactory.getLogger(AnalyzeController.class);
+    private static final Logger log          = LoggerFactory.getLogger(AnalyzeController.class);
+
+    private static final String AUDIO_FILE_TYPE = ".wav";
+
+    @Value("assets.audio.outputPath")
+    private String audioPath;
 
     private AnalyzeService analyzeService;
     private ObjectMapper   mapper;
@@ -41,6 +46,7 @@ public class AnalyzeController {
     public JsonNode analyzeVideo(
             @PathVariable @NotNull String vidId
     ) throws IOException {
-        return analyzeService.getLaughterInstancesFromVideo(vidId);
+        String audio = audioPath + vidId + AUDIO_FILE_TYPE;
+        return analyzeService.getLaughterInstancesFromVideo(audio);
     }
 }

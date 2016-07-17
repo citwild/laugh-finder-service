@@ -17,19 +17,32 @@ extract:
     nix:
       location: "/usr/local/Cellar/ffmpeg/2.8.4/bin/ffmpeg"
 
-# Location of assets required for learning program
+# Location of assets for training program
 training:
   laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
   nonLaughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/non_laughter_filenames.txt"
   # Location of the Python training script to run
   program:
-    location: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
+    path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
   # Location of the .arff output file (used to generate model)
   arff:
     path: "/Users/milesdowe/Documents/workspace/school/lf-output/wekaFile.arff"
   # Location of model, resulting from k-NN analysis
   model:
     path: "/Users/milesdowe/Documents/workspace/school/lf-output/laugh.model"
+
+# Location of assets for testing program
+testing:
+  program:
+    path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-testing/main.py"
+  arff:
+    path: "/Users/milesdowe/Documents/workspace/school/lf-output/test.arff"
+  index:
+    path: "/Users/milesdowe/Documents/workspace/school/lf-output/index.txt"
+  window: "800"
+
+# TODO: Probably too many things here... this should be remove in the future
+testDir: "/Users/milesdowe/Documents/workspace/school/lf-output/"
 
 python:
   win:
