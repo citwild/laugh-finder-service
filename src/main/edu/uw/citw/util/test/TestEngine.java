@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Copied from Shalini's code.
  * <p>
- * TODO: Can be renamed and refactor as it's integrated into this service.
+ * TODO: Can be renamed and refactored as it's integrated into this service.
  * <p>
  * Created by milesdowe on 7/12/16.
  */
@@ -42,7 +42,7 @@ public class TestEngine {
     /**
      * Get the laughter segments from the ARFF files.
      */
-    public List<long[]> getLaughters() {
+    public List<long[]> getLaughters() throws Exception {
         isPresentList = getIsPresentList(indexPath);
         List<long[]> laughtersInMilliSecs = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class TestEngine {
             }
             arffReader.close();
         } catch (Exception e) {
-            // TODO: maybe just throw this again?
+            // unfortunate that the WEKA API uses generic Exception...
             log.error("There was a problem", e);
         }
         return laughtersInMilliSecs;

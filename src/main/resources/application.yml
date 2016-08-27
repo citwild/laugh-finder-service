@@ -10,6 +10,7 @@ assets:
     # where audio files are placed for scanning
     outputPath: "../test-videos/"
 
+# EXTRACT to be DEPRECATED, will be using ElasticTranscoder combined with Lambda.
 extract:
   ffmpeg:
     win:

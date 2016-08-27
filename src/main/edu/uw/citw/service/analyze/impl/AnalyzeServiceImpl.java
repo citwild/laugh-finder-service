@@ -31,6 +31,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private TestEngine      testEngine;
     private JsonNodeAdapter jsonNodeAdapter;
 
+    // External files relating to WEKA and the learning python script
     @Value("${testing.arff.path}")
     private String arffLocation;
     @Value("${testing.program.path}")
@@ -59,14 +60,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 + " --audio " + audioId
                 + " --arff " + testDir
                 + " --phase 0";
+
         Runtime runTime = Runtime.getRuntime();
         try {
             Process proc = runTime.exec(command);
             // retrieve output from Python script
             BufferedReader bfr = new BufferedReader(
-                    new InputStreamReader(
-                            proc.getInputStream()
-                    )
+                    new InputStreamReader(proc.getInputStream())
             );
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -74,17 +74,25 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 log.debug(line);
             }
         } catch (IOException e) {
-            log.error("Failure doing something", e);
+            log.error("There was a failure analyzing the audio file: {}", audioId, e);
         }
 
         testEngine.setArffPath(arffLocation);
-        List<long[]> laughterList = testEngine.getLaughters();
 
-        result = addLaughterInstances(laughterList, result);
-
-        return result;
+        // append found laughter and return, or return nothing if it broke
+        try {
+            List<long[]> laughterList = testEngine.getLaughters();
+            result = addLaughterInstances(laughterList, result);
+            return result;
+        } catch (Exception e) {
+            log.error("There was an error searching for laughter in audio file: {}", audioId, e);
+            return null;
+        }
     }
 
+    /**
+     * Appends the provided laughters to the provided result
+     */
     @NotNull
     private FoundLaughters addLaughterInstances(@NotNull List<long[]> laughterList, @NotNull FoundLaughters result) {
         for (long[] laughter : laughterList) {
