@@ -38,7 +38,7 @@ public class AnalyzeController {
         this.mapper = mapper;
     }
 
-    @RequestMapping(value = "/video/id/{vidId}",
+    @RequestMapping(value = "/video/bucket/{bucket}/key/{key}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
