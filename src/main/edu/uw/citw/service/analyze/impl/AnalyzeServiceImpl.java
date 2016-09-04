@@ -34,7 +34,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     // External files relating to WEKA and the learning python script
     @Value("${testing.arff.path}")
     private String arffLocation;
-    @Value("${arff.test.output}")
+    @Value("${testDir}")
     private String testDir;
 
     @Autowired
