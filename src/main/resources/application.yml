@@ -10,14 +10,6 @@ assets:
     # where audio files are placed for scanning
     outputPath: "../test-videos/"
 
-# EXTRACT to be DEPRECATED, will be using ElasticTranscoder combined with Lambda.
-extract:
-  ffmpeg:
-    win:
-      location: "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe"
-    nix:
-      location: "/usr/local/Cellar/ffmpeg/2.8.4/bin/ffmpeg"
-
 # Location of assets for training program
 training:
   laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
@@ -35,7 +27,7 @@ training:
 # Location of assets for testing program
 testing:
   program:
-    path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-testing/main.py"
+    path: "ml-scripts/python-testing/main.py"
   arff:
     path: "/Users/milesdowe/Documents/workspace/school/lf-output/test.arff"
   index:
@@ -49,7 +41,7 @@ python:
   win:
     path: ""
   nix:
-    path: "/usr/local/bin/python3"
+    path: "/usr/local/bin/python"
 
 server:
   port: 8080
