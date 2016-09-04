@@ -22,16 +22,14 @@ import java.util.List;
  * Created by milesdowe on 7/12/16.
  */
 @Component("testEngine")
-public class TestEngine {
+public class TestingEngine {
 
-    private static final Logger log = LoggerFactory.getLogger(TestEngine.class);
+    private static final Logger log = LoggerFactory.getLogger(TestingEngine.class);
 
     @Value("${testing.index.path}")
     private String indexPath;
-
     @Value("${training.model.path}")
     private String modelPath;
-
     @Value("${testing.window}")
     private String windowSize;
 
@@ -47,8 +45,7 @@ public class TestEngine {
         List<long[]> laughtersInMilliSecs = new ArrayList<>();
 
         try {
-            BufferedReader arffReader = new BufferedReader(new FileReader(
-                    this.arffPath));
+            BufferedReader arffReader = new BufferedReader(new FileReader(this.arffPath));
             instances = new Instances(arffReader);
             instances.setClassIndex(instances.numAttributes() - 1);
             Classifier model = (Classifier) weka.core.SerializationHelper

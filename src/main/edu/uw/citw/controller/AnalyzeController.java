@@ -44,10 +44,10 @@ public class AnalyzeController {
     @ResponseBody
     @NotNull
     public JsonNode analyzeVideo(
-            @PathVariable @NotNull String vidId
+            @PathVariable @NotNull String bucket,
+            @PathVariable @NotNull String key
     ) throws IOException {
         // extract audio from video, then use audio's path
-        String audio = audioPath + vidId + AUDIO_FILE_TYPE;
-        return analyzeService.getLaughterInstancesFromAudio(audio);
+        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
     }
 }

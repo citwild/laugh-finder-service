@@ -9,5 +9,5 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface AnalyzeService {
 
-    JsonNode getLaughterInstancesFromAudio(String audioId);
+    JsonNode getLaughterInstancesFromAudio(String bucket, String audioId);
 }

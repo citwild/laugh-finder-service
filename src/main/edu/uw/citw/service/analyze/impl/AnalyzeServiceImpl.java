@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.model.FoundLaughters;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
-import edu.uw.citw.util.test.TestEngine;
+import edu.uw.citw.util.test.TestingEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private static final Logger log                   = LoggerFactory.getLogger(AnalyzeServiceImpl.class);
     private static final String FOUND_LAUGHTERS_LABEL = "foundLaughters";
 
-    private TestEngine      testEngine;
+    private TestingEngine testEngine;
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
@@ -36,17 +36,17 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private String arffLocation;
     @Value("${testing.program.path}")
     private String testingScriptLocation;
-    @Value("${testDir}")
+    @Value("${arff.test.output}")
     private String testDir;
 
     @Autowired
-    public AnalyzeServiceImpl(TestEngine testEngine, JsonNodeAdapter jsonNodeAdapter) {
+    public AnalyzeServiceImpl(TestingEngine testEngine, JsonNodeAdapter jsonNodeAdapter) {
         this.testEngine = testEngine;
         this.jsonNodeAdapter = jsonNodeAdapter;
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(@NotNull String audioId) {
+    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String audioId) {
         FoundLaughters laughters = actionPerformed(audioId);
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughters);
     }
@@ -55,8 +55,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     public FoundLaughters actionPerformed(@NotNull String audioId) {
         FoundLaughters result = new FoundLaughters(audioId);
 
-        String command = "/usr/local/bin/python3 "
-                + testingScriptLocation
+        String command = "python ml-scripts/python-testing/main.py"
                 + " --audio " + audioId
                 + " --arff " + testDir
                 + " --phase 0";

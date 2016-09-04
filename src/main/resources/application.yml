@@ -26,8 +26,6 @@ training:
 
 # Location of assets for testing program
 testing:
-  program:
-    path: "ml-scripts/python-testing/main.py"
   arff:
     path: "/Users/milesdowe/Documents/workspace/school/lf-output/test.arff"
   index:
