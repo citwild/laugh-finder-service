@@ -33,7 +33,7 @@ testing:
   window: "800"
 
 # TODO: Probably too many things here... this should be remove in the future
-testDir: "C:\\Users\\Miles\\Desktop\\"
+testDir: "C:\\Users\\Miles\\Documents\\workspace\\lf-output"
 
 python:
   win:

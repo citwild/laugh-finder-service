@@ -1,5 +1,13 @@
-import boto3, botocore
-import wave
+import boto3
+from io import BytesIO
+
+__author__ = 'Miles Dowe'
+
+"""
+Uses Boto3 library to retrieve S3 object from AWS, then returns the
+byte array body as a string (because later scripts originally read in
+file data, which is read in by Python I/O as a string).
+"""
 
 
 def get_wav_file(bucket_name, key):
@@ -7,7 +15,7 @@ def get_wav_file(bucket_name, key):
     s3 = boto3.resource('s3')
 
     # access bucket
-    object = s3.Object(bucket_name, key)
-    result = object.get()['Body'].read()
+    s3_object = s3.Object(bucket_name, key)
+    result = s3_object.get()['Body'].read()
 
-    return result
+    return BytesIO(result)

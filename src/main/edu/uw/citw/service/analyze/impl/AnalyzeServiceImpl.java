@@ -44,17 +44,17 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String audioId) {
-        FoundLaughters laughters = actionPerformed(audioId);
+    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String key) {
+        FoundLaughters laughters = actionPerformed(key);
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughters);
     }
 
     @NotNull
-    public FoundLaughters actionPerformed(@NotNull String audioId) {
-        FoundLaughters result = new FoundLaughters(audioId);
+    public FoundLaughters actionPerformed(@NotNull String key) {
+        FoundLaughters result = new FoundLaughters(key);
 
         String command = "python ml-scripts/python-testing/main.py"
-                + " --audio " + audioId
+                + " --audio " + key
                 + " --arff " + testDir
                 + " --phase 0";
 
@@ -71,7 +71,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 log.debug(line);
             }
         } catch (IOException e) {
-            log.error("There was a failure analyzing the audio file: {}", audioId, e);
+            log.error("There was a failure analyzing the audio file: {}", key, e);
         }
 
         testEngine.setArffPath(arffLocation);
@@ -82,7 +82,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
             result = addLaughterInstances(laughterList, result);
             return result;
         } catch (Exception e) {
-            log.error("There was an error searching for laughter in audio file: {}", audioId, e);
+            log.error("There was an error searching for laughter in audio file: {}", key, e);
             return null;
         }
     }

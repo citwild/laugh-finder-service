@@ -17,13 +17,17 @@ import getDFT
 
 eps = 0.00000001
 
+
 """
 Extracts the audio features for the given audio file
 """
+
+
 def file_feature_extraction(file, win=0.032, step=0.016, amplitudeFilter=False, diffFilter=False):
     # read in digital signal from audio file
     audioInfo = read(file)
-    fs = audioInfo[0] # fs = frames/second = rate
+
+    fs = audioInfo[0]     # fs = frames/second = rate
     signal = audioInfo[1] # signal = data
 
     # Converting stereo signal to MONO signal
