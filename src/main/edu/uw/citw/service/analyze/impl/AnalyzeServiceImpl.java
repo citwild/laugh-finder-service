@@ -1,7 +1,7 @@
 package edu.uw.citw.service.analyze.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import edu.uw.citw.model.FoundLaughters;
+import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.test.TestingEngine;
@@ -45,26 +45,26 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     @Override
     public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String key) {
-        FoundLaughters laughters = actionPerformed(key);
-        return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughters);
+        FoundLaughter laughter = actionPerformed(bucket, key);
+        return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughter);
     }
 
     @NotNull
-    public FoundLaughters actionPerformed(@NotNull String key) {
-        FoundLaughters result = new FoundLaughters(key);
+    public FoundLaughter actionPerformed(@NotNull String bucket, @NotNull String key) {
+        // prepare response; label is bucket and key
+        FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
         String command = "python ml-scripts/python-testing/main.py"
-                + " --audio " + key
+                + " --bucket" + bucket
+                + " --key" + key
                 + " --arff " + testDir
                 + " --phase 0";
 
-        Runtime runTime = Runtime.getRuntime();
         try {
-            Process proc = runTime.exec(command);
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec(command);
             // retrieve output from Python script
-            BufferedReader bfr = new BufferedReader(
-                    new InputStreamReader(proc.getInputStream())
-            );
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = bfr.readLine()) != null) {
                 // display each output line from Python script
@@ -91,7 +91,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
      * Appends the provided laughters to the provided result
      */
     @NotNull
-    private FoundLaughters addLaughterInstances(@NotNull List<long[]> laughterList, @NotNull FoundLaughters result) {
+    private FoundLaughter addLaughterInstances(@NotNull List<long[]> laughterList, @NotNull FoundLaughter result) {
         for (long[] laughter : laughterList) {
             long start = laughter[0];
             long stop  = laughter[1];

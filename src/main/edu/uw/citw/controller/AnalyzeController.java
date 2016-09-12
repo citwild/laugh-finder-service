@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
- * For simply checking audio streams for laughter instances; not intended to refine model.
+ * For finding laughter instances in audio streams.
  * <p>
  * Created by Miles on 6/26/2016.
  */
@@ -23,11 +23,6 @@ import java.io.IOException;
 public class AnalyzeController {
 
     private static final Logger log = LoggerFactory.getLogger(AnalyzeController.class);
-
-    private static final String AUDIO_FILE_TYPE = ".wav";
-
-    @Value("assets.audio.outputPath")
-    private String audioPath;
 
     private AnalyzeService analyzeService;
     private ObjectMapper   mapper;
@@ -38,16 +33,23 @@ public class AnalyzeController {
         this.mapper = mapper;
     }
 
-    @RequestMapping(value = "/video/bucket/{bucket}/key/{key}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Returns instances of laughter in the specified bucket/key combination.
+     *
+     * Key expected to look like the following:
+     *     <code>ExtractedAudio/Compressed/2014-01-31/Huddle/00079-320.wav</code>
+     */
+    @RequestMapping(value = "/video",
+                    method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @NotNull
     public JsonNode analyzeVideo(
-            @PathVariable @NotNull String bucket,
-            @PathVariable @NotNull String key
+            @NotNull @RequestParam String bucket,
+            @NotNull @RequestParam String key
     ) throws IOException {
         // extract audio from video, then use audio's path
+        log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         return analyzeService.getLaughterInstancesFromAudio(bucket, key);
     }
 }

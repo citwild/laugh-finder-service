@@ -2,14 +2,6 @@
 spring:
   profiles: "dev"
 
-assets:
-  video:
-    # where video files are located for extracting (multiple variables for multiple S3 buckets? not very maintainable...)
-    inputPath: "../test-videos/"
-  audio:
-    # where audio files are placed for scanning
-    outputPath: "../test-videos/"
-
 # Location of assets for training program
 training:
   laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
@@ -19,25 +11,26 @@ training:
     path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
   # Location of the .arff output file (used to generate model)
   arff:
-    path: "/Users/milesdowe/Documents/workspace/school/lf-output/wekaFile.arff"
+    path: "C:/Users/Miles/Documents/workspace/lf-output/wekaFile.arff"
   # Location of model, resulting from k-NN analysis
   model:
-    path: "/Users/milesdowe/Documents/workspace/school/lf-output/laugh.model"
+    path: "C:/Users/Miles/Documents/workspace/lf-output/laugh.model"
 
 # Location of assets for testing program
 testing:
   arff:
-    path: "/Users/milesdowe/Documents/workspace/school/lf-output/test.arff"
+    path: "C:/Users/Miles/Documents/workspace/lf-output/test.arff"
   index:
-    path: "/Users/milesdowe/Documents/workspace/school/lf-output/index.txt"
+    path: "C:/Users/Miles/Documents/workspace/lf-output/index.txt"
   window: "800"
 
-# TODO: Probably too many things here... this should be remove in the future
-testDir: "C:\\Users\\Miles\\Documents\\workspace\\lf-output"
+# TODO: State shouldn't be maintained in external files, should be in database
+testDir: "C:/Users/Miles/Documents/workspace/lf-output"
 
+# Are these necessary?
 python:
   win:
-    path: ""
+    path: "C:\\Users\\Miles\\AppData\\Local\\Programs\\Python\\Python35-32\\python.exe"
   nix:
     path: "/usr/local/bin/python"
 

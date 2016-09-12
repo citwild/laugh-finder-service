@@ -8,12 +8,12 @@ import java.util.List;
  *
  * Created by milesdowe on 7/12/16.
  */
-public class FoundLaughters {
+public class FoundLaughter {
 
     private String          filename;
     private List<StartStop> timestamps;
 
-    public FoundLaughters(String filename) {
+    public FoundLaughter(String filename) {
         this.filename = filename;
         this.timestamps = new ArrayList<>();
     }
