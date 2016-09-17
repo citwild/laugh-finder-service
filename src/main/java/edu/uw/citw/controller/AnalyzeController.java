@@ -24,12 +24,10 @@ public class AnalyzeController {
     private static final Logger log = LoggerFactory.getLogger(AnalyzeController.class);
 
     private AnalyzeService analyzeService;
-    private ObjectMapper   mapper;
 
     @Autowired
-    public AnalyzeController(AnalyzeService analyzeService, ObjectMapper mapper) {
+    public AnalyzeController(AnalyzeService analyzeService) {
         this.analyzeService = analyzeService;
-        this.mapper = mapper;
     }
 
     /**
@@ -47,7 +45,6 @@ public class AnalyzeController {
             @NotNull @RequestParam String bucket,
             @NotNull @RequestParam String key
     ) throws IOException {
-        // extract audio from video, then use audio's path
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         return analyzeService.getLaughterInstancesFromAudio(bucket, key);
     }
