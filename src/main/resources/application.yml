@@ -2,6 +2,13 @@
 spring:
   profiles: "dev"
 
+  datasource:
+    url:
+    username:
+    password:
+    testWhileIdle: "true"
+    validationQuery: "SELECT 1"
+
 # Location of assets for training program
 training:
   laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"

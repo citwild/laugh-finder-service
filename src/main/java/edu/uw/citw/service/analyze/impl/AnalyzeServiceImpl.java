@@ -28,7 +28,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private static final Logger log                   = LoggerFactory.getLogger(AnalyzeServiceImpl.class);
     private static final String FOUND_LAUGHTERS_LABEL = "foundLaughters";
 
-    private TestingEngine testEngine;
+    private TestingEngine   testEngine;
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
@@ -44,34 +44,41 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String key) {
+    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String key) throws IOException {
         FoundLaughter laughter = actionPerformed(bucket, key);
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughter);
     }
 
     @NotNull
-    public FoundLaughter actionPerformed(@NotNull String bucket, @NotNull String key) {
+    public FoundLaughter actionPerformed(@NotNull String bucket, @NotNull String key) throws IOException{
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
         String command = "python ml-scripts/python-testing/main.py"
-                + " --bucket" + bucket
-                + " --key" + key
-                + " --arff " + testDir
+                + " --bucket \"" + bucket + "\""
+                + " --key \"" + key + "\""
+                + " --arff \"" + testDir + "\""
                 + " --phase 0";
 
         try {
             Runtime rt = Runtime.getRuntime();
             Process proc = rt.exec(command);
+            int exitValue = proc.waitFor();
+
+            if (exitValue != 0) throw new IOException("Python script exited with non-zero code; command used: " + command);
+
             // retrieve output from Python script
             BufferedReader bfr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = bfr.readLine()) != null) {
                 // display each output line from Python script
-                log.debug(line);
+                log.info("    " + line);
             }
         } catch (IOException e) {
             log.error("There was a failure analyzing the audio file: {}", key, e);
+            throw e;
+        } catch (InterruptedException e) {
+            log.error("There was a failure getting the exit code", e);
         }
 
         testEngine.setArffPath(arffLocation);
