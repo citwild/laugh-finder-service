@@ -55,12 +55,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
-
-        String command = "python " + mainScript
-                + " --bucket \"" + bucket + "\""
-                + " --key \"" + key + "\""
-                + " --arff \"" + testDir + "\""
-                + " --phase 0";
+        String[] command = {
+                "python", mainScript,
+                "--bucket", bucket,
+                "--key", key,
+                "--arff", testDir,
+                "--phase", "0"
+        };
 
         runPythonLaughFinderScript(command, key);
 
@@ -76,11 +77,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         }
     }
 
-    private Process runPythonLaughFinderScript(String command, String key) throws IOException {
+    private Process runPythonLaughFinderScript(String[] command, String key) throws IOException {
         log.debug("Running Python script to search for laughter");
         try {
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec(command);
+            Process proc = Runtime.getRuntime().exec(command);
 
             // check exit code
             try {
