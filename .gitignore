@@ -4,3 +4,7 @@
 
 # Generated sources
 target
+
+# Compiled Python
+__pycache__
+*.pyc

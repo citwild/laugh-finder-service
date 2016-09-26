@@ -61,8 +61,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 + " --arff \"" + testDir + "\""
                 + " --phase 0";
 
-        Process proc = runPythonLaughFinderScript(command, key);
-        printPythonLaughFinderOutput(proc);
+        runPythonLaughFinderScript(command, key);
 
         log.debug("Getting laughter from *.arff file, returning result");
         testEngine.setArffPath(arffLocation);
@@ -85,12 +84,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
             // check exit code
             try {
                 int exitValue = proc.waitFor();
+
+                printPythonLaughFinderOutput(proc);
+
                 if (exitValue != 0) {
-                    BufferedReader errStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-                    String line;
-                    while ((line = errStream.readLine()) != null) {
-                        log.error(line);
-                    }
                     throw new IOException("Python script exited with non-zero code; command used: " + command);
                 }
             } catch (InterruptedException e) {
@@ -106,11 +103,17 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     private void printPythonLaughFinderOutput(Process proc) {
         try {
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            // log any output
+            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
-            while ((line = bfr.readLine()) != null) {
-                // display each output line from Python script
-                log.info("    " + line);
+            while ((line = inputStream.readLine()) != null) {
+                log.info("\t" + line);
+            }
+
+            // log any errors
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            while ((line = errorStream.readLine()) != null) {
+                log.error("\t" + line);
             }
         } catch (IOException e) {
             log.error("There was a failure printing the Python script's output", e);
