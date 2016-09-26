@@ -51,6 +51,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     @NotNull
     public FoundLaughter actionPerformed(@NotNull String bucket, @NotNull String key) throws IOException{
+        log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
@@ -60,30 +61,11 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 + " --arff \"" + testDir + "\""
                 + " --phase 0";
 
-        try {
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec(command);
-            int exitValue = proc.waitFor();
+        Process proc = runPythonLaughFinderScript(command, key);
+        printPythonLaughFinderOutput(proc);
 
-            if (exitValue != 0) throw new IOException("Python script exited with non-zero code; command used: " + command);
-
-            // retrieve output from Python script
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                // display each output line from Python script
-                log.info("    " + line);
-            }
-        } catch (IOException e) {
-            log.error("There was a failure analyzing the audio file: {}", key, e);
-            throw e;
-        } catch (InterruptedException e) {
-            log.error("There was a failure getting the exit code", e);
-        }
-
+        log.debug("Getting laughter from *.arff file, returning result");
         testEngine.setArffPath(arffLocation);
-
-        // append found laughter and return, or return nothing if it broke
         try {
             List<long[]> laughterList = testEngine.getLaughters();
             result = addLaughterInstances(laughterList, result);
@@ -91,6 +73,47 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         } catch (Exception e) {
             log.error("There was an error searching for laughter in audio file: {}", key, e);
             return null;
+        }
+    }
+
+    private Process runPythonLaughFinderScript(String command, String key) throws IOException {
+        log.debug("Running Python script to search for laughter");
+        try {
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec(command);
+
+            // check exit code
+            try {
+                int exitValue = proc.waitFor();
+                if (exitValue != 0) {
+                    BufferedReader errStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                    String line;
+                    while ((line = errStream.readLine()) != null) {
+                        log.error(line);
+                    }
+                    throw new IOException("Python script exited with non-zero code; command used: " + command);
+                }
+            } catch (InterruptedException e) {
+                log.error("There was a failure getting the exit code of the Python Script", e);
+            }
+
+            return proc;
+        } catch (IOException e) {
+            log.error("There was a failure analyzing the audio file: {}", key, e);
+            throw e;
+        }
+    }
+
+    private void printPythonLaughFinderOutput(Process proc) {
+        try {
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                // display each output line from Python script
+                log.info("    " + line);
+            }
+        } catch (IOException e) {
+            log.error("There was a failure printing the Python script's output", e);
         }
     }
 
