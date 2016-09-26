@@ -32,10 +32,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
-    @Value("${testing.arff.path}")
-    private String arffLocation;
-    @Value("${testDir}")
-    private String testDir;
+
+    @Value("${testing.mainScript}") private String mainScript;
+    @Value("${testing.arff.path}")  private String arffLocation;
+    @Value("${testDir}")            private String testDir;
 
     @Autowired
     public AnalyzeServiceImpl(TestingEngine testEngine, JsonNodeAdapter jsonNodeAdapter) {
@@ -55,7 +55,8 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
-        String command = "python ml-scripts/python-testing/main.py"
+
+        String command = "python " + mainScript
                 + " --bucket \"" + bucket + "\""
                 + " --key \"" + key + "\""
                 + " --arff \"" + testDir + "\""

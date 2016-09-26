@@ -25,6 +25,7 @@ training:
 
 # Location of assets for testing program
 testing:
+  mainScript: "C:/Users/Miles/Documents/workspace/laugh-finder-service/ml-scripts/python-testing/main.py"
   arff:
     path: "C:/Users/Miles/Documents/workspace/lf-output/test.arff"
   index:
