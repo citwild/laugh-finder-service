@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "laugh_instance", schema = "uwbwfe")
-public class LaughterTimestamp implements Serializable {
+public class LaughterInstance implements Serializable {
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -28,9 +28,9 @@ public class LaughterTimestamp implements Serializable {
     @Column(name = "VID_STOP", nullable = false)
     private Long stopTime;
 
-    public LaughterTimestamp() {}
+    public LaughterInstance() {}
 
-    public LaughterTimestamp(Long id, Long s3Key, String startTime, Long stopTime) {
+    public LaughterInstance(Long id, Long s3Key, String startTime, Long stopTime) {
         this.id = id;
         this.s3Key = s3Key;
         this.startTime = startTime;
@@ -74,7 +74,7 @@ public class LaughterTimestamp implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LaughterTimestamp that = (LaughterTimestamp) o;
+        LaughterInstance that = (LaughterInstance) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (s3Key != null ? !s3Key.equals(that.s3Key) : that.s3Key != null) return false;
@@ -93,7 +93,7 @@ public class LaughterTimestamp implements Serializable {
 
     @Override
     public String toString() {
-        return "LaughterTimestamp{" +
+        return "LaughterInstance{" +
                 "id=" + id +
                 ", s3Key=" + s3Key +
                 ", startTime='" + startTime + '\'' +

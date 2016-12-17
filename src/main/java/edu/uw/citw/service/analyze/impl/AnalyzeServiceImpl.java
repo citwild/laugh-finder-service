@@ -2,7 +2,7 @@ package edu.uw.citw.service.analyze.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.model.FoundLaughter;
-import edu.uw.citw.persistence.repository.LaughterTimestampRepository;
+import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.test.TestingEngine;
@@ -30,7 +30,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private static final String FOUND_LAUGHTERS_LABEL = "foundLaughters";
 
     private TestingEngine   testEngine;
-    private LaughterTimestampRepository timestampRepository;
+    private LaughterInstanceRepository timestampRepository;
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
@@ -60,7 +60,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 //    public FoundLaughter checkDatabaseForBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
 //        FoundLaughter result = null;
 //
-//        LaughterTimestampRepository
+//        LaughterInstanceRepository
 //
 //        return result;
 //    }
