@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -38,17 +38,18 @@ public class AnalyzeController {
      * Key expected to look like the following:
      *     <code>Compressed/2014-01-31/Huddle/00079-320.mp4</code>
      */
-    @NotNull
+    @Nonnull
     @ResponseBody
     @RequestMapping(value = "/video",
                     method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode analyzeVideo(
-            @NotNull @RequestParam String bucket,
-            @NotNull @RequestParam String key
+            @Nonnull @RequestParam String bucket,
+            @Nonnull @RequestParam String key
     ) throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         String[] bucketAndKey = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
+
         // [0] == bucket string, [1] == audio filename string
         return analyzeService.getLaughterInstancesFromAudio(bucketAndKey[0], bucketAndKey[1]);
     }
@@ -60,14 +61,14 @@ public class AnalyzeController {
      * Key expected to look like the following:
      *     <code>ExtractedAudio/Compressed/2014-01-31/Huddle/00079-320.wav</code>
      */
-    @NotNull
+    @Nonnull
     @ResponseBody
     @RequestMapping(value = "/audio",
                     method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode analyzeAudio(
-            @NotNull @RequestParam String bucket,
-            @NotNull @RequestParam String key
+            @Nonnull @RequestParam String bucket,
+            @Nonnull @RequestParam String key
     ) throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         return analyzeService.getLaughterInstancesFromAudio(bucket, key);

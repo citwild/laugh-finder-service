@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +22,7 @@ import java.util.List;
  * <p>
  * Created by milesdowe on 7/12/16.
  */
-@Service("analyzeService")
+@Service
 public class AnalyzeServiceImpl implements AnalyzeService {
 
     private static final Logger log                   = LoggerFactory.getLogger(AnalyzeServiceImpl.class);
@@ -33,9 +33,12 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     // External files relating to WEKA and the learning python script
 
-    @Value("${testing.mainScript}") private String mainScript;
-    @Value("${testing.arff.path}")  private String arffLocation;
-    @Value("${testDir}")            private String testDir;
+    @Value("${testing.mainScript}")
+    private String mainScript;
+    @Value("${testing.arff.path}")
+    private String arffLocation;
+    @Value("${testDir}")
+    private String testDir; // TODO: remove this and have it managed by DB
 
     @Autowired
     public AnalyzeServiceImpl(TestingEngine testEngine, JsonNodeAdapter jsonNodeAdapter) {
@@ -44,28 +47,23 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(@NotNull String bucket, @NotNull String key) throws IOException {
+    public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
         FoundLaughter laughter = actionPerformed(bucket, key);
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughter);
     }
 
-    @NotNull
-    public FoundLaughter actionPerformed(@NotNull String bucket, @NotNull String key) throws IOException{
+    @Nonnull
+    public FoundLaughter actionPerformed(@Nonnull String bucket, @Nonnull String key) throws IOException{
         log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
-        String[] command = {
-                "python", mainScript,
-                "--bucket", bucket,
-                "--key", key,
-                "--arff", testDir,
-                "--phase", "0"
-        };
+        runPythonLaughFinderScript(
+                getCommand(bucket, key),
+                key
+        );
 
-        runPythonLaughFinderScript(command, key);
-
-        log.debug("Getting laughter from *.arff file, returning result");
+        log.debug("Getting laughter from arff file, returning result");
         testEngine.setArffPath(arffLocation);
         try {
             List<long[]> laughterList = testEngine.getLaughters();
@@ -77,7 +75,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         }
     }
 
-    private Process runPythonLaughFinderScript(String[] command, String key) throws IOException {
+    public Process runPythonLaughFinderScript(String[] command, String key) throws IOException {
         log.debug("Running Python script to search for laughter");
         try {
             Process proc = Runtime.getRuntime().exec(command);
@@ -102,7 +100,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         }
     }
 
-    private void printPythonLaughFinderOutput(Process proc) {
+    public void printPythonLaughFinderOutput(Process proc) {
         try {
             // log any output
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -124,13 +122,53 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     /**
      * Appends the provided laughters to the provided result
      */
-    @NotNull
-    private FoundLaughter addLaughterInstances(@NotNull List<long[]> laughterList, @NotNull FoundLaughter result) {
+    @Nonnull
+    public FoundLaughter addLaughterInstances(@Nonnull List<long[]> laughterList, @Nonnull FoundLaughter result) {
         for (long[] laughter : laughterList) {
             long start = laughter[0];
             long stop  = laughter[1];
             result.addStartStop(start, stop);
         }
         return result;
+    }
+
+    @Nonnull
+    public String[] getCommand(@Nonnull String bucket, @Nonnull String key) {
+        String phase = "0";
+
+        log.debug("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
+                mainScript, bucket, key, testDir, phase);
+
+        return new String[] {
+                "python", mainScript,
+                "--bucket", bucket,
+                "--key", key,
+                "--arff", testDir,
+                "--phase", phase
+        };
+    }
+
+    public String getMainScript() {
+        return mainScript;
+    }
+
+    public void setMainScript(String mainScript) {
+        this.mainScript = mainScript;
+    }
+
+    public String getArffLocation() {
+        return arffLocation;
+    }
+
+    public void setArffLocation(String arffLocation) {
+        this.arffLocation = arffLocation;
+    }
+
+    public String getTestDir() {
+        return testDir;
+    }
+
+    public void setTestDir(String testDir) {
+        this.testDir = testDir;
     }
 }
