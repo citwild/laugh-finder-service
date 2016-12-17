@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import weka.classifiers.lazy.IBk;
 
 import java.io.IOException;
 
@@ -29,6 +30,8 @@ public class TrainServiceImpl implements TrainService {
     private String nonLaughterSampleLocation;
     @Value("${training.arff.path}")
     private String arffLocation;
+    @Value("${training.model.path}")
+    private String modelOutputPath;
 
     @Value("${training.program.path}")
     private String trainingScriptLocation;
@@ -63,7 +66,8 @@ public class TrainServiceImpl implements TrainService {
             log.info("Training complete");
 
         try {
-            wekaUtil.classifyAndSaveModel(arffLocation);
+            IBk result = wekaUtil.classifyAndGetModel(arffLocation);
+            wekaUtil.saveModel(modelOutputPath, result);
         } catch (Exception e) {
             log.error("There was a failure converting the .arff file to a .model file", e);
         }

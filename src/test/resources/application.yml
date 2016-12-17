@@ -21,12 +21,15 @@ extract:
 training:
   laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
   nonLaughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/non_laughter_filenames.txt"
+
   # Location of the Python training script to run
   program:
     path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
+
   # Location of the .arff output file (used to generate model)
   arff:
-    path: "/Users/milesdowe/Documents/workspace/school/lf-output/wekaFile.arff"
+    path: "src/test/resources/data/wekaFile.arff"
+
   # Location of model, resulting from k-NN analysis
   model:
     path: "/Users/milesdowe/Documents/workspace/school/lf-output/laugh.model"

@@ -18,11 +18,8 @@ import weka.core.converters.ConverterUtils;
 public class WekaModelUtil {
 
     // copied from the Weka app when building the model manually
-    private static final String KNN_OPTIONS = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
-                                              "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
-
-    @Value("${training.model.path}")
-    private String modelOutputPath;
+    private final String KNN_OPTIONS = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
+                                       "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
 
 
     public Instances readArffFile(String filepath) throws Exception {
@@ -34,7 +31,7 @@ public class WekaModelUtil {
         return data;
     }
 
-    public void classifyAndSaveModel(String filepath) throws Exception {
+    public IBk classifyAndGetModel(String filepath) throws Exception {
         Instances data = readArffFile(filepath);
         // set classifier
         IBk iBk = new IBk();
@@ -42,8 +39,15 @@ public class WekaModelUtil {
         iBk.setOptions(weka.core.Utils.splitOptions(KNN_OPTIONS));
         // train
         iBk.buildClassifier(data);
-        // serialize as *.model file
+
+        return iBk;
+    }
+
+    public void saveModel(String modelOutputPath, IBk iBk) throws Exception {
         SerializationHelper.write(modelOutputPath, iBk);
     }
 
+    public String getKnnOptions() {
+        return KNN_OPTIONS;
+    }
 }
