@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  * Created by Miles on 7/3/2016.
  */
-@Service("trainService")
+@Service
 public class TrainServiceImpl implements TrainService {
 
     private static Logger log = LoggerFactory.getLogger(TrainServiceImpl.class);
@@ -31,7 +31,7 @@ public class TrainServiceImpl implements TrainService {
     @Value("${training.arff.path}")
     private String arffLocation;
     @Value("${training.model.path}")
-    private String modelOutputPath;
+    private String modelOutputLocation;
 
     @Value("${training.program.path}")
     private String trainingScriptLocation;
@@ -65,11 +65,18 @@ public class TrainServiceImpl implements TrainService {
         else
             log.info("Training complete");
 
+        IBk result = new IBk();
+
         try {
-            IBk result = wekaUtil.classifyAndGetModel(arffLocation);
-            wekaUtil.saveModel(modelOutputPath, result);
+            result = wekaUtil.classifyAndGetModel(arffLocation);
         } catch (Exception e) {
-            log.error("There was a failure converting the .arff file to a .model file", e);
+            log.error("There was a failure converting the arff file to a model file", e);
+        }
+
+        try {
+            wekaUtil.saveModel(modelOutputLocation, result);
+        } catch (Exception e) {
+            log.error("There was a failure serializing and saving the model file", e);
         }
     }
 }

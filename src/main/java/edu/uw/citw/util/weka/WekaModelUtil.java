@@ -1,11 +1,12 @@
 package edu.uw.citw.util.weka;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -22,7 +23,7 @@ public class WekaModelUtil {
                                        "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
 
 
-    public Instances readArffFile(String filepath) throws Exception {
+    public Instances readArffFile(@Nonnull String filepath) throws Exception {
         ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
 
         Instances data = source.getDataSet();
@@ -31,7 +32,7 @@ public class WekaModelUtil {
         return data;
     }
 
-    public IBk classifyAndGetModel(String filepath) throws Exception {
+    public IBk classifyAndGetModel(@Nonnull String filepath) throws Exception {
         Instances data = readArffFile(filepath);
         // set classifier
         IBk iBk = new IBk();
@@ -43,7 +44,7 @@ public class WekaModelUtil {
         return iBk;
     }
 
-    public void saveModel(String modelOutputPath, IBk iBk) throws Exception {
+    public void saveModel(@Nonnull String modelOutputPath, @Nonnull IBk iBk) throws Exception {
         SerializationHelper.write(modelOutputPath, iBk);
     }
 
