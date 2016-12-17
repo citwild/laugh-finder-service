@@ -2,6 +2,7 @@ package edu.uw.citw.service.analyze.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.model.FoundLaughter;
+import edu.uw.citw.persistence.repository.LaughterTimestampRepository;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.test.TestingEngine;
@@ -29,6 +30,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private static final String FOUND_LAUGHTERS_LABEL = "foundLaughters";
 
     private TestingEngine   testEngine;
+    private LaughterTimestampRepository timestampRepository;
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
@@ -48,9 +50,20 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     @Override
     public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
-        FoundLaughter laughter = actionPerformed(bucket, key);
+        // FoundLaughter result = checkDatabaseForBucketAndKey(bucket, key)
+        // if result is empty {
+               FoundLaughter laughter = actionPerformed(bucket, key);
+        // }
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughter);
     }
+
+//    public FoundLaughter checkDatabaseForBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
+//        FoundLaughter result = null;
+//
+//        LaughterTimestampRepository
+//
+//        return result;
+//    }
 
     @Nonnull
     public FoundLaughter actionPerformed(@Nonnull String bucket, @Nonnull String key) throws IOException{
@@ -136,7 +149,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     public String[] getCommand(@Nonnull String bucket, @Nonnull String key) {
         String phase = "0";
 
-        log.debug("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
+        log.info("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
                 mainScript, bucket, key, testDir, phase);
 
         return new String[] {

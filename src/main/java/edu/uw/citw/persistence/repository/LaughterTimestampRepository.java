@@ -1,6 +1,6 @@
 package edu.uw.citw.persistence.repository;
 
-import edu.uw.citw.persistence.domain.SavedLaughterTimestamp;
+import edu.uw.citw.persistence.domain.LaughterTimestamp;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -11,9 +11,9 @@ import java.util.List;
  *
  * Created by Miles on 9/25/2016.
  */
-public interface SavedLaughterTimestampsRepository extends Repository<SavedLaughterTimestamp, Long>{
+public interface LaughterTimestampRepository extends Repository<LaughterTimestamp, Long>{
 
     @Query(value = "select * from saved_laughter_timestamps times where times.s3_bucket = ?1 and times.s3_key = ?2",
            nativeQuery = true)
-    List<SavedLaughterTimestamp> findByBucketAndKey(String bucket, String key);
+    List<LaughterTimestamp> findByBucketAndKey(String bucket, String key);
 }

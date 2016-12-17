@@ -40,11 +40,11 @@ public class AnalyzeServiceImplTest {
     public void getCommand_ShouldProvideExpectedCommand() throws Exception {
         String[] result = unitUnderTest.getCommand("testBucket", "testKey");
 
-        assertEquals("testScript.py", result[1]);       // script location
+        assertEquals("testScript.py", result[1]); // script location
         assertEquals("testBucket", result[3]); // bucket
-        assertEquals("testKey", result[5]);    // key
-        assertEquals("testDir", result[7]);       // testDir
-        assertEquals("0", result[9]);          // phase
+        assertEquals("testKey", result[5]); // key
+        assertEquals("testDir", result[7]); // testDir
+        assertEquals("0", result[9]); // phase
     }
 
     @Test
