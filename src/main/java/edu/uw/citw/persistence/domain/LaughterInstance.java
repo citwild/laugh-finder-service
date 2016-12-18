@@ -23,14 +23,14 @@ public class LaughterInstance implements Serializable {
     private Long s3Key;
 
     @Column(name = "VID_START", nullable = false)
-    private String startTime;
+    private Long startTime;
 
     @Column(name = "VID_STOP", nullable = false)
     private Long stopTime;
 
     public LaughterInstance() {}
 
-    public LaughterInstance(Long id, Long s3Key, String startTime, Long stopTime) {
+    public LaughterInstance(Long id, Long s3Key, Long startTime, Long stopTime) {
         this.id = id;
         this.s3Key = s3Key;
         this.startTime = startTime;
@@ -53,11 +53,11 @@ public class LaughterInstance implements Serializable {
         this.s3Key = s3Key;
     }
 
-    public String getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 

@@ -1,5 +1,7 @@
 package edu.uw.citw.model;
 
+import edu.uw.citw.persistence.domain.LaughterInstance;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,10 @@ public class FoundLaughter {
 
     public void addStartStop(long start, long stop) {
         timestamps.add(new StartStop(start, stop));
+    }
+
+    public void addStartStop(LaughterInstance instance) {
+        addStartStop(instance.getStartTime(), instance.getStopTime());
     }
 
     public String getFilename() {

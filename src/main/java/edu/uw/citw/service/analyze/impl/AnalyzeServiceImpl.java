@@ -5,6 +5,7 @@ import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.persistence.InstancePersistenceUtil;
 import edu.uw.citw.util.test.TestingEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An implementation of the Analyze Service.
@@ -30,7 +32,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private static final String FOUND_LAUGHTERS_LABEL = "foundLaughters";
 
     private TestingEngine   testEngine;
-    private LaughterInstanceRepository timestampRepository;
+    private InstancePersistenceUtil instancePersistenceUtil;
     private JsonNodeAdapter jsonNodeAdapter;
 
     // External files relating to WEKA and the learning python script
@@ -43,30 +45,30 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private String testDir; // TODO: remove this and have it managed by DB
 
     @Autowired
-    public AnalyzeServiceImpl(TestingEngine testEngine, JsonNodeAdapter jsonNodeAdapter) {
+    public AnalyzeServiceImpl(
+            TestingEngine testEngine,
+            InstancePersistenceUtil instancePersistenceUtil,
+            JsonNodeAdapter jsonNodeAdapter
+    ) {
         this.testEngine = testEngine;
+        this.instancePersistenceUtil = instancePersistenceUtil;
         this.jsonNodeAdapter = jsonNodeAdapter;
     }
 
     @Override
     public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
-        // FoundLaughter result = checkDatabaseForBucketAndKey(bucket, key)
-        // if result is empty {
-               FoundLaughter laughter = actionPerformed(bucket, key);
-        // }
-        return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, laughter);
+        Optional<FoundLaughter> result = instancePersistenceUtil.getInstancesByBucketAndKey(bucket, key);
+        if (!result.isPresent()) {
+            result = actionPerformed(bucket, key);
+        }
+        return jsonNodeAdapter.createJsonObject(
+                FOUND_LAUGHTERS_LABEL,
+                (result.isPresent()) ? result.get() : null
+        );
     }
 
-//    public FoundLaughter checkDatabaseForBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
-//        FoundLaughter result = null;
-//
-//        LaughterInstanceRepository
-//
-//        return result;
-//    }
-
     @Nonnull
-    public FoundLaughter actionPerformed(@Nonnull String bucket, @Nonnull String key) throws IOException{
+    public Optional<FoundLaughter> actionPerformed(@Nonnull String bucket, @Nonnull String key) throws IOException{
         log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
@@ -81,10 +83,11 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         try {
             List<long[]> laughterList = testEngine.getLaughters();
             result = addLaughterInstances(laughterList, result);
-            return result;
+            return Optional.of(result);
+
         } catch (Exception e) {
             log.error("There was an error searching for laughter in audio file: {}", key, e);
-            return null;
+            return Optional.empty();
         }
     }
 

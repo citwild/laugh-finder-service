@@ -15,5 +15,5 @@ public interface LaughterInstanceRepository extends Repository<LaughterInstance,
 
     @Query(value = "select * from laugh_instance where s3_key= ?1",
            nativeQuery = true)
-    List<LaughterInstance> findByBucketAndKey(String bucket, String key);
+    List<LaughterInstance> findById(Long id);
 }

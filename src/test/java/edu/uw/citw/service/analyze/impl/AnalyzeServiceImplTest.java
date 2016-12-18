@@ -3,6 +3,7 @@ package edu.uw.citw.service.analyze.impl;
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.StartStop;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.persistence.InstancePersistenceUtil;
 import edu.uw.citw.util.test.TestingEngine;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,13 +13,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzeServiceImplTest {
 
     private TestingEngine testingEngine;
+    private InstancePersistenceUtil instancePersistenceUtil;
     private JsonNodeAdapter jsonNodeAdapter;
 
     private AnalyzeServiceImpl unitUnderTest;
@@ -26,9 +28,10 @@ public class AnalyzeServiceImplTest {
     @Before
     public void setUp() throws Exception {
         testingEngine = mock(TestingEngine.class);
+        instancePersistenceUtil = mock(InstancePersistenceUtil.class);
         jsonNodeAdapter = mock(JsonNodeAdapter.class);
 
-        unitUnderTest = new AnalyzeServiceImpl(testingEngine, jsonNodeAdapter);
+        unitUnderTest = new AnalyzeServiceImpl(testingEngine, instancePersistenceUtil, jsonNodeAdapter);
 
         // set values only initialized by Spring context
         unitUnderTest.setArffLocation("testArff.arff");
