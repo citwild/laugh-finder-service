@@ -4,6 +4,7 @@ import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.StartStop;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
+import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
 import edu.uw.citw.util.test.TestingEngine;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,15 +13,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzeServiceImplTest {
 
     private TestingEngine testingEngine;
     private InstancePersistenceUtil instancePersistenceUtil;
+    private PyLaughFinderUtil pyLaughFinderUtil;
     private JsonNodeAdapter jsonNodeAdapter;
 
     private AnalyzeServiceImpl unitUnderTest;
@@ -29,30 +33,50 @@ public class AnalyzeServiceImplTest {
     public void setUp() throws Exception {
         testingEngine = mock(TestingEngine.class);
         instancePersistenceUtil = mock(InstancePersistenceUtil.class);
+        pyLaughFinderUtil = mock(PyLaughFinderUtil.class);
         jsonNodeAdapter = mock(JsonNodeAdapter.class);
 
-        unitUnderTest = new AnalyzeServiceImpl(testingEngine, instancePersistenceUtil, jsonNodeAdapter);
+        unitUnderTest = new AnalyzeServiceImpl(testingEngine, instancePersistenceUtil, pyLaughFinderUtil, jsonNodeAdapter);
 
         // set values only initialized by Spring context
         unitUnderTest.setArffLocation("testArff.arff");
-        unitUnderTest.setMainScript("testScript.py");
-        unitUnderTest.setTestDir("testDir");
     }
 
     @Test
-    public void getCommand_ShouldProvideExpectedCommand() throws Exception {
-        String[] result = unitUnderTest.getCommand("testBucket", "testKey");
+    public void getLaughterInstancesFromAudio_ShouldRunPythonCode_IfDatabaseFindsNothing() throws Exception {
+        // pretend database didn't find anything
+        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+                .thenReturn(Optional.empty());
+        // pretend python code is run
+        when(pyLaughFinderUtil.runPythonLaughFinderScript(anyString(), anyString()))
+                .thenReturn(null);
+        when(testingEngine.getLaughters())
+                .thenReturn(getStubInstances());
 
-        assertEquals("testScript.py", result[1]); // script location
-        assertEquals("testBucket", result[3]); // bucket
-        assertEquals("testKey", result[5]); // key
-        assertEquals("testDir", result[7]); // testDir
-        assertEquals("0", result[9]); // phase
+        // run test
+        unitUnderTest.getLaughterInstancesFromAudio("test", "test");
+
+        verify(pyLaughFinderUtil, times(1))
+                .runPythonLaughFinderScript(anyString(), anyString());
     }
+
+    @Test
+    public void getLaughterInstancesFromAudio_ShouldNotRunPythonCode_IfDatabaseFindsSomething() throws Exception {
+        // pretend database found something
+        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+                .thenReturn(Optional.of(new FoundLaughter("test")));
+
+        // run test
+        unitUnderTest.getLaughterInstancesFromAudio("test", "test");
+
+        verify(pyLaughFinderUtil, never())
+                .runPythonLaughFinderScript(anyString(), anyString());
+    }
+
 
     @Test
     public void addLaughterInstances_ShouldAddStartStops() throws Exception {
-        List<long[]> input = Arrays.asList(new long[] {111, 222}, new long[]{333, 444});
+        List<long[]> input = getStubInstances();
         FoundLaughter result = new FoundLaughter("testFile");
 
         unitUnderTest.addLaughterInstances(input, result);
@@ -66,5 +90,9 @@ public class AnalyzeServiceImplTest {
         StartStop second = result.getTimestamps().get(1);
         assertEquals(333, second.getStart());
         assertEquals(444, second.getStop());
+    }
+
+    private List<long[]> getStubInstances() {
+        return Arrays.asList(new long[] {111, 222}, new long[]{333, 444});
     }
 }
