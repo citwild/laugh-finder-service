@@ -2,6 +2,7 @@ package edu.uw.citw.service.analyze.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.model.FoundLaughter;
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import weka.experiment.InstancesResultListener;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -44,8 +46,8 @@ public class AnalyzeServiceImpl implements AnalyzeService {
             TestingEngine testEngine,
             InstancePersistenceUtil instancePersistenceUtil,
             PyLaughFinderUtil pyLaughFinderUtil,
-            JsonNodeAdapter jsonNodeAdapter
-    ) {
+            JsonNodeAdapter jsonNodeAdapter)
+    {
         this.testEngine = testEngine;
         this.instancePersistenceUtil = instancePersistenceUtil;
         this.pyLaughFinderUtil = pyLaughFinderUtil;
@@ -53,11 +55,24 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
-        Optional<FoundLaughter> result = instancePersistenceUtil.getInstancesByBucketAndKey(bucket, key);
+//    public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
+    public JsonNode getLaughterInstancesFromAudio(
+            @Nonnull AudioVideoMapping mapping)
+    throws IOException
+    {
+        // first, try to get any existing instances
+        //   using audio file because that's what Python program reads
+        // TODO: 1/8/2017 change to DEBUG?
+        log.info("Checking for existing timestamps");
+        Optional<FoundLaughter> result = instancePersistenceUtil
+                .getInstancesByBucketAndKey(mapping.getBucket(), mapping.getVideoFile());
+
+        // otherwise, laughter instances don't exist; will run algorithm
         if (!result.isPresent()) {
-            result = actionPerformed(bucket, key);
+            log.info("No pre-existing timestamps found; running search algorithm");
+            result = findLaughterInstances(mapping.getBucket(), mapping.getAudioFile(), mapping.getId());
         }
+
         return jsonNodeAdapter.createJsonObject(
                 FOUND_LAUGHTERS_LABEL,
                 (result.isPresent()) ? result.get() : null
@@ -65,7 +80,12 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Nonnull
-    public Optional<FoundLaughter> actionPerformed(@Nonnull String bucket, @Nonnull String key) throws IOException{
+    public Optional<FoundLaughter> findLaughterInstances(
+            @Nonnull String bucket,
+            @Nonnull String key,
+            @Nonnull long dbId)
+    throws IOException
+    {
         log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
@@ -77,6 +97,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         try {
             List<long[]> laughterList = testEngine.getLaughters();
             result = addLaughterInstances(laughterList, result);
+
+            // add instances to DB for quick retrieval
+            instancePersistenceUtil.saveInstances(result, dbId);
+
             return Optional.of(result);
 
         } catch (Exception e) {

@@ -46,7 +46,8 @@ public class PyLaughFinderUtil {
                 printPythonLaughFinderOutput(proc);
 
                 if (exitValue != 0) {
-                    throw new IOException("Python script exited with non-zero code; command used: " + command);
+                    throw new IOException("Python script exited with non-zero code; command used: "
+                            + printCommandArray(command));
                 }
             } catch (InterruptedException e) {
                 log.error("There was a failure getting the exit code of the Python Script", e);
@@ -57,6 +58,14 @@ public class PyLaughFinderUtil {
             log.error("There was a failure analyzing the audio file: {}", key, e);
             throw e;
         }
+    }
+
+    private String printCommandArray(String[] cmd) {
+        String val = "";
+        for (String str : cmd) {
+            val += str + ", ";
+        }
+        return val;
     }
 
     public void printPythonLaughFinderOutput(Process proc) {

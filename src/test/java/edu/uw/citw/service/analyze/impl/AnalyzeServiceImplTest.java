@@ -2,6 +2,7 @@ package edu.uw.citw.service.analyze.impl;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.StartStop;
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
 import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
@@ -54,7 +55,7 @@ public class AnalyzeServiceImplTest {
                 .thenReturn(getStubInstances());
 
         // run test
-        unitUnderTest.getLaughterInstancesFromAudio("test", "test");
+        unitUnderTest.getLaughterInstancesFromAudio(getStubAudioVideoMapping());
 
         verify(pyLaughFinderUtil, times(1))
                 .runPythonLaughFinderScript(anyString(), anyString());
@@ -67,7 +68,7 @@ public class AnalyzeServiceImplTest {
                 .thenReturn(Optional.of(new FoundLaughter("test")));
 
         // run test
-        unitUnderTest.getLaughterInstancesFromAudio("test", "test");
+        unitUnderTest.getLaughterInstancesFromAudio(getStubAudioVideoMapping());
 
         verify(pyLaughFinderUtil, never())
                 .runPythonLaughFinderScript(anyString(), anyString());
@@ -92,7 +93,17 @@ public class AnalyzeServiceImplTest {
         assertEquals(444, second.getStop());
     }
 
+
     private List<long[]> getStubInstances() {
         return Arrays.asList(new long[] {111, 222}, new long[]{333, 444});
+    }
+
+    private AudioVideoMapping getStubAudioVideoMapping() {
+        AudioVideoMapping result = new AudioVideoMapping();
+        result.setId((long) 12345);
+        result.setBucket("testBucket");
+        result.setVideoFile("testVideoFile");
+        result.setAudioFile("testAudioFile");
+        return result;
     }
 }

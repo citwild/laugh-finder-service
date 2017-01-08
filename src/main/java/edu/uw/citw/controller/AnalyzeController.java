@@ -1,6 +1,7 @@
 package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.mapping.AudioVideoMappingUtil;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * For finding laughter instances in audio streams.
@@ -48,10 +50,15 @@ public class AnalyzeController {
             @Nonnull @RequestParam String key
     ) throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
-        String[] bucketAndKey = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
+        Optional<AudioVideoMapping> asset = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
 
-        // [0] == bucket string, [1] == audio filename string
-        return analyzeService.getLaughterInstancesFromAudio(bucketAndKey[0], bucketAndKey[1]);
+        if (asset.isPresent()) {
+            // [0] == bucket string, [1] == audio filename string
+//            return analyzeService.getLaughterInstancesFromAudio(bucketAndKey[0], bucketAndKey[1]);
+            return analyzeService.getLaughterInstancesFromAudio(asset.get());
+        } else {
+            throw new IOException("There was an error...");
+        }
     }
 
 
@@ -63,6 +70,7 @@ public class AnalyzeController {
      *
      * TODO: fix this because it doesn't work
      */
+    @Deprecated
     @Nonnull
     @ResponseBody
     @RequestMapping(value = "/audio",
@@ -73,6 +81,7 @@ public class AnalyzeController {
             @Nonnull @RequestParam String key
     ) throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
-        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
+//        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
+        return null;
     }
 }
