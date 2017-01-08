@@ -61,15 +61,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     throws IOException
     {
         // first, try to get any existing instances
-        //   using audio file because that's what Python program reads
-        // TODO: 1/8/2017 change to DEBUG?
-        log.info("Checking for existing timestamps");
+        log.debug("Checking for existing timestamps");
         Optional<FoundLaughter> result = instancePersistenceUtil
                 .getInstancesByBucketAndKey(mapping.getBucket(), mapping.getVideoFile());
 
         // otherwise, laughter instances don't exist; will run algorithm
         if (!result.isPresent()) {
-            log.info("No pre-existing timestamps found; running search algorithm");
+            log.debug("No pre-existing timestamps found; running search algorithm");
             result = findLaughterInstances(mapping.getBucket(), mapping.getAudioFile(), mapping.getId());
         }
 

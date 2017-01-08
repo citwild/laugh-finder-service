@@ -29,7 +29,12 @@ public class PyLaughFinderUtil {
 
     public PyLaughFinderUtil() {}
 
-    public Process runPythonLaughFinderScript(String bucket, String key) throws IOException {
+    @Nonnull
+    public Process runPythonLaughFinderScript(
+            @Nonnull String bucket,
+            @Nonnull String key)
+    throws IOException
+    {
         log.debug("Running Python script to search for laughter");
 
         String[] command = getCommand(bucket, key);
@@ -58,14 +63,6 @@ public class PyLaughFinderUtil {
             log.error("There was a failure analyzing the audio file: {}", key, e);
             throw e;
         }
-    }
-
-    private String printCommandArray(String[] cmd) {
-        String val = "";
-        for (String str : cmd) {
-            val += str + ", ";
-        }
-        return val;
     }
 
     public void printPythonLaughFinderOutput(Process proc) {
@@ -115,5 +112,14 @@ public class PyLaughFinderUtil {
 
     public void setTestDir(String testDir) {
         this.testDir = testDir;
+    }
+
+    // for logging System.exec command
+    private String printCommandArray(String[] cmd) {
+        String val = "";
+        for (String str : cmd) {
+            val += str + ", ";
+        }
+        return val;
     }
 }

@@ -44,7 +44,7 @@ public class AnalyzeServiceImplTest {
     }
 
     @Test
-    public void getLaughterInstancesFromAudio_ShouldRunPythonCode_IfDatabaseFindsNothing() throws Exception {
+    public void getLaughterInstancesFromAudio_shouldRunPythonCode_ifDatabaseFindsNothing() throws Exception {
         // pretend database didn't find anything
         when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.empty());
@@ -62,7 +62,7 @@ public class AnalyzeServiceImplTest {
     }
 
     @Test
-    public void getLaughterInstancesFromAudio_ShouldNotRunPythonCode_IfDatabaseFindsSomething() throws Exception {
+    public void getLaughterInstancesFromAudio_shouldNotRunPythonCode_ifDatabaseFindsSomething() throws Exception {
         // pretend database found something
         when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.of(new FoundLaughter("test")));
@@ -74,9 +74,24 @@ public class AnalyzeServiceImplTest {
                 .runPythonLaughFinderScript(anyString(), anyString());
     }
 
+    /**
+     * Search for instances using video ID, not audio ID
+     */
+    @Test
+    public void getLaughterInstancesFromAudio_shouldUseVideoIdWhenSearchingForInstances() throws Exception {
+        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+                .thenReturn(Optional.of(new FoundLaughter("test")));
+
+        AudioVideoMapping map = getStubAudioVideoMapping();
+
+        unitUnderTest.getLaughterInstancesFromAudio(map);
+
+        verify(instancePersistenceUtil, atLeastOnce())
+                .getInstancesByBucketAndKey(map.getBucket(), map.getVideoFile());
+    }
 
     @Test
-    public void addLaughterInstances_ShouldAddStartStops() throws Exception {
+    public void addLaughterInstances_shouldAddStartStops() throws Exception {
         List<long[]> input = getStubInstances();
         FoundLaughter result = new FoundLaughter("testFile");
 
@@ -92,7 +107,6 @@ public class AnalyzeServiceImplTest {
         assertEquals(333, second.getStart());
         assertEquals(444, second.getStop());
     }
-
 
     private List<long[]> getStubInstances() {
         return Arrays.asList(new long[] {111, 222}, new long[]{333, 444});
