@@ -29,7 +29,11 @@ public class AnalyzeController {
     private AudioVideoMappingUtil audioVideoMappingUtil;
 
     @Autowired
-    public AnalyzeController(AnalyzeService analyzeService, AudioVideoMappingUtil audioVideoMappingUtil) {
+    public AnalyzeController(
+            AnalyzeService analyzeService,
+            AudioVideoMappingUtil audioVideoMappingUtil
+    )
+    {
         this.analyzeService = analyzeService;
         this.audioVideoMappingUtil = audioVideoMappingUtil;
     }
@@ -42,21 +46,24 @@ public class AnalyzeController {
      */
     @Nonnull
     @ResponseBody
-    @RequestMapping(value = "/video",
-                    method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            value = "/video",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public JsonNode analyzeVideo(
             @Nonnull @RequestParam String bucket,
             @Nonnull @RequestParam String key
-    ) throws IOException {
+    )
+    throws IOException
+    {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         Optional<AudioVideoMapping> asset = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
 
         if (asset.isPresent()) {
-            // [0] == bucket string, [1] == audio filename string
-//            return analyzeService.getLaughterInstancesFromAudio(bucketAndKey[0], bucketAndKey[1]);
             return analyzeService.getLaughterInstancesFromAudio(asset.get());
         } else {
+            // TODO: 1/8/2017 Fix this unhelpful error handling
             throw new IOException("There was an error...");
         }
     }
@@ -67,21 +74,24 @@ public class AnalyzeController {
      *
      * Key expected to look like the following:
      *     <code>ExtractedAudio/Compressed/2014-01-31/Huddle/00079-320.wav</code>
-     *
-     * TODO: fix this because it doesn't work
      */
-    @Deprecated
-    @Nonnull
-    @ResponseBody
-    @RequestMapping(value = "/audio",
-                    method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonNode analyzeAudio(
-            @Nonnull @RequestParam String bucket,
-            @Nonnull @RequestParam String key
-    ) throws IOException {
-        log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
-//        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
-        return null;
-    }
+    // TODO: 1/8/2017 Fix this if it becomes necessary, or delete it
+//    @Deprecated
+//    @Nonnull
+//    @ResponseBody
+//    @RequestMapping(
+//            value = "/audio",
+//            method = RequestMethod.GET,
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    public JsonNode analyzeAudio(
+//            @Nonnull @RequestParam String bucket,
+//            @Nonnull @RequestParam String key
+//    )
+//    throws IOException
+//    {
+//        log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
+////        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
+//        return null;
+//    }
 }

@@ -5,6 +5,7 @@ import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,26 +17,19 @@ import java.util.Optional;
 @Component
 public class AudioVideoMappingUtil {
 
-    @Autowired
     private AudioVideoMappingRepository audioVideoMappingRepository;
 
-//    public String[] getAudioExtractOfVideo(String bucket, String key) {
-//        String[] extract = new String[2];
-//
-//        List<AudioVideoMapping> searchResult  = audioVideoMappingRepository.findByBucketAndVideo(bucket, key);
-//
-//        // Expected to be unique result, so always first value
-//        if (!searchResult.isEmpty()) {
-//            AudioVideoMapping mapping = searchResult.get(0);
-//
-//            extract[0] = bucket;
-//            extract[1] = mapping.getAudioFile();
-//        }
-//        return extract;
-//    }
+    @Autowired
+    public AudioVideoMappingUtil(
+            AudioVideoMappingRepository audioVideoMappingRepository)
+    {
+        this.audioVideoMappingRepository = audioVideoMappingRepository;
+    }
 
-    public Optional<AudioVideoMapping> getAudioExtractOfVideo(String bucket, String key) {
-
+    public Optional<AudioVideoMapping> getAudioExtractOfVideo(
+            @Nonnull String bucket,
+            @Nonnull String key)
+    {
         List<AudioVideoMapping> searchResult  = audioVideoMappingRepository.findByBucketAndVideo(bucket, key);
 
         // Expected to be unique result, so always first value

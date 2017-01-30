@@ -31,7 +31,9 @@ public class AnalyzeServiceImplTest {
     private AnalyzeServiceImpl unitUnderTest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()
+    throws Exception
+    {
         testingEngine = mock(TestingEngine.class);
         instancePersistenceUtil = mock(InstancePersistenceUtil.class);
         pyLaughFinderUtil = mock(PyLaughFinderUtil.class);
@@ -43,8 +45,13 @@ public class AnalyzeServiceImplTest {
         unitUnderTest.setArffLocation("testArff.arff");
     }
 
+    /**
+     * Run python code if laugh instances don't exist
+     */
     @Test
-    public void getLaughterInstancesFromAudio_shouldRunPythonCode_ifDatabaseFindsNothing() throws Exception {
+    public void getLaughterInstancesFromAudio_shouldRunPythonCode_ifDatabaseFindsNothing()
+    throws Exception
+    {
         // pretend database didn't find anything
         when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.empty());
@@ -61,8 +68,13 @@ public class AnalyzeServiceImplTest {
                 .runPythonLaughFinderScript(anyString(), anyString());
     }
 
+    /**
+     * Don't run python code if laugh instances exist
+     */
     @Test
-    public void getLaughterInstancesFromAudio_shouldNotRunPythonCode_ifDatabaseFindsSomething() throws Exception {
+    public void getLaughterInstancesFromAudio_shouldNotRunPythonCode_ifDatabaseFindsSomething()
+    throws Exception
+    {
         // pretend database found something
         when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.of(new FoundLaughter("test")));
@@ -78,7 +90,9 @@ public class AnalyzeServiceImplTest {
      * Search for instances using video ID, not audio ID
      */
     @Test
-    public void getLaughterInstancesFromAudio_shouldUseVideoIdWhenSearchingForInstances() throws Exception {
+    public void getLaughterInstancesFromAudio_shouldUseVideoIdWhenSearchingForInstances()
+    throws Exception
+    {
         when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.of(new FoundLaughter("test")));
 
@@ -90,8 +104,13 @@ public class AnalyzeServiceImplTest {
                 .getInstancesByBucketAndKey(map.getBucket(), map.getVideoFile());
     }
 
+    /**
+     * Add StartStop objects as expected
+     */
     @Test
-    public void addLaughterInstances_shouldAddStartStops() throws Exception {
+    public void addLaughterInstances_shouldAddStartStops()
+    throws Exception
+    {
         List<long[]> input = getStubInstances();
         FoundLaughter result = new FoundLaughter("testFile");
 

@@ -55,7 +55,6 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-//    public JsonNode getLaughterInstancesFromAudio(@Nonnull String bucket, @Nonnull String key) throws IOException {
     public JsonNode getLaughterInstancesFromAudio(
             @Nonnull AudioVideoMapping mapping)
     throws IOException
