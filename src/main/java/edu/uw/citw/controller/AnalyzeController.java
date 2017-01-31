@@ -19,6 +19,8 @@ import java.util.Optional;
  * <p>
  * Created by Miles on 6/26/2016.
  */
+// TODO: 1/30/2017 remove localhost when done testing
+@CrossOrigin(origins = {"http://localhost:8080", "https://52.37.207.59"})
 @RestController
 @RequestMapping(value = "/analyze")
 public class AnalyzeController {
@@ -31,8 +33,7 @@ public class AnalyzeController {
     @Autowired
     public AnalyzeController(
             AnalyzeService analyzeService,
-            AudioVideoMappingUtil audioVideoMappingUtil
-    )
+            AudioVideoMappingUtil audioVideoMappingUtil)
     {
         this.analyzeService = analyzeService;
         this.audioVideoMappingUtil = audioVideoMappingUtil;
@@ -53,8 +54,7 @@ public class AnalyzeController {
     )
     public JsonNode analyzeVideo(
             @Nonnull @RequestParam String bucket,
-            @Nonnull @RequestParam String key
-    )
+            @Nonnull @RequestParam String key)
     throws IOException
     {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
@@ -67,31 +67,4 @@ public class AnalyzeController {
             throw new IOException("There was an error...");
         }
     }
-
-
-    /**
-     * Returns instances of laughter in the specified bucket/key combination.
-     *
-     * Key expected to look like the following:
-     *     <code>ExtractedAudio/Compressed/2014-01-31/Huddle/00079-320.wav</code>
-     */
-    // TODO: 1/8/2017 Fix this if it becomes necessary, or delete it
-//    @Deprecated
-//    @Nonnull
-//    @ResponseBody
-//    @RequestMapping(
-//            value = "/audio",
-//            method = RequestMethod.GET,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    public JsonNode analyzeAudio(
-//            @Nonnull @RequestParam String bucket,
-//            @Nonnull @RequestParam String key
-//    )
-//    throws IOException
-//    {
-//        log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
-////        return analyzeService.getLaughterInstancesFromAudio(bucket, key);
-//        return null;
-//    }
 }
