@@ -13,15 +13,15 @@ import java.util.List;
 public class FoundLaughter {
 
     private String          filename;
-    private List<StartStop> timestamps;
+    private List<StartStop> instances;
 
     public FoundLaughter(String filename) {
         this.filename = filename;
-        this.timestamps = new ArrayList<>();
+        this.instances = new ArrayList<>();
     }
 
     public void addStartStop(long start, long stop) {
-        timestamps.add(new StartStop(start, stop));
+        instances.add(new StartStop(start, stop));
     }
 
     public void addStartStop(LaughterInstance instance) {
@@ -36,11 +36,11 @@ public class FoundLaughter {
         this.filename = filename;
     }
 
-    public List<StartStop> getTimestamps() {
-        return timestamps;
+    public List<StartStop> getInstances() {
+        return instances;
     }
 
-    public void setTimestamps(List<StartStop> timestamps) {
-        this.timestamps = timestamps;
+    public void setInstances(List<StartStop> instances) {
+        this.instances = instances;
     }
 }

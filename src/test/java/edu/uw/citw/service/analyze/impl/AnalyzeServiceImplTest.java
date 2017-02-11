@@ -116,13 +116,13 @@ public class AnalyzeServiceImplTest {
 
         unitUnderTest.addLaughterInstances(input, result);
 
-        assertEquals(2, result.getTimestamps().size());
+        assertEquals(2, result.getInstances().size());
 
-        StartStop first = result.getTimestamps().get(0);
+        StartStop first = result.getInstances().get(0);
         assertEquals(111, first.getStart());
         assertEquals(222, first.getStop());
 
-        StartStop second = result.getTimestamps().get(1);
+        StartStop second = result.getInstances().get(1);
         assertEquals(333, second.getStart());
         assertEquals(444, second.getStop());
     }

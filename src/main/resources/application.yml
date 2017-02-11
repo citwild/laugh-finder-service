@@ -1,46 +1,33 @@
 # Develop
+
+baseDir: "/home/miles/Documents/workspace"
+
 spring:
   profiles: "dev"
 
   datasource:
-    url:
-    username:
-    password:
+    driver-class-name: "com.mysql.jdbc.Driver"
+    url: "jdbc:mysql://localhost:3306/uwbwfe"
+    username: "root"
+    password: "ImJustAMachine?!"
     testWhileIdle: "true"
     validationQuery: "SELECT 1"
 
-# Location of assets for training program
 training:
-  laughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/laughter_filenames.txt"
-  nonLaughterSamples: "/Users/milesdowe/Documents/workspace/school/laugh-finder/laugh-files/non_laughter_filenames.txt"
-  # Location of the Python training script to run
-  program:
-    path: "/Users/milesdowe/Documents/workspace/school/laugh-finder/python-training/main.py"
-  # Location of the .arff output file (used to generate model)
-  arff:
-    path: "C:/Users/Miles/Documents/workspace/lf-output/wekaFile.arff"
-  # Location of model, resulting from k-NN analysis
   model:
-    path: "C:/Users/Miles/Documents/workspace/lf-output/laugh.model"
+    path: "{{baseDir}}/lf-model-files/laugh.model"
 
 # Location of assets for testing program
 testing:
-  mainScript: "C:/Users/Miles/Documents/workspace/laugh-finder-service/ml-scripts/python-testing/main.py"
+  mainScript: "{{baseDir}}/lf-python-scripts/testing/main.py"
   arff:
-    path: "C:/Users/Miles/Documents/workspace/lf-output/test.arff"
+    path: "{{baseDir}}/lf-model-files/test.arff"
   index:
-    path: "C:/Users/Miles/Documents/workspace/lf-output/index.txt"
+    path: "{{baseDir}}/lf-model-files/index.txt"
   window: "800"
 
 # TODO: State shouldn't be maintained in external files, should be in database
-testDir: "C:/Users/Miles/Documents/workspace/lf-output"
-
-# Are these necessary?
-python:
-  win:
-    path: "C:\\Users\\Miles\\AppData\\Local\\Programs\\Python\\Python35-32\\python.exe"
-  nix:
-    path: "/usr/local/bin/python"
+testDir: "{{baseDir}}/lf-model-files"
 
 server:
-  port: 8080
+  port: 16000

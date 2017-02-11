@@ -69,7 +69,7 @@ public class InstancePersistenceUtil {
             @Nonnull FoundLaughter foundLaughter,
             long dbId)
     {
-        for (StartStop startStop : foundLaughter.getTimestamps()) {
+        for (StartStop startStop : foundLaughter.getInstances()) {
             laughterInstanceRepository.save(createInstance(startStop, dbId));
         }
     }

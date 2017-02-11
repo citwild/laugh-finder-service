@@ -13,7 +13,6 @@ import java.util.Optional;
  */
 public interface AnalyzeService {
 
-//    JsonNode getLaughterInstancesFromAudio(String bucket, String audioId) throws IOException;
-
     JsonNode getLaughterInstancesFromAudio(AudioVideoMapping asset) throws IOException;
+
 }
