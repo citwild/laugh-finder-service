@@ -1,7 +1,7 @@
 package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.FoundLaughter;
-import edu.uw.citw.model.StartStop;
+import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
@@ -60,13 +60,13 @@ public class InstancePersistenceUtilTest {
 
     @Test
     public void createInstance_ShouldUseTheExpectedValues() throws Exception {
-        StartStop stubStartStop = new StartStop(1000, 2000);
+        LaughInstance stubLaughInstance = new LaughInstance(1000, 2000);
         long stubKey = 1234;
 
-        LaughterInstance result = unitUnderTest.createInstance(stubStartStop, stubKey);
+        LaughterInstance result = unitUnderTest.createInstance(stubLaughInstance, stubKey);
 
-        assertTrue(stubStartStop.getStart() == result.getStartTime());
-        assertTrue(stubStartStop.getStop() == result.getStopTime());
+        assertTrue(stubLaughInstance.getStart() == result.getStartTime());
+        assertTrue(stubLaughInstance.getStop() == result.getStopTime());
         assertTrue(stubKey == result.getS3Key());
     }
 

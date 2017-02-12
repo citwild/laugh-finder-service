@@ -13,7 +13,7 @@ import java.util.List;
 public class FoundLaughter {
 
     private String          filename;
-    private List<StartStop> instances;
+    private List<LaughInstance> instances;
 
     public FoundLaughter(String filename) {
         this.filename = filename;
@@ -21,7 +21,7 @@ public class FoundLaughter {
     }
 
     public void addStartStop(long start, long stop) {
-        instances.add(new StartStop(start, stop));
+        instances.add(new LaughInstance(start, stop));
     }
 
     public void addStartStop(LaughterInstance instance) {
@@ -36,11 +36,11 @@ public class FoundLaughter {
         this.filename = filename;
     }
 
-    public List<StartStop> getInstances() {
+    public List<LaughInstance> getInstances() {
         return instances;
     }
 
-    public void setInstances(List<StartStop> instances) {
+    public void setInstances(List<LaughInstance> instances) {
         this.instances = instances;
     }
 }

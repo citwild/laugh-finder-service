@@ -1,7 +1,7 @@
 package edu.uw.citw.service.analyze.impl;
 
 import edu.uw.citw.model.FoundLaughter;
-import edu.uw.citw.model.StartStop;
+import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
@@ -105,7 +105,7 @@ public class AnalyzeServiceImplTest {
     }
 
     /**
-     * Add StartStop objects as expected
+     * Add LaughInstance objects as expected
      */
     @Test
     public void addLaughterInstances_shouldAddStartStops()
@@ -118,11 +118,11 @@ public class AnalyzeServiceImplTest {
 
         assertEquals(2, result.getInstances().size());
 
-        StartStop first = result.getInstances().get(0);
+        LaughInstance first = result.getInstances().get(0);
         assertEquals(111, first.getStart());
         assertEquals(222, first.getStop());
 
-        StartStop second = result.getInstances().get(1);
+        LaughInstance second = result.getInstances().get(1);
         assertEquals(333, second.getStart());
         assertEquals(444, second.getStop());
     }

@@ -1,7 +1,7 @@
 package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.FoundLaughter;
-import edu.uw.citw.model.StartStop;
+import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
@@ -69,15 +69,15 @@ public class InstancePersistenceUtil {
             @Nonnull FoundLaughter foundLaughter,
             long dbId)
     {
-        for (StartStop startStop : foundLaughter.getInstances()) {
-            laughterInstanceRepository.save(createInstance(startStop, dbId));
+        for (LaughInstance laughInstance : foundLaughter.getInstances()) {
+            laughterInstanceRepository.save(createInstance(laughInstance, dbId));
         }
     }
 
     public LaughterInstance createInstance(
-            @Nonnull StartStop startStop,
+            @Nonnull LaughInstance laughInstance,
             long dbId)
     {
-        return new LaughterInstance(null, dbId, startStop.getStart(), startStop.getStop());
+        return new LaughterInstance(null, dbId, laughInstance.getStart(), laughInstance.getStop());
     }
 }
