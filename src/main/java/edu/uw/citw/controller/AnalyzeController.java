@@ -1,9 +1,7 @@
 package edu.uw.citw.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.service.analyze.AnalyzeService;
-import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.mapping.AudioVideoMappingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Optional;
@@ -44,33 +41,21 @@ public class AnalyzeController {
     /**
      * Returns instances of laughter in the specified bucket/key combination.
      *
-     * Key expected to look like the following:
-     *     <code>Compressed/2014-01-31/Huddle/00079-320.mp4</code>
+     * Key expected to look like the following: <code>Compressed/2014-01-31/Huddle/00079-320.mp4</code>
      */
     @Nullable
     @ResponseBody
-    @RequestMapping(
-            value = "/video",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public JsonNode analyzeVideo(
-            @Nullable @RequestParam String bucket,
-            @Nullable @RequestParam String key)
-    throws IOException
-    {
+    @GetMapping(value = "/video", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String analyzeVideo(@Nullable @RequestParam String bucket, @Nullable @RequestParam String key) throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         if (bucket != null && key != null) {
             Optional<AudioVideoMapping> asset = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
 
-            if (asset.isPresent()) {
+            if (asset.isPresent())
                 return analyzeService.getLaughterInstancesFromAudio(asset.get());
-            } else {
-                // TODO: 1/8/2017 Fix this unhelpful error handling
-                throw new IOException("There was an error...");
-            }
+            else
+                throw new IOException("Laughter instances turned up empty");
         }
-        // TODO: provide a helpful error message
-        return null;
+        return null; // TODO: provide a helpful error message
     }
 }

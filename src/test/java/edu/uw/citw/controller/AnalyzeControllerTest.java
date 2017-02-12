@@ -41,7 +41,7 @@ public class AnalyzeControllerTest {
 
     @Test
     public void analyzeVideo_shouldReturnNull_ifProvidedNullArguments() throws Exception {
-        JsonNode result = unitUnderTest.analyzeVideo(null, "hey");
+        String result = unitUnderTest.analyzeVideo(null, "hey");
         assertEquals(null, result);
         result = unitUnderTest.analyzeVideo("hey", null);
         assertEquals(null, result);

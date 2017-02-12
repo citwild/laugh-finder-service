@@ -1,9 +1,7 @@
 package edu.uw.citw.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.uw.citw.persistence.domain.LaughterType;
 import edu.uw.citw.service.laughtype.LaughTypeService;
 import edu.uw.citw.util.JsonNodeAdapter;
@@ -32,24 +30,17 @@ public class LaughTypeController {
     private JsonNodeAdapter jsonNodeAdapter;
 
     @Autowired
-    public LaughTypeController(
-            LaughTypeService laughTypeService,
-            JsonNodeAdapter jsonNodeAdapter)
-    {
+    public LaughTypeController(LaughTypeService laughTypeService, JsonNodeAdapter jsonNodeAdapter) {
         this.laughTypeService = laughTypeService;
         this.jsonNodeAdapter = jsonNodeAdapter;
     }
 
     @Nullable
     @ResponseBody
-    @RequestMapping(
-            value = "/get/all",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(value = "/get/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllLaughTypes() {
-        List<LaughterType> types = laughTypeService.getAllLaughTypes();
         ObjectMapper mapper = new ObjectMapper();
+        List<LaughterType> types = laughTypeService.getAllLaughTypes();
         return mapper.<ArrayNode>valueToTree(types).toString();
     }
 

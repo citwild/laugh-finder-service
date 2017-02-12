@@ -23,8 +23,7 @@ public class JsonNodeAdapterTest {
 
     @Test
     public void createJsonArray_shouldCreateTheExpectedValue() throws Exception {
-        JsonNode result = unitUnderTest
-                .createJsonArray("test", Arrays.asList(new StubObject(), new StubObject()));
+        String result = unitUnderTest.createJsonArray("test", Arrays.asList(new StubObject(), new StubObject()));
 
         String expected = "{\"test\":[{\"str\":\"test\",\"num\":1},{\"str\":\"test\",\"num\":1}]}";
         assertEquals(expected, result.toString());

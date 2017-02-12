@@ -1,10 +1,8 @@
 package edu.uw.citw.service.analyze;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Returns found laughter instances in a video file or audio file.
@@ -13,6 +11,6 @@ import java.util.Optional;
  */
 public interface AnalyzeService {
 
-    JsonNode getLaughterInstancesFromAudio(AudioVideoMapping asset) throws IOException;
+    String getLaughterInstancesFromAudio(AudioVideoMapping asset) throws IOException;
 
 }

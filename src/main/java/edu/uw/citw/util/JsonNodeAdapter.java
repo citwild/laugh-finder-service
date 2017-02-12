@@ -21,19 +21,19 @@ public class JsonNodeAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(JsonNodeAdapter.class);
 
-    public JsonNode createJsonArray(String nameOfArray, @Nullable Object input) {
+    public String createJsonArray(String nameOfArray, @Nullable Object input) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode result = mapper.createArrayNode();
         List<Object> list = (List) input;
         for (Object object : list) {
             result.add(mapper.valueToTree(object));
         }
-        return mapper.createObjectNode().set(nameOfArray, result);
+        return mapper.createObjectNode().set(nameOfArray, result).toString();
     }
 
-    public JsonNode createJsonObject(String nameOfObject, @Nullable Object obj) {
+    public String createJsonObject(String nameOfObject, @Nullable Object obj) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.valueToTree(obj);
-        return mapper.createObjectNode().set(nameOfObject, result);
+        return mapper.createObjectNode().set(nameOfObject, result).toString();
     }
 }

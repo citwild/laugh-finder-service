@@ -1,7 +1,5 @@
 package edu.uw.citw.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.service.metadata.MetadataService;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 
 /**
  * For updating laughter instances with additional data.
@@ -35,9 +32,8 @@ public class MetadataController {
 
     @Nullable
     @ResponseBody
-    @RequestMapping(
+    @PutMapping(
             value = "/put/instanceId/{instanceId}",
-            method = RequestMethod.PUT,
             produces = MediaType.TEXT_PLAIN_VALUE
     )
     public String postMetadataPerInstance(

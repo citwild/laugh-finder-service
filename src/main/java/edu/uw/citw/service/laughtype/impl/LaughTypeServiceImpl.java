@@ -25,10 +25,7 @@ public class LaughTypeServiceImpl implements LaughTypeService {
     private JsonNodeAdapter jsonNodeAdapter;
 
     @Autowired
-    public LaughTypeServiceImpl(
-            LaughTypesRepository laughTypesRepository,
-            JsonNodeAdapter jsonNodeAdapter)
-    {
+    public LaughTypeServiceImpl(LaughTypesRepository laughTypesRepository, JsonNodeAdapter jsonNodeAdapter) {
         this.laughTypesRepository = laughTypesRepository;
         this.jsonNodeAdapter = jsonNodeAdapter;
     }

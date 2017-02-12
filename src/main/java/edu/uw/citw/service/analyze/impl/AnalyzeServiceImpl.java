@@ -1,6 +1,5 @@
 package edu.uw.citw.service.analyze.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.service.analyze.AnalyzeService;
@@ -35,8 +34,6 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private PyLaughFinderUtil pyLaughFinderUtil;
     private JsonNodeAdapter jsonNodeAdapter;
 
-    // External files relating to WEKA and the learning python script
-
     @Value("${testing.arff.path}")
     private String arffLocation;
 
@@ -54,10 +51,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     @Override
-    public JsonNode getLaughterInstancesFromAudio(
-            @Nonnull AudioVideoMapping mapping)
-    throws IOException
-    {
+    public String getLaughterInstancesFromAudio(@Nonnull AudioVideoMapping mapping) throws IOException {
         // first, try to get any existing instances
         log.debug("Checking for existing timestamps");
         Optional<FoundLaughter> result = instancePersistenceUtil
@@ -69,19 +63,11 @@ public class AnalyzeServiceImpl implements AnalyzeService {
             result = findLaughterInstances(mapping.getBucket(), mapping.getAudioFile(), mapping.getId());
         }
 
-        return jsonNodeAdapter.createJsonObject(
-                FOUND_LAUGHTERS_LABEL,
-                (result.isPresent()) ? result.get() : null
-        );
+        return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, (result.isPresent()) ? result.get() : null);
     }
 
     @Nonnull
-    public Optional<FoundLaughter> findLaughterInstances(
-            @Nonnull String bucket,
-            @Nonnull String key,
-            @Nonnull long dbId)
-    throws IOException
-    {
+    public Optional<FoundLaughter> findLaughterInstances(@Nonnull String bucket, @Nonnull String key, @Nonnull long dbId) throws IOException {
         log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
