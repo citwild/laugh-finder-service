@@ -15,13 +15,10 @@ import java.util.List;
  *
  * Created by Miles on 12/17/2016.
  */
-@Entity
 public class LaughInstance {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    
+
     private int s3Key;
 
     private long start;

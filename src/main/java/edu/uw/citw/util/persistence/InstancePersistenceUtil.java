@@ -3,11 +3,14 @@ package edu.uw.citw.util.persistence;
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
+import edu.uw.citw.persistence.domain.InstanceParticipant;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
+import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -27,13 +30,17 @@ public class InstancePersistenceUtil {
 
     private AudioVideoMappingRepository audioVideoMappingRepository;
     private LaughterInstanceRepository laughterInstanceRepository;
+    private InstanceParticipantsRepository instanceParticipantsRepository;
 
+    @Autowired
     public InstancePersistenceUtil(
             AudioVideoMappingRepository audioVideoMappingRepository,
-            LaughterInstanceRepository laughterInstanceRepository)
+            LaughterInstanceRepository laughterInstanceRepository,
+            InstanceParticipantsRepository instanceParticipantsRepository)
     {
         this.audioVideoMappingRepository = audioVideoMappingRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
+        this.instanceParticipantsRepository = instanceParticipantsRepository;
     }
 
     public Optional<FoundLaughter> getInstancesByBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
@@ -48,14 +55,16 @@ public class InstancePersistenceUtil {
         }
 
         // get instances using ID & provide result
-        Long targetId = resultSet.get(0).getId();
-        List<LaughterInstance> instances = laughterInstanceRepository.findByS3Key(targetId);
+        Long s3Key = resultSet.get(0).getId();
+        List<LaughterInstance> instances = laughterInstanceRepository.findByS3Key(s3Key);
         FoundLaughter foundLaughter = null;
 
         if (!CollectionUtils.isEmpty(instances)) {
             foundLaughter = new FoundLaughter(bucket + "/" + key);
 
             for (LaughterInstance instance : instances) {
+                // get participants for this instance
+//                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
                 foundLaughter.addInstance(instance);
             }
         }
