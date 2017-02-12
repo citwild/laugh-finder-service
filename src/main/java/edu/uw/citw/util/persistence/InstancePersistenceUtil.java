@@ -2,6 +2,7 @@ package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
+import edu.uw.citw.model.LaughParticipant;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.InstanceParticipant;
 import edu.uw.citw.persistence.domain.LaughterInstance;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,12 +61,30 @@ public class InstancePersistenceUtil {
         List<LaughterInstance> instances = laughterInstanceRepository.findByS3Key(s3Key);
         FoundLaughter foundLaughter = null;
 
+        /*
+            foundLaughter {
+                filename
+                instancelist: [
+                    start
+                    stop
+                    participants: [
+                        name
+                        tags
+                        intensity
+                    ]
+                    joke
+                    speaker
+                    correct
+                ]
+            }
+         */
         if (!CollectionUtils.isEmpty(instances)) {
             foundLaughter = new FoundLaughter(bucket + "/" + key);
 
             for (LaughterInstance instance : instances) {
                 // get participants for this instance
 //                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
+//                LaughInstance modelInstance = new LaughInstance();
                 foundLaughter.addInstance(instance);
             }
         }

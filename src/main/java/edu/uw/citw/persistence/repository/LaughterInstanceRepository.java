@@ -11,7 +11,7 @@ import java.util.List;
  *
  * Created by Miles on 9/25/2016.
  */
-public interface LaughterInstanceRepository extends CrudRepository<LaughterInstance, Long>{
+public interface LaughterInstanceRepository extends CrudRepository<LaughterInstance, Long> {
 
     @Query(value = "select * from laugh_instance where id = ?1", nativeQuery = true)
     List<LaughterInstance> findById(Integer id);

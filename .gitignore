@@ -2,6 +2,9 @@
 *.iml
 .idea
 
+# Ignore application.yml
+application.yml
+
 # Generated sources
 target
 

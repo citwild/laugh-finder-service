@@ -14,6 +14,9 @@ public class FoundLaughter {
 
     private String          filename;
     private List<LaughInstance> instances;
+    private Boolean joke;
+    private String speaker;
+    private Boolean algCorrect;
 
     public FoundLaughter(String filename) {
         this.filename = filename;
@@ -21,11 +24,29 @@ public class FoundLaughter {
     }
 
     public void addInstance(long start, long stop) {
-        instances.add(new LaughInstance(start, stop));
+        instances.add(
+                new LaughInstance(
+                    start,
+                    stop,
+                    new ArrayList<>(),
+                    false,
+                    null,
+                    true
+                )
+        );
     }
 
     public void addInstance(LaughterInstance instance) {
-        addInstance(instance.getStartTime(), instance.getStopTime());
+        instances.add(
+                new LaughInstance(
+                    instance.getStartTime(),
+                    instance.getStopTime(),
+                    new ArrayList<>(),
+                    instance.getJoke(),
+                    instance.getJokeSpeaker(),
+                    instance.getAlgCorrect()
+                )
+        );
     }
 
     public String getFilename() {
