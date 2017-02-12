@@ -2,6 +2,7 @@ package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.service.metadata.MetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,31 +36,18 @@ public class MetadataController {
     @Nullable
     @ResponseBody
     @RequestMapping(
-            value = "/metadata/instanceId/{instanceId}",
+            value = "/put/instanceId/{instanceId}",
             method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            produces = MediaType.TEXT_PLAIN_VALUE
     )
-    public JsonNode postMetadataPerInstance(
-            @Nullable
-            @RequestParam
-                    String bucket,
-            @Nullable
-            @RequestParam
-                    String key,
+    public String postMetadataPerInstance(
             @Nonnull
             @PathVariable(value = "instanceId")
                     Integer instanceId,
             @Nullable
             @RequestBody
-                    String payload)
+                    LaughInstance payload)
     {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readTree("{\"bucket\":\" " + bucket + "\"," +
-                    "\"key\": \""+ key+"\", \"instanceId\": " + instanceId + ", \"payload\": \"" + payload + "\"}");
-        } catch (IOException e) {
-            log.error("There was an error", e);
-            return null;
-        }
+        return "instanceId=" + instanceId + ", payload=" + payload;
     }
 }

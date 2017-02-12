@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import weka.experiment.InstancesResultListener;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         for (long[] laughter : laughterList) {
             long start = laughter[0];
             long stop  = laughter[1];
-            result.addStartStop(start, stop);
+            result.addInstance(start, stop);
         }
         return result;
     }

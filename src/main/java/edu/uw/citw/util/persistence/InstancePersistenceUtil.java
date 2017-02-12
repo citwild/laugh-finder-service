@@ -36,10 +36,7 @@ public class InstancePersistenceUtil {
         this.laughterInstanceRepository = laughterInstanceRepository;
     }
 
-    public Optional<FoundLaughter> getInstancesByBucketAndKey(
-            @Nonnull String bucket,
-            @Nonnull String key)
-    {
+    public Optional<FoundLaughter> getInstancesByBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
         // get ID of key/bucket combo
         List<AudioVideoMapping> resultSet = audioVideoMappingRepository.findByBucketAndVideo(bucket, key);
 
@@ -52,32 +49,26 @@ public class InstancePersistenceUtil {
 
         // get instances using ID & provide result
         Long targetId = resultSet.get(0).getId();
-        List<LaughterInstance> instances = laughterInstanceRepository.findById(targetId);
+        List<LaughterInstance> instances = laughterInstanceRepository.findByS3Key(targetId);
         FoundLaughter foundLaughter = null;
 
         if (!CollectionUtils.isEmpty(instances)) {
             foundLaughter = new FoundLaughter(bucket + "/" + key);
 
             for (LaughterInstance instance : instances) {
-                foundLaughter.addStartStop(instance);
+                foundLaughter.addInstance(instance);
             }
         }
         return Optional.ofNullable(foundLaughter);
     }
 
-    public void saveInstances(
-            @Nonnull FoundLaughter foundLaughter,
-            long dbId)
-    {
+    public void saveInstances(@Nonnull FoundLaughter foundLaughter, long dbId) {
         for (LaughInstance laughInstance : foundLaughter.getInstances()) {
             laughterInstanceRepository.save(createInstance(laughInstance, dbId));
         }
     }
 
-    public LaughterInstance createInstance(
-            @Nonnull LaughInstance laughInstance,
-            long dbId)
-    {
+    public LaughterInstance createInstance(@Nonnull LaughInstance laughInstance, long dbId) {
         return new LaughterInstance(null, dbId, laughInstance.getStart(), laughInstance.getStop());
     }
 }

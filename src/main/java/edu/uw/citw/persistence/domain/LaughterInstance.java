@@ -26,6 +26,15 @@ public class LaughterInstance implements Serializable {
     @Column(name = "VID_STOP", nullable = false)
     private Long stopTime;
 
+    @Column(name = "IS_JOKE", nullable = false)
+    private Boolean joke;
+
+    @Column(name = "JOKE_SPEAKER", nullable = true)
+    private String jokeSpeaker;
+
+    @Column(name = "ALG_CORRECT", nullable = false)
+    private Boolean algCorrect;
+
     public LaughterInstance() {}
 
     public LaughterInstance(Long id, Long s3Key, Long startTime, Long stopTime) {
@@ -33,6 +42,9 @@ public class LaughterInstance implements Serializable {
         this.s3Key = s3Key;
         this.startTime = startTime;
         this.stopTime = stopTime;
+
+        this.joke = false;
+        this.algCorrect = true;
     }
 
     public Long getId() {
@@ -67,6 +79,30 @@ public class LaughterInstance implements Serializable {
         this.stopTime = stopTime;
     }
 
+    public Boolean getJoke() {
+        return joke;
+    }
+
+    public void setJoke(Boolean joke) {
+        this.joke = joke;
+    }
+
+    public String getJokeSpeaker() {
+        return jokeSpeaker;
+    }
+
+    public void setJokeSpeaker(String jokeSpeaker) {
+        this.jokeSpeaker = jokeSpeaker;
+    }
+
+    public Boolean getAlgCorrect() {
+        return algCorrect;
+    }
+
+    public void setAlgCorrect(Boolean algCorrect) {
+        this.algCorrect = algCorrect;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,7 +113,10 @@ public class LaughterInstance implements Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (s3Key != null ? !s3Key.equals(that.s3Key) : that.s3Key != null) return false;
         if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
-        return stopTime != null ? stopTime.equals(that.stopTime) : that.stopTime == null;
+        if (stopTime != null ? !stopTime.equals(that.stopTime) : that.stopTime != null) return false;
+        if (joke != null ? !joke.equals(that.joke) : that.joke != null) return false;
+        if (jokeSpeaker != null ? !jokeSpeaker.equals(that.jokeSpeaker) : that.jokeSpeaker != null) return false;
+        return algCorrect != null ? algCorrect.equals(that.algCorrect) : that.algCorrect == null;
     }
 
     @Override
@@ -86,6 +125,9 @@ public class LaughterInstance implements Serializable {
         result = 31 * result + (s3Key != null ? s3Key.hashCode() : 0);
         result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
         result = 31 * result + (stopTime != null ? stopTime.hashCode() : 0);
+        result = 31 * result + (joke != null ? joke.hashCode() : 0);
+        result = 31 * result + (jokeSpeaker != null ? jokeSpeaker.hashCode() : 0);
+        result = 31 * result + (algCorrect != null ? algCorrect.hashCode() : 0);
         return result;
     }
 
@@ -94,8 +136,11 @@ public class LaughterInstance implements Serializable {
         return "LaughterInstance{" +
                 "id=" + id +
                 ", s3Key=" + s3Key +
-                ", startTime='" + startTime + '\'' +
+                ", startTime=" + startTime +
                 ", stopTime=" + stopTime +
+                ", joke=" + joke +
+                ", jokeSpeaker='" + jokeSpeaker + '\'' +
+                ", algCorrect=" + algCorrect +
                 '}';
     }
 }

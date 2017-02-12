@@ -1,5 +1,9 @@
 package edu.uw.citw.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.List;
 
 /**
@@ -11,7 +15,14 @@ import java.util.List;
  *
  * Created by Miles on 12/17/2016.
  */
+@Entity
 public class LaughInstance {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    
+    private int s3Key;
 
     private long start;
     private long stop;
@@ -34,6 +45,14 @@ public class LaughInstance {
         this.joke = joke;
         this.speaker = speaker;
         this.algCorrect = algCorrect;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getStart() {
@@ -91,6 +110,7 @@ public class LaughInstance {
 
         LaughInstance that = (LaughInstance) o;
 
+        if (id != that.id) return false;
         if (start != that.start) return false;
         if (stop != that.stop) return false;
         if (joke != that.joke) return false;
@@ -101,7 +121,8 @@ public class LaughInstance {
 
     @Override
     public int hashCode() {
-        int result = (int) (start ^ (start >>> 32));
+        int result = id;
+        result = 31 * result + (int) (start ^ (start >>> 32));
         result = 31 * result + (int) (stop ^ (stop >>> 32));
         result = 31 * result + (participants != null ? participants.hashCode() : 0);
         result = 31 * result + (joke ? 1 : 0);
@@ -113,7 +134,8 @@ public class LaughInstance {
     @Override
     public String toString() {
         return "LaughInstance{" +
-                "start=" + start +
+                "id=" + id +
+                ", start=" + start +
                 ", stop=" + stop +
                 ", participants=" + participants +
                 ", joke=" + joke +

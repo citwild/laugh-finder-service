@@ -20,12 +20,12 @@ public class FoundLaughter {
         this.instances = new ArrayList<>();
     }
 
-    public void addStartStop(long start, long stop) {
+    public void addInstance(long start, long stop) {
         instances.add(new LaughInstance(start, stop));
     }
 
-    public void addStartStop(LaughterInstance instance) {
-        addStartStop(instance.getStartTime(), instance.getStopTime());
+    public void addInstance(LaughterInstance instance) {
+        addInstance(instance.getStartTime(), instance.getStopTime());
     }
 
     public String getFilename() {

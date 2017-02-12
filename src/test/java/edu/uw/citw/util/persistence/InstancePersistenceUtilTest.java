@@ -49,8 +49,8 @@ public class InstancePersistenceUtilTest {
     @Test
     public void saveInstances_ShouldSaveAnInstanceForEachStartStopInFoundLaughter() throws Exception {
         FoundLaughter stubFoundLaughter = new FoundLaughter("testFile");
-        stubFoundLaughter.addStartStop(1000, 2000);
-        stubFoundLaughter.addStartStop(3000, 4000);
+        stubFoundLaughter.addInstance(1000, 2000);
+        stubFoundLaughter.addInstance(3000, 4000);
 
         unitUnderTest.saveInstances(stubFoundLaughter, 1234);
 
@@ -73,8 +73,8 @@ public class InstancePersistenceUtilTest {
     //    @Test
 //    public void saveInstances_ShouldSaveInstancesToTheDatabase() throws Exception {
 //        FoundLaughter stubFoundLaughter = new FoundLaughter("testFile");
-//        stubFoundLaughter.addStartStop(1000, 2000);
-//        stubFoundLaughter.addStartStop(3000, 4000);
+//        stubFoundLaughter.addInstance(1000, 2000);
+//        stubFoundLaughter.addInstance(3000, 4000);
 //
 //        unitUnderTest.saveInstances(stubFoundLaughter);
 //    }
