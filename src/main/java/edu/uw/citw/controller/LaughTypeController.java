@@ -38,10 +38,21 @@ public class LaughTypeController {
     @Nullable
     @ResponseBody
     @GetMapping(value = "/get/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllLaughTypes() {
+    public String getAll() {
         ObjectMapper mapper = new ObjectMapper();
         List<LaughterType> types = laughTypeService.getAllLaughTypes();
         return mapper.<ArrayNode>valueToTree(types).toString();
     }
 
+    @Nullable
+    @ResponseBody
+    @PostMapping(value = "/add", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String add(@RequestBody String requestJson) {
+        try {
+            laughTypeService.addType(requestJson);
+        } catch (Exception e) {
+            return "failure";
+        }
+        return "success";
+    }
 }
