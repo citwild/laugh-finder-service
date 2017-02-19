@@ -55,4 +55,16 @@ public class LaughTypeController {
         }
         return "success";
     }
+
+    @Nullable
+    @ResponseBody
+    @PostMapping(value = "/update", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String update(@RequestBody String requestJson) {
+        try {
+            laughTypeService.addTypeArray(requestJson);
+        } catch (Exception e) {
+            return "failure";
+        }
+        return "success";
+    }
 }

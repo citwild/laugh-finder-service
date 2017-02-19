@@ -2,6 +2,7 @@ package edu.uw.citw.service.laughtype.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import edu.uw.citw.persistence.domain.LaughterType;
 import edu.uw.citw.persistence.repository.LaughTypesRepository;
 import edu.uw.citw.service.laughtype.LaughTypeService;
@@ -23,8 +24,10 @@ import java.util.List;
 public class LaughTypeServiceImpl implements LaughTypeService {
 
     private static final Logger log = LoggerFactory.getLogger(LaughTypeServiceImpl.class);
-    private static final String NAME_FIELD = "name";
-    private static final String DESC_FIELD = "desc";
+    private static final String ID_FIELD = "id";
+    private static final String NAME_FIELD = "type";
+    private static final String DESC_FIELD = "description";
+    private static final String CONSIDERED_FIELD = "considered";
 
     private LaughTypesRepository laughTypesRepository;
     private JsonNodeAdapter jsonNodeAdapter;
@@ -55,5 +58,26 @@ public class LaughTypeServiceImpl implements LaughTypeService {
 
         // submit to DB
         laughTypesRepository.save(result);
+    }
+
+    @Override
+    public void addTypeArray(String requestJson) throws IOException {
+        // parse input JSON
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode json = (ArrayNode) mapper.readTree(requestJson);
+
+        for (JsonNode obj : json) {
+            Long id = obj.get(ID_FIELD).asLong();
+            String type = obj.get(NAME_FIELD).asText();
+            String desc = obj.get(DESC_FIELD).asText();
+            Boolean considered = obj.get(CONSIDERED_FIELD).asBoolean();
+
+            LaughterType updatedVal = new LaughterType(id, type, (desc == null) ? "" : desc, considered);
+
+            log.info("Updating laugh type: {}", updatedVal);
+
+            // submit to DB
+            laughTypesRepository.save(updatedVal);
+        }
     }
 }

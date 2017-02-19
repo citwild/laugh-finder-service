@@ -10,4 +10,6 @@ public interface LaughTypeService {
     List<LaughterType> getAllLaughTypes();
 
     void addType(String requestJson) throws IOException;
+
+    void addTypeArray(String requestJson) throws IOException;
 }
