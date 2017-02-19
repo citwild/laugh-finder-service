@@ -72,7 +72,11 @@ public class LaughTypeServiceImpl implements LaughTypeService {
             String desc = obj.get(DESC_FIELD).asText();
             Boolean considered = obj.get(CONSIDERED_FIELD).asBoolean();
 
-            LaughterType updatedVal = new LaughterType(id, type, (desc == null) ? "" : desc, considered);
+            LaughterType updatedVal = new LaughterType(
+                    id,
+                    type,
+                    (desc == null || desc.equals("null")) ? "" : desc,
+                    considered);
 
             log.info("Updating laugh type: {}", updatedVal);
 
