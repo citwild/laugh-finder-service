@@ -105,7 +105,7 @@ public class InstancePersistenceUtil {
         List<LaughterType> types = laughTypesRepository.findAll();
         for (LaughterType type : types) {
             result.put(type.getId(), type.getType());
-            log.info("Adding laugh type \"{}\" to maps of types", type.getType());
+            log.debug("Adding laugh type \"{}\" to map of types", type.getType());
         }
 
         return result;
