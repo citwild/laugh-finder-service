@@ -86,7 +86,11 @@ public class InstancePersistenceUtil {
                     List<ParticipantType> types = typesPerParticipantRepository.findByParticipantId(participant.getId());
                     List<String> tags = new ArrayList<>();
                     for (ParticipantType type : types) {
-                        tags.add(typesById.get(type.getId()));
+                        // add type if available
+                        String val = typesById.get(type.getId());
+                        if (val != null) {
+                            tags.add(val);
+                        }
                     }
                     p.setTags(tags);
 
@@ -104,8 +108,13 @@ public class InstancePersistenceUtil {
 
         List<LaughterType> types = laughTypesRepository.findAll();
         for (LaughterType type : types) {
-            result.put(type.getId(), type.getType());
-            log.debug("Adding laugh type \"{}\" to map of types", type.getType());
+            // add type value if "considered"
+            if (type.getConsidered()) {
+                result.put(type.getId(), type.getType());
+                log.debug("Adding laugh type \"{}\" to map of types", type.getType());
+            } else {
+                log.debug("Type \"{}\" is marked as unconsidered; not adding", type.getType());
+            }
         }
 
         return result;
