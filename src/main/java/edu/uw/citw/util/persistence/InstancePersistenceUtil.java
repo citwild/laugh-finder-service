@@ -3,12 +3,8 @@ package edu.uw.citw.util.persistence;
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.model.LaughParticipant;
-import edu.uw.citw.persistence.domain.AudioVideoMapping;
-import edu.uw.citw.persistence.domain.InstanceParticipant;
-import edu.uw.citw.persistence.domain.LaughterInstance;
-import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
-import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
+import edu.uw.citw.persistence.domain.*;
+import edu.uw.citw.persistence.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Used to retrieve and format data from databases
@@ -33,16 +27,23 @@ public class InstancePersistenceUtil {
     private AudioVideoMappingRepository audioVideoMappingRepository;
     private LaughterInstanceRepository laughterInstanceRepository;
     private InstanceParticipantsRepository instanceParticipantsRepository;
+    private TypesPerParticipantRepository typesPerParticipantRepository;
+    private LaughTypesRepository laughTypesRepository;
 
     @Autowired
     public InstancePersistenceUtil(
             AudioVideoMappingRepository audioVideoMappingRepository,
             LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository instanceParticipantsRepository)
+            InstanceParticipantsRepository instanceParticipantsRepository,
+            TypesPerParticipantRepository typesPerParticipantRepository,
+            LaughTypesRepository laughTypesRepository)
     {
         this.audioVideoMappingRepository = audioVideoMappingRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
         this.instanceParticipantsRepository = instanceParticipantsRepository;
+        this.typesPerParticipantRepository = typesPerParticipantRepository;
+        this.laughterInstanceRepository = laughterInstanceRepository;
+        this.laughTypesRepository = laughTypesRepository;
     }
 
     public Optional<FoundLaughter> getInstancesByBucketAndKey(@Nonnull String bucket, @Nonnull String key) {
@@ -61,34 +62,53 @@ public class InstancePersistenceUtil {
         List<LaughterInstance> instances = laughterInstanceRepository.findByS3Key(s3Key);
         FoundLaughter foundLaughter = null;
 
-        /*
-            foundLaughter {
-                filename
-                instancelist: [
-                    start
-                    stop
-                    participants: [
-                        name
-                        tags
-                        intensity
-                    ]
-                    joke
-                    speaker
-                    correct
-                ]
-            }
-         */
+        // database contains values, begin modelling
         if (!CollectionUtils.isEmpty(instances)) {
+
+            // get types
+            Map<Long, String> typesById = createLaughTypeMap();
+
             foundLaughter = new FoundLaughter(bucket + "/" + key);
 
+            // get the participants for each instance (should be some)
             for (LaughterInstance instance : instances) {
                 // get participants for this instance
-//                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
-//                LaughInstance modelInstance = new LaughInstance();
-                foundLaughter.addInstance(instance);
+                LaughInstance result = new LaughInstance(instance);
+                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
+
+                // get the laugh descriptors for each participant
+                List<LaughParticipant> pList = new ArrayList<>();
+                for (InstanceParticipant participant : participants) {
+                    LaughParticipant p = new LaughParticipant();
+                    p.setName(participant.getParticipantName());
+                    p.setIntensity(participant.getIntensity());
+
+                    List<ParticipantType> types = typesPerParticipantRepository.findByParticipantId(participant.getId());
+                    List<String> tags = new ArrayList<>();
+                    for (ParticipantType type : types) {
+                        tags.add(typesById.get(type.getId()));
+                    }
+                    p.setTags(tags);
+
+                    pList.add(p);
+                }
+                result.setParticipants(pList);
+                foundLaughter.addInstance(result);
             }
         }
         return Optional.ofNullable(foundLaughter);
+    }
+
+    private Map<Long, String> createLaughTypeMap() {
+        Map<Long, String> result = new HashMap<>();
+
+        List<LaughterType> types = laughTypesRepository.findAll();
+        for (LaughterType type : types) {
+            result.put(type.getId(), type.getType());
+            log.info("Adding laugh type \"{}\" to maps of types", type.getType());
+        }
+
+        return result;
     }
 
     public void saveInstances(@Nonnull FoundLaughter foundLaughter, long dbId) {

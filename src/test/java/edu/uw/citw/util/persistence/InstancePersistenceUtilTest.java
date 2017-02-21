@@ -4,9 +4,7 @@ import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.LaughterInstance;
-import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
-import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
+import edu.uw.citw.persistence.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +24,8 @@ public class InstancePersistenceUtilTest {
     private AudioVideoMappingRepository audioVideoMapping;
     private LaughterInstanceRepository laughterInstanceRepository;
     private InstanceParticipantsRepository instanceParticipantsRepository;
+    private TypesPerParticipantRepository typesPerParticipantRepository;
+    private LaughTypesRepository laughTypesRepository;
 
     private InstancePersistenceUtil unitUnderTest;
 
@@ -34,8 +34,16 @@ public class InstancePersistenceUtilTest {
         audioVideoMapping = mock(AudioVideoMappingRepository.class);
         laughterInstanceRepository = mock(LaughterInstanceRepository.class);
         instanceParticipantsRepository = mock(InstanceParticipantsRepository.class);
+        typesPerParticipantRepository = mock(TypesPerParticipantRepository.class);
+        laughTypesRepository = mock(LaughTypesRepository.class);
 
-        unitUnderTest = new InstancePersistenceUtil(audioVideoMapping, laughterInstanceRepository, instanceParticipantsRepository);
+        unitUnderTest = new InstancePersistenceUtil(
+                audioVideoMapping,
+                laughterInstanceRepository,
+                instanceParticipantsRepository,
+                typesPerParticipantRepository,
+                laughTypesRepository
+        );
     }
 
     @Test

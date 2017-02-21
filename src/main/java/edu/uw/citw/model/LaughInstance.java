@@ -1,9 +1,12 @@
 package edu.uw.citw.model;
 
+import edu.uw.citw.persistence.domain.LaughterInstance;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +41,15 @@ public class LaughInstance {
         this.joke = joke;
         this.speaker = speaker;
         this.algCorrect = algCorrect;
+    }
+
+    public LaughInstance(LaughterInstance instance) {
+        this.start = instance.getStartTime();
+        this.stop = instance.getStopTime();
+        this.participants = new ArrayList<>();
+        this.joke = instance.getJoke();
+        this.speaker = instance.getJokeSpeaker();
+        this.algCorrect = instance.getAlgCorrect();
     }
 
     public long getStart() {

@@ -14,9 +14,6 @@ public class FoundLaughter {
 
     private String          filename;
     private List<LaughInstance> instances;
-    private Boolean joke;
-    private String speaker;
-    private Boolean algCorrect;
 
     public FoundLaughter(String filename) {
         this.filename = filename;
@@ -47,6 +44,10 @@ public class FoundLaughter {
                     instance.getAlgCorrect()
                 )
         );
+    }
+
+    public void addInstance(LaughInstance instance) {
+        instances.add(instance);
     }
 
     public String getFilename() {

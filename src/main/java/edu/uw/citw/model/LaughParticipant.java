@@ -1,5 +1,7 @@
 package edu.uw.citw.model;
 
+import edu.uw.citw.persistence.domain.InstanceParticipant;
+
 import java.util.List;
 
 /**
@@ -28,6 +30,11 @@ public class LaughParticipant {
         this.name = name;
         this.tags = tags;
         this.intensity = intensity;
+    }
+
+    public LaughParticipant(InstanceParticipant participant) {
+        this.name = participant.getParticipantName();
+        this.intensity = participant.getIntensity();
     }
 
     public String getName() {
