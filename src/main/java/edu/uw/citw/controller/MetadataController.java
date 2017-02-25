@@ -1,5 +1,7 @@
 package edu.uw.citw.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.service.metadata.MetadataService;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * For updating laughter instances with additional data.
@@ -32,8 +35,9 @@ public class MetadataController {
 
     @Nullable
     @ResponseBody
-    @PutMapping(
-            value = "/put/instanceId/{instanceId}",
+    @PostMapping(
+            value = "/instance/{instanceId}/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE
     )
     public String postMetadataPerInstance(
@@ -45,5 +49,26 @@ public class MetadataController {
                     LaughInstance payload)
     {
         return "instanceId=" + instanceId + ", payload=" + payload;
+    }
+
+    @Nullable
+    @ResponseBody
+    @PostMapping(
+            value = "/video/{videoId}/instances/add",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public String postNewInstance(
+            @Nonnull
+            @PathVariable(value = "videoId")
+                    Integer videoId,
+            @Nullable
+            @RequestBody
+                    String payload)
+    throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode val = mapper.readTree(payload);
+        return metadataService.postNewInstance(videoId, val);
     }
 }
