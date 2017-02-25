@@ -69,6 +69,7 @@ public class InstancePersistenceUtil {
             Map<Long, String> typesById = createLaughTypeMap();
 
             foundLaughter = new FoundLaughter(bucket + "/" + key);
+            foundLaughter.setVideoId(s3Key);
 
             // get the participants for each instance (should be some)
             for (LaughterInstance instance : instances) {
