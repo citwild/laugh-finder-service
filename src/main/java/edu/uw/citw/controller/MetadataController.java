@@ -36,7 +36,7 @@ public class MetadataController {
     @Nullable
     @ResponseBody
     @PostMapping(
-            value = "/instance/{instanceId}/update",
+            value = "/instance/{instanceId}/participants/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE
     )
@@ -45,8 +45,7 @@ public class MetadataController {
             @PathVariable(value = "instanceId")
                     Integer instanceId,
             @Nullable
-            @RequestBody
-                    LaughInstance payload)
+            @RequestBody String payload)
     {
         return "instanceId=" + instanceId + ", payload=" + payload;
     }

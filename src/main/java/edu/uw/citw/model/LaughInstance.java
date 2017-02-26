@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class LaughInstance {
 
+    private long id;
+
     private long start;
     private long stop;
 
@@ -44,12 +46,21 @@ public class LaughInstance {
     }
 
     public LaughInstance(LaughterInstance instance) {
+        this.id = instance.getId();
         this.start = instance.getStartTime();
         this.stop = instance.getStopTime();
         this.participants = new ArrayList<>();
         this.joke = instance.getJoke();
         this.speaker = instance.getJokeSpeaker();
         this.algCorrect = instance.getAlgCorrect();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getStart() {
@@ -107,6 +118,7 @@ public class LaughInstance {
 
         LaughInstance that = (LaughInstance) o;
 
+        if (id != that.id) return false;
         if (start != that.start) return false;
         if (stop != that.stop) return false;
         if (joke != that.joke) return false;
@@ -117,7 +129,8 @@ public class LaughInstance {
 
     @Override
     public int hashCode() {
-        int result = (int) (start ^ (start >>> 32));
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (start ^ (start >>> 32));
         result = 31 * result + (int) (stop ^ (stop >>> 32));
         result = 31 * result + (participants != null ? participants.hashCode() : 0);
         result = 31 * result + (joke ? 1 : 0);
@@ -129,7 +142,8 @@ public class LaughInstance {
     @Override
     public String toString() {
         return "LaughInstance{" +
-                "start=" + start +
+                "id=" + id +
+                ", start=" + start +
                 ", stop=" + stop +
                 ", participants=" + participants +
                 ", joke=" + joke +
