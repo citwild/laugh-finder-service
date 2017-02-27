@@ -1,9 +1,6 @@
 package edu.uw.citw.persistence.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -17,6 +14,7 @@ public class ParticipantType implements Serializable {
 
     @Id
     @Column(name = "ID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "TYPE_ID", nullable = false)
@@ -24,6 +22,13 @@ public class ParticipantType implements Serializable {
 
     @Column(name = "PARTICIPANT_ID", nullable = false)
     private Long participantId;
+
+    public ParticipantType() {}
+
+    public ParticipantType(Long typeId, Long participantId) {
+        this.typeId = typeId;
+        this.participantId = participantId;
+    }
 
     public Long getId() {
         return id;

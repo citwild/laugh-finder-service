@@ -40,13 +40,16 @@ public class MetadataController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE
     )
-    public String postMetadataPerInstance(
+    public String addParticipantToInstance(
             @Nonnull
             @PathVariable(value = "instanceId")
                     Integer instanceId,
             @Nullable
             @RequestBody String payload)
-    {
+    throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode val = mapper.readTree(payload);
+        metadataService.postNewParticipant(instanceId, val);
         return "instanceId=" + instanceId + ", payload=" + payload;
     }
 
