@@ -81,6 +81,7 @@ public class InstancePersistenceUtil {
                 List<LaughParticipant> pList = new ArrayList<>();
                 for (InstanceParticipant participant : participants) {
                     LaughParticipant p = new LaughParticipant();
+                    p.setId(participant.getId());
                     p.setName(participant.getParticipantName());
                     p.setIntensity(participant.getIntensity());
 

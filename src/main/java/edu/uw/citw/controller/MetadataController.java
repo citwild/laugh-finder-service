@@ -2,7 +2,6 @@ package edu.uw.citw.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.service.metadata.MetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,5 +71,20 @@ public class MetadataController {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode val = mapper.readTree(payload);
         return metadataService.postNewInstance(videoId, val);
+    }
+
+    @Nullable
+    @ResponseBody
+    @DeleteMapping(
+            value = "/participant/{id}/delete",
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public String deleteParticipant(
+            @Nonnull
+            @PathVariable(value = "id")
+                    Integer id)
+    throws IOException {
+
+        return metadataService.deleteParticipant(id);
     }
 }

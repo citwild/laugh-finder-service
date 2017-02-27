@@ -97,6 +97,13 @@ public class MetadataServiceImpl implements MetadataService {
         return participantResult.toString();
     }
 
+    @Override
+    public String deleteParticipant(Integer id) {
+        participantsRepository.delete(id.longValue());
+        return "Success";
+    }
+
+
     private String getStringValFromJsonNode(JsonNode node, String field) {
         return (node.get(field).asText().equals("null")) ? null : node.get(field).asText();
     }

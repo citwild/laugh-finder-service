@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class LaughParticipant {
 
+    private long id;
     private String name;
     private List<String> tags;
     private int intensity;
@@ -35,6 +36,14 @@ public class LaughParticipant {
     public LaughParticipant(InstanceParticipant participant) {
         this.name = participant.getParticipantName();
         this.intensity = participant.getIntensity();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -68,6 +77,7 @@ public class LaughParticipant {
 
         LaughParticipant that = (LaughParticipant) o;
 
+        if (id != that.id) return false;
         if (intensity != that.intensity) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         return tags != null ? tags.equals(that.tags) : that.tags == null;
@@ -75,7 +85,8 @@ public class LaughParticipant {
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (tags != null ? tags.hashCode() : 0);
         result = 31 * result + intensity;
         return result;
@@ -84,7 +95,8 @@ public class LaughParticipant {
     @Override
     public String toString() {
         return "LaughParticipant{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", tags=" + tags +
                 ", intensity=" + intensity +
                 '}';
