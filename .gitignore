@@ -2,5 +2,12 @@
 *.iml
 .idea
 
+# Ignore application.yml
+application.yml
+
 # Generated sources
 target
+
+# Compiled Python
+__pycache__
+*.pyc
