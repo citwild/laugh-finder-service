@@ -46,7 +46,8 @@ public class AnalyzeController {
     @Nullable
     @ResponseBody
     @GetMapping(value = "/video", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String analyzeVideo(@Nullable @RequestParam String bucket, @Nullable @RequestParam String key) throws IOException {
+    public String analyzeVideo(@Nullable @RequestParam String bucket, @Nullable @RequestParam String key)
+            throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         if (bucket != null && key != null) {
             Optional<AudioVideoMapping> asset = audioVideoMappingUtil.getAudioExtractOfVideo(bucket, key);
@@ -57,5 +58,22 @@ public class AnalyzeController {
                 throw new IOException("Laughter instances turned up empty");
         }
         return null; // TODO: provide a helpful error message
+    }
+
+    @Nullable
+    @ResponseBody
+    @GetMapping(value = "/video", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String analyzeVideo(@Nullable @RequestParam Integer id) throws IOException {
+
+        log.info("Analyzing laughter in video id {}", id);
+        if (id != null) {
+            Optional<AudioVideoMapping> asset = audioVideoMappingUtil.getAudioExtractOfVideo(id);
+
+            if (asset.isPresent())
+                return analyzeService.getLaughterInstancesFromAudio(asset.get());
+            else
+                throw new IOException("Laughter instances turned up empty");
+        }
+        throw new IllegalArgumentException("Provided null argument");
     }
 }

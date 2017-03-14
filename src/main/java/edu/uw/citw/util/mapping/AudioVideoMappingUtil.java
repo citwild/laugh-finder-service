@@ -38,4 +38,14 @@ public class AudioVideoMappingUtil {
         }
         return Optional.empty();
     }
+
+    public Optional<AudioVideoMapping> getAudioExtractOfVideo(@Nonnull Integer id) {
+        List<AudioVideoMapping> searchResult  = audioVideoMappingRepository.findById(id);
+
+        // Expected to be unique result, so always first value
+        if (!searchResult.isEmpty()) {
+            return Optional.ofNullable(searchResult.get(0));
+        }
+        return Optional.empty();
+    }
 }

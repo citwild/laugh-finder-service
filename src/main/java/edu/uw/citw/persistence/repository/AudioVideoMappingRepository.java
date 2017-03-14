@@ -16,4 +16,7 @@ public interface AudioVideoMappingRepository extends Repository<AudioVideoMappin
     @Query(value = "select * from transcoder_vid_aud_mappings map where map.bucket = ?1 and map.mp4_file = ?2",
            nativeQuery = true)
     List<AudioVideoMapping> findByBucketAndVideo(String bucket, String videoKey);
+
+    @Query(value = "select * from transcoder_vid_aud_mappings map where map.id = ?1", nativeQuery = true)
+    List<AudioVideoMapping> findById(Integer id);
 }
