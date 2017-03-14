@@ -46,7 +46,7 @@ public class AnalyzeController {
     @Nullable
     @ResponseBody
     @GetMapping(value = "/video", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String analyzeVideo(@Nullable @RequestParam String bucket, @Nullable @RequestParam String key)
+    public String analyzeVideoByBucketAndKey(@Nullable @RequestParam String bucket, @Nullable @RequestParam String key)
             throws IOException {
         log.info("Analyzing laughter in S3 bucket {}, key {}", bucket, key);
         if (bucket != null && key != null) {
@@ -62,8 +62,8 @@ public class AnalyzeController {
 
     @Nullable
     @ResponseBody
-    @GetMapping(value = "/video", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String analyzeVideo(@Nullable @RequestParam Integer id) throws IOException {
+    @GetMapping(value = "/video/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String analyzeVideoById(@Nullable @PathVariable Integer id) throws IOException {
 
         log.info("Analyzing laughter in video id {}", id);
         if (id != null) {

@@ -1,6 +1,5 @@
 package edu.uw.citw.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.mapping.AudioVideoMappingUtil;
 import org.junit.Before;
@@ -32,18 +31,18 @@ public class AnalyzeControllerTest {
 
     @Test
     public void analyzeVideo_shouldNotAttempAnything_ifProvidedNullArguments() throws Exception {
-        unitUnderTest.analyzeVideo(null, "hey");
+        unitUnderTest.analyzeVideoByBucketAndKey(null, "hey");
         verify(audioVideoMappingUtil, never()).getAudioExtractOfVideo(any(), any());
 
-        unitUnderTest.analyzeVideo("hey", null);
+        unitUnderTest.analyzeVideoByBucketAndKey("hey", null);
         verify(audioVideoMappingUtil, never()).getAudioExtractOfVideo(any(), any());
     }
 
     @Test
     public void analyzeVideo_shouldReturnNull_ifProvidedNullArguments() throws Exception {
-        String result = unitUnderTest.analyzeVideo(null, "hey");
+        String result = unitUnderTest.analyzeVideoByBucketAndKey(null, "hey");
         assertEquals(null, result);
-        result = unitUnderTest.analyzeVideo("hey", null);
+        result = unitUnderTest.analyzeVideoByBucketAndKey("hey", null);
         assertEquals(null, result);
     }
 }
