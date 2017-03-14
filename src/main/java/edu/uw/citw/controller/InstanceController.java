@@ -1,5 +1,7 @@
 package edu.uw.citw.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uw.citw.service.instance.InstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * For viewing and modifying instances.
@@ -37,5 +40,20 @@ public class InstanceController {
     {
         log.debug("Provided id value: {}", id);
         return instanceService.deleteInstance(id);
+    }
+
+    @Nullable
+    @ResponseBody
+    @PostMapping(value = "/{id}/update")
+    public String updateInstance(
+            @PathVariable(value = "id")
+            @Nonnull Long id,
+            @RequestBody String payload)
+    throws IOException {
+        log.debug("Provided id value: {}, payload: {}", id, payload);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode val = mapper.readTree(payload);
+        return instanceService.updateInstance(id, val);
     }
 }

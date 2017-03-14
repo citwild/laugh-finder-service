@@ -67,7 +67,6 @@ public class MetadataController {
             @RequestBody
                     String payload)
     throws IOException {
-
         ObjectMapper mapper = new ObjectMapper();
         JsonNode val = mapper.readTree(payload);
         return metadataService.postNewInstance(videoId, val);
