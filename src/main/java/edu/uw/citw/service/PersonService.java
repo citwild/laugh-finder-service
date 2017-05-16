@@ -55,7 +55,8 @@ public class PersonService {
                         .append(CSV_SEP)
                         .append(person.getRole())
                         .append(CSV_SEP)
-                        .append(person.getSex());
+                        .append(person.getSex())
+                        .append('\n');
             }
         }
         catch (Exception e) {
