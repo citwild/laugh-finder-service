@@ -1,5 +1,6 @@
 package edu.uw.citw.controller;
 
+import edu.uw.citw.service.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,11 @@ public class PersonController {
 
     private static final Logger log = LoggerFactory.getLogger(PersonController.class);
 
-    @Autowired
-    public PersonController() {
+    private PersonService service;
 
+    @Autowired
+    public PersonController(PersonService service) {
+        this.service = service;
     }
 
     @Nullable
@@ -33,14 +36,13 @@ public class PersonController {
     @ResponseBody
     @GetMapping(value = "/all/format/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllInJson() throws IOException {
-        return null;
+        return service.getAllInJson();
     }
 
     @Nullable
     @ResponseBody
     @GetMapping(value = "/all/format/csv", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getAllInCsv() throws IOException {
-        
-        return null;
+        return service.getAllInCsv();
     }
 }
