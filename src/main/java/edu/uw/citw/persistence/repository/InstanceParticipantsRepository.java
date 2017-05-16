@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface InstanceParticipantsRepository extends CrudRepository<InstanceParticipant, Long> {
 
-    @Query(value = "select * from laugh_instance_participants where instance_id = ?1", nativeQuery = true)
+    @Query(value = "select * from participanting where instance_id = ?1", nativeQuery = true)
     List<InstanceParticipant> findByInstanceId(Long id);
 }
