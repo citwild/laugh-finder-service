@@ -2,10 +2,11 @@ package edu.uw.citw.persistence.domain;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "person", schema = "uwbwfe")
-public class Person {
+public class Person implements Serializable {
 
     private Long id;
     private String name;
