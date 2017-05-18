@@ -1,7 +1,7 @@
 package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.LaughParticipant;
-import edu.uw.citw.persistence.domain.InstanceParticipant;
+import edu.uw.citw.persistence.domain.Participant;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public class ParticipantModelConverter {
 
     @Nonnull
-    public LaughParticipant getModelFromDbValues(@Nonnull List<InstanceParticipant> dbVal) {
+    public LaughParticipant getModelFromDbValues(@Nonnull List<Participant> dbVal) {
         return null;
     }
 }

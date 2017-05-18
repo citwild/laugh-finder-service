@@ -4,7 +4,7 @@ package edu.uw.citw.persistence.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "person")
+@Table(name = "person", schema = "uwbwfe")
 public class Person {
 
     private Long id;

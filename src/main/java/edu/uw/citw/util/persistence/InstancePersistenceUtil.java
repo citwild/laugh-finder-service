@@ -75,11 +75,11 @@ public class InstancePersistenceUtil {
             for (LaughterInstance instance : instances) {
                 // get participants for this instance
                 LaughInstance result = new LaughInstance(instance);
-                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
+                List<Participant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
 
                 // get the laugh descriptors for each participant
                 List<LaughParticipant> pList = new ArrayList<>();
-                for (InstanceParticipant participant : participants) {
+                for (Participant participant : participants) {
                     LaughParticipant p = new LaughParticipant();
                     p.setId(participant.getId());
                     p.setName(participant.getParticipantName());
