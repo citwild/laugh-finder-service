@@ -1,5 +1,6 @@
 package edu.uw.citw.model;
 
+import edu.uw.citw.persistence.domain.InstanceParticipant;
 import edu.uw.citw.persistence.domain.Participant;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class LaughParticipant {
         this.intensity = intensity;
     }
 
-    public LaughParticipant(Participant participant) {
+    public LaughParticipant(InstanceParticipant participant) {
         this.name = participant.getParticipantName();
         this.intensity = participant.getIntensity();
     }

@@ -1,6 +1,7 @@
 package edu.uw.citw.service.metadata.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import edu.uw.citw.persistence.domain.InstanceParticipant;
 import edu.uw.citw.persistence.domain.Participant;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.ParticipantType;
@@ -67,7 +68,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public String postNewParticipant(Integer instanceId, JsonNode val) {
-        Participant participant = new Participant();
+        InstanceParticipant participant = new InstanceParticipant();
 
         // save participant
         participant.setInstanceId(instanceId.longValue());
@@ -75,7 +76,7 @@ public class MetadataServiceImpl implements MetadataService {
                 getStringValFromJsonNode(val, "name")
         );
         participant.setIntensity(val.get("intensity").asInt());
-        Participant participantResult = participantsRepository.save(participant);
+        InstanceParticipant participantResult = participantsRepository.save(participant);
 
         // get result ID from participant row insert, use for tag inserts
         JsonNode tags = val.get("tags");

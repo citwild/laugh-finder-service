@@ -1,6 +1,6 @@
 package edu.uw.citw.util.persistence;
 
-import edu.uw.citw.persistence.domain.Participant;
+import edu.uw.citw.persistence.domain.InstanceParticipant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +24,11 @@ public class ParticipantModelConverterTest {
         unitUnderTest.getModelFromDbValues(getStubParticipantList());
     }
 
-    private List<Participant> getStubParticipantList() {
-        Participant part1 = new Participant(1L, 1L, "Dan", 4);
-        Participant part2 = new Participant(2L, 1L, "Jim",1);
-        Participant part3 = new Participant(3L, 1L, "Jane", 3);
-        Participant part4 = new Participant(4L, 1L, "Danika", 2);
+    private List<InstanceParticipant> getStubParticipantList() {
+        InstanceParticipant part1 = new InstanceParticipant(1L, 1L, "Dan", 4);
+        InstanceParticipant part2 = new InstanceParticipant(2L, 1L, "Jim",1);
+        InstanceParticipant part3 = new InstanceParticipant(3L, 1L, "Jane", 3);
+        InstanceParticipant part4 = new InstanceParticipant(4L, 1L, "Danika", 2);
 
         return Arrays.asList(part1, part2, part3, part4);
     }
