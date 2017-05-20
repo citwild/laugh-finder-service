@@ -30,6 +30,12 @@ public class PresentController {
         return null;
     }
 
-// Retrieve present
+// Delete present value
+    @Nullable
+    @ResponseBody
+    @PostMapping(value = "/delete/id/{id}")
+    public String deletePresentPerson(String id) throws IOException {
+        return null;
+    }
 
 }
