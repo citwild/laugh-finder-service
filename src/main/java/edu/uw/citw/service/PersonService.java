@@ -46,6 +46,7 @@ public class PersonService {
      */
     public String getAllInCsv() {
         StringBuilder b = new StringBuilder("");
+        b.append("id,name,role,sex\n");
         try {
             List<Person> people = repository.getAll();
             for(Person person : people) {
@@ -60,7 +61,7 @@ public class PersonService {
             }
         }
         catch (Exception e) {
-            log.error("Failure reaching database", e);
+            log.error("Failure retrieving from database", e);
         }
         return b.toString();
     }
