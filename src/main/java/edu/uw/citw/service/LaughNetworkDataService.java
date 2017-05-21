@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 
@@ -29,13 +30,13 @@ public class LaughNetworkDataService {
      */
     public String findEngagementEdges_CSV() {
         StringBuilder b = new StringBuilder("");
-        b.append("from,to,percent\n");
+        b.append("from,to,weight\n");
         try {
             List<Object[]> vals = repository.getLaughEngagementRatios();
             for (Object[] val : vals) {
-                b.append((String) val[0])
+                b.append((BigInteger) val[0])
                         .append(CSV_SEP)
-                        .append((String) val[1])
+                        .append((BigInteger) val[1])
                         .append(CSV_SEP)
                         .append((BigDecimal) val[2])
                         .append('\n');

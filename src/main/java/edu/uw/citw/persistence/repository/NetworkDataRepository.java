@@ -16,8 +16,8 @@ import java.util.List;
 public interface NetworkDataRepository extends JpaRepository<Person, Long> {
 
     @Query(value =
-        "SELECT (SELECT PERSON_NAME FROM person WHERE ID = pres.PERSON_ID) AS p_to " +
-        "  , (SELECT PERSON_NAME FROM person WHERE ID = inst.JOKE_SPEAKER) AS p_from " +
+        "SELECT (SELECT ID FROM person WHERE ID = pres.PERSON_ID) AS p_to " +
+        "  , (SELECT ID FROM person WHERE ID = inst.JOKE_SPEAKER) AS p_from " +
         "  , count(part.PRESENT_ID) / count(pres.ID) * 100 participation_percentage " +
         "FROM present pres " +
         "  INNER JOIN laugh_instance inst " +
