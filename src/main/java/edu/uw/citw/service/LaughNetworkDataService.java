@@ -24,7 +24,7 @@ public class LaughNetworkDataService {
     }
 
     /**
-     * Go through and append person laughter's from, laughter's to, and percentage
+     * Go through and append person laughter's from, laughter's to, and percentage of participation over presence
      *
      * Using a custom query, so no POJO to represent the values.
      */
