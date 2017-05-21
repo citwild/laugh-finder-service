@@ -46,13 +46,11 @@ public class PersonService {
      */
     public String getAllInCsv() {
         StringBuilder b = new StringBuilder("");
-        b.append("id,name,role,sex\n");
+        b.append("name,role,sex\n");
         try {
             List<Person> people = repository.getAll();
             for(Person person : people) {
-                b.append(person.getId())
-                        .append(CSV_SEP)
-                        .append(person.getName())
+                b.append(person.getName())
                         .append(CSV_SEP)
                         .append(person.getRole())
                         .append(CSV_SEP)

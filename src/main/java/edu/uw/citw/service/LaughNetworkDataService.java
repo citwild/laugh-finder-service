@@ -34,9 +34,9 @@ public class LaughNetworkDataService {
         try {
             List<Object[]> vals = repository.getLaughEngagementRatios();
             for (Object[] val : vals) {
-                b.append((BigInteger) val[0])
+                b.append((String) val[0])
                         .append(CSV_SEP)
-                        .append((BigInteger) val[1])
+                        .append((String) val[1])
                         .append(CSV_SEP)
                         .append((BigDecimal) val[2])
                         .append('\n');
@@ -53,9 +53,9 @@ public class LaughNetworkDataService {
         try {
             List<Object[]> vals = repository.getLaughHumorRatios();
             for (Object[] val : vals) {
-                b.append((BigInteger) val[0])
+                b.append((String) val[0])
                         .append(CSV_SEP)
-                        .append((BigInteger) val[1])
+                        .append((String) val[1])
                         .append(CSV_SEP)
                         .append((BigDecimal) val[2])
                         .append('\n');
