@@ -31,9 +31,17 @@ public class LaughNetworkDataController {
 
     @Nullable
     @ResponseBody
-    @GetMapping(value = "/edges/instance/all/type/engagement/format/csv", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String getEngagementEdges_CSV() throws IOException {
+    @GetMapping(value = "/edges/instance/all/foci/person/format/csv", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String getPersonEngagementEdges_CSV() throws IOException {
         log.debug("Call to: /edges/instance/all/type/engagement/format/csv");
-        return service.findEngagementEdges_CSV();
+        return service.findPersonEngagementEdges_CSV();
+    }
+
+    @Nullable
+    @ResponseBody
+    @GetMapping(value = "/edges/instance/all/foci/humor/format/csv", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String getFociEngagementEdges_CSV() throws IOException {
+        log.debug("Call to: /edges/instance/all/type/engagement/format/csv");
+        return service.findHumorEngagementEdges_CSV();
     }
 }

@@ -28,4 +28,22 @@ public interface NetworkDataRepository extends JpaRepository<Person, Long> {
         nativeQuery = true
     )
     List<Object[]> getLaughEngagementRatios();
+
+    @Query(value =
+            "SELECT " +
+            "    (SELECT ID FROM person WHERE ID = pres.PERSON_ID) as p_from " +
+            "  , (SELECT TYPE_ID FROM humor_types ht " +
+            "        INNER JOIN humor_types_per_instance htpi " +
+            "          ON ht.ID = htpi.TYPE_ID " +
+            "      WHERE htpi.INSTANCE_ID = inst.ID) as foci_to " +
+            "  , count(part.PRESENT_ID) / count(pres.ID) * 100 participation_percentage " +
+            "FROM present pres " +
+            "  INNER JOIN laugh_instance inst " +
+            "    ON pres.INSTANCE_ID = inst.ID " +
+            "  LEFT JOIN participating part " +
+            "    ON pres.ID = part.PRESENT_ID " +
+            "GROUP BY foci_to, p_from",
+           nativeQuery = true
+    )
+    List<Object[]> getLaughHumorRatios();
 }

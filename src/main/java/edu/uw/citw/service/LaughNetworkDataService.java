@@ -28,7 +28,7 @@ public class LaughNetworkDataService {
      *
      * Using a custom query, so no POJO to represent the values.
      */
-    public String findEngagementEdges_CSV() {
+    public String findPersonEngagementEdges_CSV() {
         StringBuilder b = new StringBuilder("");
         b.append("from,to,weight\n");
         try {
@@ -45,5 +45,25 @@ public class LaughNetworkDataService {
             log.error("Failure retrieving from database", e);
         }
         return b.toString();
+    }
+
+    public String findHumorEngagementEdges_CSV() {
+        StringBuilder b = new StringBuilder("");
+        b.append("from,to,weight\n");
+        try {
+            List<Object[]> vals = repository.getLaughHumorRatios();
+            for (Object[] val : vals) {
+                b.append((BigInteger) val[0])
+                        .append(CSV_SEP)
+                        .append((BigInteger) val[1])
+                        .append(CSV_SEP)
+                        .append((BigDecimal) val[2])
+                        .append('\n');
+            }
+        } catch (Exception e) {
+            log.error("Failure retrieving from database", e);
+        }
+        return b.toString();
+
     }
 }
