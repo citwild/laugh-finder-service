@@ -27,7 +27,7 @@ public interface NetworkDataRepository extends JpaRepository<Person, Long> {
         "GROUP BY p_to, p_from ",
         nativeQuery = true
     )
-    List<Object[]> getLaughEngagementRatios();
+    List<Object[]> getLaughPeopleRatios();
 
     @Query(value =
             "SELECT " +
@@ -46,4 +46,13 @@ public interface NetworkDataRepository extends JpaRepository<Person, Long> {
            nativeQuery = true
     )
     List<Object[]> getLaughHumorRatios();
+
+    @Query(value =
+            "SELECT p.PERSON_NAME as name, 'person' as type " +
+            "FROM person p " +
+            "UNION " +
+            "SELECT h.description as name, 'humor' as type " +
+            "FROM humor_types h",
+           nativeQuery = true)
+    List<Object[]> getBipartiteNodes_peopleAndHumor();
 }

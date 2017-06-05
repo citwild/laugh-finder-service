@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 
@@ -32,7 +31,7 @@ public class LaughNetworkDataService {
         StringBuilder b = new StringBuilder("");
         b.append("from,to,weight\n");
         try {
-            List<Object[]> vals = repository.getLaughEngagementRatios();
+            List<Object[]> vals = repository.getLaughPeopleRatios();
             for (Object[] val : vals) {
                 b.append((String) val[0])
                         .append(CSV_SEP)
@@ -58,6 +57,24 @@ public class LaughNetworkDataService {
                         .append((String) val[1])
                         .append(CSV_SEP)
                         .append((BigDecimal) val[2])
+                        .append('\n');
+            }
+        } catch (Exception e) {
+            log.error("Failure retrieving from database", e);
+        }
+        return b.toString();
+
+    }
+
+    public String getAllNodes_peopleAndHumor_CSV() {
+        StringBuilder b = new StringBuilder("");
+        b.append("name,type\n");
+        try {
+            List<Object[]> vals = repository.getBipartiteNodes_peopleAndHumor();
+            for (Object[] val : vals) {
+                b.append((String) val[0])
+                        .append(CSV_SEP)
+                        .append((String) val[1])
                         .append('\n');
             }
         } catch (Exception e) {
