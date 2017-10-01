@@ -90,7 +90,7 @@ public class PyLaughFinderUtil {
                 mainScript, bucket, key, testDir, PHASE);
 
         return new String[] {
-                "python", mainScript,
+                "python3", mainScript,
                 "--bucket", bucket,
                 "--key", key,
                 "--arff", testDir,

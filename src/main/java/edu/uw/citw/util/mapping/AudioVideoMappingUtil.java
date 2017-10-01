@@ -2,6 +2,8 @@ package edu.uw.citw.util.mapping;
 
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,8 @@ import java.util.Optional;
 @Component
 public class AudioVideoMappingUtil {
 
+    private static final Logger log = LoggerFactory.getLogger(AudioVideoMappingUtil.class);
+
     private AudioVideoMappingRepository audioVideoMappingRepository;
 
     @Autowired
@@ -30,6 +34,7 @@ public class AudioVideoMappingUtil {
             @Nonnull String bucket,
             @Nonnull String key)
     {
+        log.debug("Finding instances for: bucket={}, key={}", bucket, key);
         List<AudioVideoMapping> searchResult  = audioVideoMappingRepository.findByBucketAndVideo(bucket, key);
 
         // Expected to be unique result, so always first value
