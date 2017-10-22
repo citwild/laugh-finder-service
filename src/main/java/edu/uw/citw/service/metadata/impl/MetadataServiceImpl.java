@@ -80,17 +80,19 @@ public class MetadataServiceImpl implements MetadataService {
 
         // get result ID from participant row insert, use for tag inserts
         JsonNode tags = val.get("tags");
-        for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> field = it.next();
+        if (tags != null) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> field = it.next();
 
-            // if type ID is true, add row
-            if (field.getValue().asBoolean()) {
-                typesPerParticipantRepository.save(
-                        new ParticipantType(
-                                Long.parseLong(field.getKey()),
-                                participantResult.getId()
-                        )
-                );
+                // if type ID is true, add row
+                if (field.getValue().asBoolean()) {
+                    typesPerParticipantRepository.save(
+                            new ParticipantType(
+                                    Long.parseLong(field.getKey()),
+                                    participantResult.getId()
+                            )
+                    );
+                }
             }
         }
 
