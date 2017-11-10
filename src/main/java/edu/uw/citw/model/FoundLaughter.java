@@ -29,7 +29,8 @@ public class FoundLaughter {
                     new ArrayList<>(),
                     false,
                     null,
-                    true
+                    true,
+                    false
                 )
         );
     }
@@ -42,7 +43,8 @@ public class FoundLaughter {
                     new ArrayList<>(),
                     instance.getJoke(),
                     instance.getJokeSpeaker(),
-                    instance.getAlgCorrect()
+                    instance.getAlgCorrect(),
+                    instance.getUserMade()
                 )
         );
     }

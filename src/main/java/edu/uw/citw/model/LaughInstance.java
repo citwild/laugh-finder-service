@@ -30,19 +30,21 @@ public class LaughInstance {
     private boolean joke;
     private String speaker;
     private boolean algCorrect;
+    private boolean userMade;
 
     public LaughInstance(long start, long stop) {
         this.start = start;
         this.stop = stop;
     }
 
-    public LaughInstance(long start, long stop, List<LaughParticipant> participants, boolean joke, String speaker, boolean algCorrect) {
+    public LaughInstance(long start, long stop, List<LaughParticipant> participants, boolean joke, String speaker, boolean algCorrect, boolean userMade) {
         this.start = start;
         this.stop = stop;
         this.participants = participants;
         this.joke = joke;
         this.speaker = speaker;
         this.algCorrect = algCorrect;
+        this.userMade = userMade;
     }
 
     public LaughInstance(LaughterInstance instance) {
@@ -53,6 +55,7 @@ public class LaughInstance {
         this.joke = instance.getJoke();
         this.speaker = instance.getJokeSpeaker();
         this.algCorrect = instance.getAlgCorrect();
+        this.userMade = instance.getUserMade();
     }
 
     public long getId() {
@@ -111,6 +114,14 @@ public class LaughInstance {
         this.algCorrect = algCorrect;
     }
 
+    public boolean isUserMade() {
+        return userMade;
+    }
+
+    public void setUserMade(boolean userMade) {
+        this.userMade = userMade;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -123,6 +134,7 @@ public class LaughInstance {
         if (stop != that.stop) return false;
         if (joke != that.joke) return false;
         if (algCorrect != that.algCorrect) return false;
+        if (userMade != that.userMade) return false;
         if (participants != null ? !participants.equals(that.participants) : that.participants != null) return false;
         return speaker != null ? speaker.equals(that.speaker) : that.speaker == null;
     }
@@ -136,6 +148,7 @@ public class LaughInstance {
         result = 31 * result + (joke ? 1 : 0);
         result = 31 * result + (speaker != null ? speaker.hashCode() : 0);
         result = 31 * result + (algCorrect ? 1 : 0);
+        result = 31 * result + (userMade ? 1 : 0);
         return result;
     }
 
@@ -149,6 +162,7 @@ public class LaughInstance {
                 ", joke=" + joke +
                 ", speaker='" + speaker + '\'' +
                 ", algCorrect=" + algCorrect +
+                ", userMade=" + userMade +
                 '}';
     }
 }
