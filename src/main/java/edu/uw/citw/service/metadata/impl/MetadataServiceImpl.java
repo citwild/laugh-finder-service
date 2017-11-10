@@ -59,8 +59,9 @@ public class MetadataServiceImpl implements MetadataService {
         submission.setJokeSpeaker(
                 getStringValFromJsonNode(val, "speaker")
         );
-        // true because entered by user
+        // following is true because entered by user
         submission.setAlgCorrect(true);
+        submission.setUserMade(true);
 
         LaughterInstance result = laughterInstanceRepository.save(submission);
         return result.toString();
