@@ -48,8 +48,7 @@ public class MetadataController {
     throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode val = mapper.readTree(payload);
-        metadataService.postNewParticipant(instanceId, val);
-        return "instanceId=" + instanceId + ", payload=" + payload;
+        return metadataService.postNewParticipant(instanceId, val);
     }
 
     @Nullable

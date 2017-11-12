@@ -9,6 +9,7 @@ import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.TypesPerParticipantRepository;
 import edu.uw.citw.service.metadata.MetadataService;
+import edu.uw.citw.util.JsonNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,11 @@ public class MetadataServiceImpl implements MetadataService {
             }
         }
 
-        return participantResult.toString();
+        JsonNodeAdapter adapter = new JsonNodeAdapter();
+        return adapter.createJsonArray(
+                "participants",
+                participantsRepository.findByInstanceId(instanceId.longValue())
+        );
     }
 
     @Override
