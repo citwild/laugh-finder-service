@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by miles on 2/12/17.
  */
 @Entity
-@Table(name = "laugh_types_per_participant", schema = "uwbwfe")
+@Table(name = "laugh_types_per_participant", schema = "dbo")
 public class ParticipantType implements Serializable {
 
     @Id

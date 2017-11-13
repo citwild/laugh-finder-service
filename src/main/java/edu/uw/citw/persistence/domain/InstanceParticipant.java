@@ -11,7 +11,7 @@ package edu.uw.citw.persistence.domain;
  * DEPRECATED: Should be phased out for Participant object
  */
 @Entity
-@Table(name = "laugh_instance_participants", schema = "uwbwfe")
+@Table(name = "laugh_instance_participants", schema = "dbo")
 public class InstanceParticipant implements Serializable {
 
     @Id

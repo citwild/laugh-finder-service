@@ -9,6 +9,7 @@ import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.TypesPerParticipantRepository;
 import edu.uw.citw.service.metadata.MetadataService;
+import edu.uw.citw.util.JsonNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,9 @@ public class MetadataServiceImpl implements MetadataService {
         submission.setJokeSpeaker(
                 getStringValFromJsonNode(val, "speaker")
         );
-        // true because entered by user
+        // following is true because entered by user
         submission.setAlgCorrect(true);
+        submission.setUserMade(true);
 
         LaughterInstance result = laughterInstanceRepository.save(submission);
         return result.toString();
@@ -80,21 +82,27 @@ public class MetadataServiceImpl implements MetadataService {
 
         // get result ID from participant row insert, use for tag inserts
         JsonNode tags = val.get("tags");
-        for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> field = it.next();
+        if (tags != null) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> field = it.next();
 
-            // if type ID is true, add row
-            if (field.getValue().asBoolean()) {
-                typesPerParticipantRepository.save(
-                        new ParticipantType(
-                                Long.parseLong(field.getKey()),
-                                participantResult.getId()
-                        )
-                );
+                // if type ID is true, add row
+                if (field.getValue().asBoolean()) {
+                    typesPerParticipantRepository.save(
+                            new ParticipantType(
+                                    Long.parseLong(field.getKey()),
+                                    participantResult.getId()
+                            )
+                    );
+                }
             }
         }
 
-        return participantResult.toString();
+        JsonNodeAdapter adapter = new JsonNodeAdapter();
+        return adapter.createJsonArray(
+                "participants",
+                participantsRepository.findByInstanceId(instanceId.longValue())
+        );
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by Miles on 9/25/2016.
  */
 @Entity
-@Table(name = "laugh_instance", schema = "uwbwfe")
+@Table(name = "laugh_instance", schema = "dbo")
 public class LaughterInstance implements Serializable {
 
     @Id
@@ -29,11 +29,14 @@ public class LaughterInstance implements Serializable {
     @Column(name = "IS_JOKE", nullable = false)
     private Boolean joke;
 
-    @Column(name = "JOKE_SPEAKER", nullable = true)
+    @Column(name = "JOKE_SPEAKER")
     private String jokeSpeaker;
 
     @Column(name = "ALG_CORRECT", nullable = false)
     private Boolean algCorrect;
+
+    @Column(name = "USER_MADE", nullable = false)
+    private Boolean userMade;
 
     public LaughterInstance() {}
 
@@ -45,6 +48,7 @@ public class LaughterInstance implements Serializable {
 
         this.joke = false;
         this.algCorrect = true;
+        this.userMade = false;
     }
 
     public Long getId() {
@@ -103,6 +107,14 @@ public class LaughterInstance implements Serializable {
         this.algCorrect = algCorrect;
     }
 
+    public Boolean getUserMade() {
+        return userMade;
+    }
+
+    public void setUserMade(Boolean userMade) {
+        this.userMade = userMade;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,7 +128,8 @@ public class LaughterInstance implements Serializable {
         if (stopTime != null ? !stopTime.equals(that.stopTime) : that.stopTime != null) return false;
         if (joke != null ? !joke.equals(that.joke) : that.joke != null) return false;
         if (jokeSpeaker != null ? !jokeSpeaker.equals(that.jokeSpeaker) : that.jokeSpeaker != null) return false;
-        return algCorrect != null ? algCorrect.equals(that.algCorrect) : that.algCorrect == null;
+        if (algCorrect != null ? !algCorrect.equals(that.algCorrect) : that.algCorrect != null) return false;
+        return userMade != null ? userMade.equals(that.userMade) : that.userMade == null;
     }
 
     @Override
@@ -128,6 +141,7 @@ public class LaughterInstance implements Serializable {
         result = 31 * result + (joke != null ? joke.hashCode() : 0);
         result = 31 * result + (jokeSpeaker != null ? jokeSpeaker.hashCode() : 0);
         result = 31 * result + (algCorrect != null ? algCorrect.hashCode() : 0);
+        result = 31 * result + (userMade != null ? userMade.hashCode() : 0);
         return result;
     }
 
@@ -141,6 +155,7 @@ public class LaughterInstance implements Serializable {
                 ", joke=" + joke +
                 ", jokeSpeaker='" + jokeSpeaker + '\'' +
                 ", algCorrect=" + algCorrect +
+                ", userMade=" + userMade +
                 '}';
     }
 }

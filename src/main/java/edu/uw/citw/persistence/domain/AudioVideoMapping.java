@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Created by Miles on 9/17/2016.
  */
 @Entity
-@Table(name = "transcoder_vid_aud_mappings", schema = "uwbwfe")
+@Table(name = "transcoder_vid_aud_mappings", schema = "dbo")
 public class AudioVideoMapping implements Serializable {
 
     @Id

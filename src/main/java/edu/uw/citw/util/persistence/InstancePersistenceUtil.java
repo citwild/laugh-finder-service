@@ -89,7 +89,7 @@ public class InstancePersistenceUtil {
                     List<String> tags = new ArrayList<>();
                     for (ParticipantType type : types) {
                         // add type if available
-                        String val = typesById.get(type.getId());
+                        String val = typesById.get(type.getTypeId());
                         if (val != null) {
                             tags.add(val);
                         }
