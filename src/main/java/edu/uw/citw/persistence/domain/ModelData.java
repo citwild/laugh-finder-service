@@ -18,7 +18,7 @@ public class ModelData implements Serializable {
     private byte[] modelBinary;
 
     @Column(name = "ARFF_DATA", nullable = false)
-    private byte[] arffData;
+    private String arffData;
 
     @Column(name = "CREATED_DATE", nullable = false)
     private Date createdDate;
@@ -41,11 +41,11 @@ public class ModelData implements Serializable {
         this.modelBinary = modelBinary;
     }
 
-    public byte[] getArffData() {
+    public String getArffData() {
         return arffData;
     }
 
-    public void setArffData(byte[] arffData) {
+    public void setArffData(String arffData) {
         this.arffData = arffData;
     }
 
@@ -74,7 +74,7 @@ public class ModelData implements Serializable {
 
         if (id != modelData.id) return false;
         if (!Arrays.equals(modelBinary, modelData.modelBinary)) return false;
-        if (!Arrays.equals(arffData, modelData.arffData)) return false;
+        if (arffData != null ? !arffData.equals(modelData.arffData) : modelData.arffData != null) return false;
         if (createdDate != null ? !createdDate.equals(modelData.createdDate) : modelData.createdDate != null)
             return false;
         return createdBy != null ? createdBy.equals(modelData.createdBy) : modelData.createdBy == null;
@@ -84,7 +84,7 @@ public class ModelData implements Serializable {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + Arrays.hashCode(modelBinary);
-        result = 31 * result + Arrays.hashCode(arffData);
+        result = 31 * result + (arffData != null ? arffData.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (createdBy != null ? createdBy.hashCode() : 0);
         return result;
@@ -95,7 +95,7 @@ public class ModelData implements Serializable {
         return "ModelData{" +
                 "id=" + id +
                 ", modelBinary=" + Arrays.toString(modelBinary) +
-                ", arffData=" + Arrays.toString(arffData) +
+                ", arffData=" + arffData +
                 ", createdDate=" + createdDate +
                 ", createdBy='" + createdBy + '\'' +
                 '}';

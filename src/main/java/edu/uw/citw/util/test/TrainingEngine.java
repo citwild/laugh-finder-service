@@ -1,6 +1,11 @@
 package edu.uw.citw.util.test;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import edu.uw.citw.exception.ArffGenerationException;
+import edu.uw.citw.exception.ModelGenerationException;
 import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.ModelDataRepository;
+import org.springframework.stereotype.Component;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.lazy.IBk;
@@ -16,18 +21,33 @@ import java.util.Random;
  */
 public class TrainingEngine {
 
-    public void updateModel(Instances newInstances) {
+    public ModelData createNewModel(String oldArff, Instances newInstances, String createdBy)
+    throws ArffGenerationException, ModelGenerationException {
         // create new db object
         ModelData newModel = new ModelData();
 
         // update arff
-        String arff = generateArff(oldArff, newInstances);
+        String arff;
+        try {
+            arff = generateArff(oldArff, newInstances);
+        } catch (IOException e) {
+            throw new ArffGenerationException(e);
+        }
 
         // create model from arff
+        byte[] model;
+        try {
+            model = generateModel(arff);
+        } catch (Exception e) {
+            throw new ModelGenerationException(e);
+        }
 
         // add both to db object
+        newModel.setArffData(arff);
+        newModel.setModelBinary(model);
+        newModel.setCreatedBy(createdBy);
 
-        // save the object
+        return newModel;
     }
 
 

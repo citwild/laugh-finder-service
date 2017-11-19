@@ -1,7 +1,10 @@
 package edu.uw.citw.persistence.repository;
 
 import edu.uw.citw.persistence.domain.ModelData;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 /**
  * For interacting with the MODEL_DATA table.
@@ -10,4 +13,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface ModelDataRepository extends CrudRepository<ModelData, Long> {
 
+    @Query(value = "select * from model_data md ...",
+            nativeQuery = true)
+    List<ModelData> findLastId();
 }
