@@ -54,8 +54,13 @@ public class MetadataServiceImpl implements MetadataService {
         // set values
         submission.setS3Key(videoId.longValue());
         // times 1000 because DB saves values as milliseconds, not seconds
-        submission.setStartTime(val.get("start").asLong() * 1000);
-        submission.setStopTime(val.get("stop").asLong() * 1000);
+        submission.setStartTime(
+                convertSecondsToMs(val.get("start").asDouble())
+        );
+        submission.setStopTime(
+                convertSecondsToMs(val.get("stop").asDouble())
+        );
+
         submission.setJoke(val.get("joke").asBoolean());
         submission.setJokeSpeaker(
                 getStringValFromJsonNode(val, "speaker")
@@ -67,6 +72,7 @@ public class MetadataServiceImpl implements MetadataService {
         LaughterInstance result = laughterInstanceRepository.save(submission);
         return result.toString();
     }
+
 
     @Override
     public String postNewParticipant(Integer instanceId, JsonNode val) {
@@ -114,5 +120,9 @@ public class MetadataServiceImpl implements MetadataService {
 
     private String getStringValFromJsonNode(JsonNode node, String field) {
         return (node.get(field).asText().equals("null")) ? null : node.get(field).asText();
+    }
+
+    protected Long convertSecondsToMs(Double sec) {
+        return Double.valueOf(sec * 1000).longValue();
     }
 }
