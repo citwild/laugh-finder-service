@@ -24,7 +24,6 @@ public class InstancePersistenceUtilTest {
     private AudioVideoMappingRepository audioVideoMapping;
     private LaughterInstanceRepository laughterInstanceRepository;
     private InstanceParticipantsRepository instanceParticipantsRepository;
-    private TypesPerParticipantRepository typesPerParticipantRepository;
     private LaughTypesRepository laughTypesRepository;
 
     private InstancePersistenceUtil unitUnderTest;
@@ -34,14 +33,12 @@ public class InstancePersistenceUtilTest {
         audioVideoMapping = mock(AudioVideoMappingRepository.class);
         laughterInstanceRepository = mock(LaughterInstanceRepository.class);
         instanceParticipantsRepository = mock(InstanceParticipantsRepository.class);
-        typesPerParticipantRepository = mock(TypesPerParticipantRepository.class);
         laughTypesRepository = mock(LaughTypesRepository.class);
 
         unitUnderTest = new InstancePersistenceUtil(
                 audioVideoMapping,
                 laughterInstanceRepository,
                 instanceParticipantsRepository,
-                typesPerParticipantRepository,
                 laughTypesRepository
         );
     }
