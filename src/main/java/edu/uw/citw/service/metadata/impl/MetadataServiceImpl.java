@@ -74,50 +74,6 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
 
-    @Override
-    public String postNewParticipant(Integer instanceId, JsonNode val) {
-        InstanceParticipant participant = new InstanceParticipant();
-
-        // save participant
-        participant.setInstanceId(instanceId.longValue());
-        participant.setParticipantName(
-                getStringValFromJsonNode(val, "name")
-        );
-        participant.setIntensity(val.get("intensity").asInt());
-        InstanceParticipant participantResult = participantsRepository.save(participant);
-
-        // get result ID from participant row insert, use for tag inserts
-        JsonNode tags = val.get("tags");
-        if (tags != null) {
-            for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
-                Map.Entry<String, JsonNode> field = it.next();
-
-                // if type ID is true, add row
-                if (field.getValue().asBoolean()) {
-                    typesPerParticipantRepository.save(
-                            new ParticipantType(
-                                    Long.parseLong(field.getKey()),
-                                    participantResult.getId()
-                            )
-                    );
-                }
-            }
-        }
-
-        JsonNodeAdapter adapter = new JsonNodeAdapter();
-        return adapter.createJsonArray(
-                "participants",
-                participantsRepository.findByInstanceId(instanceId.longValue())
-        );
-    }
-
-    @Override
-    public String deleteParticipant(Integer id) {
-        participantsRepository.delete(id.longValue());
-        return "Success";
-    }
-
-
     private String getStringValFromJsonNode(JsonNode node, String field) {
         return (node.get(field).asText().equals("null")) ? null : node.get(field).asText();
     }

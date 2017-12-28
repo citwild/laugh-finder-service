@@ -6,8 +6,4 @@ public interface MetadataService {
     JsonNode postMetadataPerInstance();
 
     String postNewInstance(Integer videoId, JsonNode val);
-
-    String postNewParticipant(Integer instanceId, JsonNode val);
-
-    String deleteParticipant(Integer id);
 }

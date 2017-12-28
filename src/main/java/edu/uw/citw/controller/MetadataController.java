@@ -35,25 +35,6 @@ public class MetadataController {
     @Nullable
     @ResponseBody
     @PostMapping(
-            value = "/instance/{instanceId}/participants/add",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.TEXT_PLAIN_VALUE
-    )
-    public String addParticipantToInstance(
-            @Nonnull
-            @PathVariable(value = "instanceId")
-                    Integer instanceId,
-            @Nullable
-            @RequestBody String payload)
-    throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode val = mapper.readTree(payload);
-        return metadataService.postNewParticipant(instanceId, val);
-    }
-
-    @Nullable
-    @ResponseBody
-    @PostMapping(
             value = "/video/{videoId}/instances/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE
@@ -69,20 +50,5 @@ public class MetadataController {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode val = mapper.readTree(payload);
         return metadataService.postNewInstance(videoId, val);
-    }
-
-    @Nullable
-    @ResponseBody
-    @DeleteMapping(
-            value = "/participant/{id}/delete",
-            produces = MediaType.TEXT_PLAIN_VALUE
-    )
-    public String deleteParticipant(
-            @Nonnull
-            @PathVariable(value = "id")
-                    Integer id)
-    throws IOException {
-
-        return metadataService.deleteParticipant(id);
     }
 }
