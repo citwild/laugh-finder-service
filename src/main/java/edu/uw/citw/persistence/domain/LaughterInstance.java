@@ -26,12 +26,6 @@ public class LaughterInstance implements Serializable {
     @Column(name = "VID_STOP", nullable = false)
     private Long stopTime;
 
-    @Column(name = "IS_JOKE", nullable = false)
-    private Boolean joke;
-
-    @Column(name = "JOKE_SPEAKER")
-    private String jokeSpeaker;
-
     @Column(name = "ALG_CORRECT", nullable = false)
     private Boolean algCorrect;
 
@@ -46,7 +40,6 @@ public class LaughterInstance implements Serializable {
         this.startTime = startTime;
         this.stopTime = stopTime;
 
-        this.joke = false;
         this.algCorrect = true;
         this.userMade = false;
     }
@@ -83,22 +76,6 @@ public class LaughterInstance implements Serializable {
         this.stopTime = stopTime;
     }
 
-    public Boolean getJoke() {
-        return joke;
-    }
-
-    public void setJoke(Boolean joke) {
-        this.joke = joke;
-    }
-
-    public String getJokeSpeaker() {
-        return jokeSpeaker;
-    }
-
-    public void setJokeSpeaker(String jokeSpeaker) {
-        this.jokeSpeaker = jokeSpeaker;
-    }
-
     public Boolean getAlgCorrect() {
         return algCorrect;
     }
@@ -126,8 +103,6 @@ public class LaughterInstance implements Serializable {
         if (s3Key != null ? !s3Key.equals(that.s3Key) : that.s3Key != null) return false;
         if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
         if (stopTime != null ? !stopTime.equals(that.stopTime) : that.stopTime != null) return false;
-        if (joke != null ? !joke.equals(that.joke) : that.joke != null) return false;
-        if (jokeSpeaker != null ? !jokeSpeaker.equals(that.jokeSpeaker) : that.jokeSpeaker != null) return false;
         if (algCorrect != null ? !algCorrect.equals(that.algCorrect) : that.algCorrect != null) return false;
         return userMade != null ? userMade.equals(that.userMade) : that.userMade == null;
     }
@@ -138,8 +113,6 @@ public class LaughterInstance implements Serializable {
         result = 31 * result + (s3Key != null ? s3Key.hashCode() : 0);
         result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
         result = 31 * result + (stopTime != null ? stopTime.hashCode() : 0);
-        result = 31 * result + (joke != null ? joke.hashCode() : 0);
-        result = 31 * result + (jokeSpeaker != null ? jokeSpeaker.hashCode() : 0);
         result = 31 * result + (algCorrect != null ? algCorrect.hashCode() : 0);
         result = 31 * result + (userMade != null ? userMade.hashCode() : 0);
         return result;
@@ -152,8 +125,6 @@ public class LaughterInstance implements Serializable {
                 ", s3Key=" + s3Key +
                 ", startTime=" + startTime +
                 ", stopTime=" + stopTime +
-                ", joke=" + joke +
-                ", jokeSpeaker='" + jokeSpeaker + '\'' +
                 ", algCorrect=" + algCorrect +
                 ", userMade=" + userMade +
                 '}';

@@ -41,12 +41,6 @@ public class InstanceServiceImpl implements InstanceService {
         if (val.get("stop") != null) {
             update.setStopTime(val.get("stop").longValue());
         }
-        if (val.get("joke") != null) {
-            update.setJoke(val.get("joke").booleanValue());
-        }
-        if (val.get("speaker") != null) {
-            update.setJokeSpeaker(val.get("speaker").textValue());
-        }
         if (val.get("algCorrect") != null) {
             update.setAlgCorrect(val.get("algCorrect").booleanValue());
         }

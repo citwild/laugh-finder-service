@@ -45,10 +45,6 @@ public class MetadataServiceImpl implements MetadataService {
                 convertSecondsToMs(val.get("stop").asDouble())
         );
 
-        submission.setJoke(val.get("joke").asBoolean());
-        submission.setJokeSpeaker(
-                getStringValFromJsonNode(val, "speaker")
-        );
         // following is true because entered by user
         submission.setAlgCorrect(true);
         submission.setUserMade(true);

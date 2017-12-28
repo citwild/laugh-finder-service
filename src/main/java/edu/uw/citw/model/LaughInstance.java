@@ -8,7 +8,6 @@ import java.util.Objects;
  * An individual instance of laughter. While the algorithm is expected to detect a single individual's laugh, this
  * object represents anyone that might be involved in a detected sequence of laughter.
  *
- * Also contains flags indicating if the laughter is the result of a joke, the speaker is if so.
  * Also contains a flag indicating if the algorithm was correct.
  *
  * Created by Miles on 12/17/2016.
