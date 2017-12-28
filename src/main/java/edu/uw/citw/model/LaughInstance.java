@@ -2,12 +2,7 @@ package edu.uw.citw.model;
 
 import edu.uw.citw.persistence.domain.LaughterInstance;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * An individual instance of laughter. While the algorithm is expected to detect a single individual's laugh, this
@@ -21,12 +16,8 @@ import java.util.List;
 public class LaughInstance {
 
     private long id;
-
     private long start;
     private long stop;
-
-    private boolean joke;
-    private String speaker;
     private boolean algCorrect;
     private boolean userMade;
 
@@ -35,11 +26,9 @@ public class LaughInstance {
         this.stop = stop;
     }
 
-    public LaughInstance(long start, long stop, boolean joke, String speaker, boolean algCorrect, boolean userMade) {
+    public LaughInstance(long start, long stop, boolean algCorrect, boolean userMade) {
         this.start = start;
         this.stop = stop;
-        this.joke = joke;
-        this.speaker = speaker;
         this.algCorrect = algCorrect;
         this.userMade = userMade;
     }
@@ -48,8 +37,6 @@ public class LaughInstance {
         this.id = instance.getId();
         this.start = instance.getStartTime();
         this.stop = instance.getStopTime();
-        this.joke = instance.getJoke();
-        this.speaker = instance.getJokeSpeaker();
         this.algCorrect = instance.getAlgCorrect();
         this.userMade = instance.getUserMade();
     }
@@ -78,22 +65,6 @@ public class LaughInstance {
         this.stop = stop;
     }
 
-    public boolean isJoke() {
-        return joke;
-    }
-
-    public void setJoke(boolean joke) {
-        this.joke = joke;
-    }
-
-    public String getSpeaker() {
-        return speaker;
-    }
-
-    public void setSpeaker(String speaker) {
-        this.speaker = speaker;
-    }
-
     public boolean isAlgCorrect() {
         return algCorrect;
     }
@@ -114,28 +85,17 @@ public class LaughInstance {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LaughInstance that = (LaughInstance) o;
-
-        if (id != that.id) return false;
-        if (start != that.start) return false;
-        if (stop != that.stop) return false;
-        if (joke != that.joke) return false;
-        if (algCorrect != that.algCorrect) return false;
-        if (userMade != that.userMade) return false;
-        return speaker != null ? speaker.equals(that.speaker) : that.speaker == null;
+        return id == that.id &&
+                start == that.start &&
+                stop == that.stop &&
+                algCorrect == that.algCorrect &&
+                userMade == that.userMade;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (start ^ (start >>> 32));
-        result = 31 * result + (int) (stop ^ (stop >>> 32));
-        result = 31 * result + (joke ? 1 : 0);
-        result = 31 * result + (speaker != null ? speaker.hashCode() : 0);
-        result = 31 * result + (algCorrect ? 1 : 0);
-        result = 31 * result + (userMade ? 1 : 0);
-        return result;
+        return Objects.hash(id, start, stop, algCorrect, userMade);
     }
 
     @Override
@@ -144,8 +104,6 @@ public class LaughInstance {
                 "id=" + id +
                 ", start=" + start +
                 ", stop=" + stop +
-                ", joke=" + joke +
-                ", speaker='" + speaker + '\'' +
                 ", algCorrect=" + algCorrect +
                 ", userMade=" + userMade +
                 '}';
