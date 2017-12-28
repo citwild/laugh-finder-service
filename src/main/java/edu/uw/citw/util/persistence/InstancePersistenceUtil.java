@@ -2,7 +2,6 @@ package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
-import edu.uw.citw.model.LaughParticipant;
 import edu.uw.citw.persistence.domain.*;
 import edu.uw.citw.persistence.repository.*;
 import org.slf4j.Logger;
@@ -26,19 +25,16 @@ public class InstancePersistenceUtil {
 
     private AudioVideoMappingRepository audioVideoMappingRepository;
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository instanceParticipantsRepository;
     private LaughTypesRepository laughTypesRepository;
 
     @Autowired
     public InstancePersistenceUtil(
             AudioVideoMappingRepository audioVideoMappingRepository,
             LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository instanceParticipantsRepository,
             LaughTypesRepository laughTypesRepository)
     {
         this.audioVideoMappingRepository = audioVideoMappingRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
-        this.instanceParticipantsRepository = instanceParticipantsRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
         this.laughTypesRepository = laughTypesRepository;
     }
@@ -72,7 +68,6 @@ public class InstancePersistenceUtil {
             for (LaughterInstance instance : instances) {
                 // get participants for this instance
                 LaughInstance result = new LaughInstance(instance);
-                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
                 foundLaughter.addInstance(result);
             }
         }

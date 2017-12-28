@@ -2,7 +2,6 @@ package edu.uw.citw.service.metadata.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.uw.citw.persistence.domain.LaughterInstance;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.service.metadata.MetadataService;
 import org.slf4j.Logger;
@@ -21,14 +20,11 @@ public class MetadataServiceImpl implements MetadataService {
     private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository participantsRepository;
     @Autowired
     public MetadataServiceImpl(
-            LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository participantsRepository)
+            LaughterInstanceRepository laughterInstanceRepository)
     {
         this.laughterInstanceRepository = laughterInstanceRepository;
-        this.participantsRepository = participantsRepository;
     }
 
     @Override

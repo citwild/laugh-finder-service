@@ -2,7 +2,6 @@ package edu.uw.citw.service.analyze.impl;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
