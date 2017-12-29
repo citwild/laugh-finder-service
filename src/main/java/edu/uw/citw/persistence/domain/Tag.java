@@ -21,6 +21,10 @@ public class Tag implements Serializable {
 
     public Tag() {}
 
+    public Tag(Long tagId) {
+        this.tagId = tagId;
+    }
+
     public Tag(Long instanceId, Long tagId) {
         this.instanceId = instanceId;
         this.tagId = tagId;

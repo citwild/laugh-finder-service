@@ -15,4 +15,6 @@ public interface TagsRepository extends CrudRepository<Tag, Long> {
 
     @Query(value = "select * from laugh_instance_tags where instance_id = ?1", nativeQuery = true)
     List<Tag> findAllPerInstance(Long instanceId);
+
+    void deleteTagsByInstanceIdEquals(Long instanceId);
 }
