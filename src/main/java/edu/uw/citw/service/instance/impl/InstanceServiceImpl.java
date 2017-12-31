@@ -60,6 +60,7 @@ public class InstanceServiceImpl implements InstanceService {
             ObjectMapper mapper = new ObjectMapper();
             List<Tag> inputTags = Arrays.asList(mapper.readValue(val.get("tags").toString(), Tag[].class));
             // assign instance ID
+            // TODO: NPE handling if unrecognized tag is provided.
             for (Tag tag : inputTags) {
                 tag.setInstanceId(id);
             }
