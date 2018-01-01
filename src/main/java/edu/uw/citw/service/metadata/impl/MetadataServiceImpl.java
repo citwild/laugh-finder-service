@@ -1,22 +1,13 @@
 package edu.uw.citw.service.metadata.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import edu.uw.citw.persistence.domain.InstanceParticipant;
-import edu.uw.citw.persistence.domain.Participant;
 import edu.uw.citw.persistence.domain.LaughterInstance;
-import edu.uw.citw.persistence.domain.ParticipantType;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
-import edu.uw.citw.persistence.repository.TypesPerParticipantRepository;
 import edu.uw.citw.service.metadata.MetadataService;
-import edu.uw.citw.util.JsonNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * For adding and getting metadata related to specific videos/audio.
@@ -29,18 +20,11 @@ public class MetadataServiceImpl implements MetadataService {
     private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository participantsRepository;
-    private TypesPerParticipantRepository typesPerParticipantRepository;
-
     @Autowired
     public MetadataServiceImpl(
-            LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository participantsRepository,
-            TypesPerParticipantRepository typesPerParticipantRepository)
+            LaughterInstanceRepository laughterInstanceRepository)
     {
         this.laughterInstanceRepository = laughterInstanceRepository;
-        this.participantsRepository = participantsRepository;
-        this.typesPerParticipantRepository = typesPerParticipantRepository;
     }
 
     @Override
@@ -61,10 +45,6 @@ public class MetadataServiceImpl implements MetadataService {
                 convertSecondsToMs(val.get("stop").asDouble())
         );
 
-        submission.setJoke(val.get("joke").asBoolean());
-        submission.setJokeSpeaker(
-                getStringValFromJsonNode(val, "speaker")
-        );
         // following is true because entered by user
         submission.setAlgCorrect(true);
         submission.setUserMade(true);

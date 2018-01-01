@@ -23,8 +23,6 @@ public class InstancePersistenceUtilTest {
 
     private AudioVideoMappingRepository audioVideoMapping;
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository instanceParticipantsRepository;
-    private TypesPerParticipantRepository typesPerParticipantRepository;
     private LaughTypesRepository laughTypesRepository;
 
     private InstancePersistenceUtil unitUnderTest;
@@ -33,15 +31,11 @@ public class InstancePersistenceUtilTest {
     public void setUp() throws Exception {
         audioVideoMapping = mock(AudioVideoMappingRepository.class);
         laughterInstanceRepository = mock(LaughterInstanceRepository.class);
-        instanceParticipantsRepository = mock(InstanceParticipantsRepository.class);
-        typesPerParticipantRepository = mock(TypesPerParticipantRepository.class);
         laughTypesRepository = mock(LaughTypesRepository.class);
 
         unitUnderTest = new InstancePersistenceUtil(
                 audioVideoMapping,
                 laughterInstanceRepository,
-                instanceParticipantsRepository,
-                typesPerParticipantRepository,
                 laughTypesRepository
         );
     }
@@ -80,13 +74,4 @@ public class InstancePersistenceUtilTest {
         assertTrue(stubLaughInstance.getStop() == result.getStopTime());
         assertTrue(stubKey == result.getS3Key());
     }
-
-    //    @Test
-//    public void saveInstances_ShouldSaveInstancesToTheDatabase() throws Exception {
-//        FoundLaughter stubFoundLaughter = new FoundLaughter("testFile");
-//        stubFoundLaughter.addInstance(1000, 2000);
-//        stubFoundLaughter.addInstance(3000, 4000);
-//
-//        unitUnderTest.saveInstances(stubFoundLaughter);
-//    }
 }

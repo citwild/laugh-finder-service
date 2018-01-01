@@ -20,7 +20,7 @@ public class LaughterType implements Serializable {
     @Column(name = "TYPE", nullable = false)
     private String type;
 
-    @Column(name = "DESCRIPTION", nullable = true)
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "CONSIDERED", nullable = false)
