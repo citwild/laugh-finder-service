@@ -1,22 +1,13 @@
 package edu.uw.citw.service.metadata.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import edu.uw.citw.persistence.domain.InstanceParticipant;
-import edu.uw.citw.persistence.domain.Participant;
 import edu.uw.citw.persistence.domain.LaughterInstance;
-import edu.uw.citw.persistence.domain.ParticipantType;
-import edu.uw.citw.persistence.repository.InstanceParticipantsRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
-import edu.uw.citw.persistence.repository.TypesPerParticipantRepository;
 import edu.uw.citw.service.metadata.MetadataService;
-import edu.uw.citw.util.JsonNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * For adding and getting metadata related to specific videos/audio.
@@ -29,18 +20,11 @@ public class MetadataServiceImpl implements MetadataService {
     private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository participantsRepository;
-    private TypesPerParticipantRepository typesPerParticipantRepository;
-
     @Autowired
     public MetadataServiceImpl(
-            LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository participantsRepository,
-            TypesPerParticipantRepository typesPerParticipantRepository)
+            LaughterInstanceRepository laughterInstanceRepository)
     {
         this.laughterInstanceRepository = laughterInstanceRepository;
-        this.participantsRepository = participantsRepository;
-        this.typesPerParticipantRepository = typesPerParticipantRepository;
     }
 
     @Override
@@ -54,12 +38,13 @@ public class MetadataServiceImpl implements MetadataService {
         // set values
         submission.setS3Key(videoId.longValue());
         // times 1000 because DB saves values as milliseconds, not seconds
-        submission.setStartTime(val.get("start").asLong() * 1000);
-        submission.setStopTime(val.get("stop").asLong() * 1000);
-        submission.setJoke(val.get("joke").asBoolean());
-        submission.setJokeSpeaker(
-                getStringValFromJsonNode(val, "speaker")
+        submission.setStartTime(
+                convertSecondsToMs(val.get("start").asDouble())
         );
+        submission.setStopTime(
+                convertSecondsToMs(val.get("stop").asDouble())
+        );
+
         // following is true because entered by user
         submission.setAlgCorrect(true);
         submission.setUserMade(true);
@@ -68,51 +53,12 @@ public class MetadataServiceImpl implements MetadataService {
         return result.toString();
     }
 
-    @Override
-    public String postNewParticipant(Integer instanceId, JsonNode val) {
-        InstanceParticipant participant = new InstanceParticipant();
-
-        // save participant
-        participant.setInstanceId(instanceId.longValue());
-        participant.setParticipantName(
-                getStringValFromJsonNode(val, "name")
-        );
-        participant.setIntensity(val.get("intensity").asInt());
-        InstanceParticipant participantResult = participantsRepository.save(participant);
-
-        // get result ID from participant row insert, use for tag inserts
-        JsonNode tags = val.get("tags");
-        if (tags != null) {
-            for (Iterator<Map.Entry<String, JsonNode>> it = tags.fields(); it.hasNext(); ) {
-                Map.Entry<String, JsonNode> field = it.next();
-
-                // if type ID is true, add row
-                if (field.getValue().asBoolean()) {
-                    typesPerParticipantRepository.save(
-                            new ParticipantType(
-                                    Long.parseLong(field.getKey()),
-                                    participantResult.getId()
-                            )
-                    );
-                }
-            }
-        }
-
-        JsonNodeAdapter adapter = new JsonNodeAdapter();
-        return adapter.createJsonArray(
-                "participants",
-                participantsRepository.findByInstanceId(instanceId.longValue())
-        );
-    }
-
-    @Override
-    public String deleteParticipant(Integer id) {
-        participantsRepository.delete(id.longValue());
-        return "Success";
-    }
-
 
     private String getStringValFromJsonNode(JsonNode node, String field) {
         return (node.get(field).asText().equals("null")) ? null : node.get(field).asText();
+    }
+
+    protected Long convertSecondsToMs(Double sec) {
+        return Double.valueOf(sec * 1000).longValue();
     }
 }

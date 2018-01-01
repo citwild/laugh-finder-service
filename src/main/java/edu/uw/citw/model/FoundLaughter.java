@@ -26,9 +26,6 @@ public class FoundLaughter {
                 new LaughInstance(
                     start,
                     stop,
-                    new ArrayList<>(),
-                    false,
-                    null,
                     true,
                     false
                 )
@@ -40,9 +37,6 @@ public class FoundLaughter {
                 new LaughInstance(
                     instance.getStartTime(),
                     instance.getStopTime(),
-                    new ArrayList<>(),
-                    instance.getJoke(),
-                    instance.getJokeSpeaker(),
                     instance.getAlgCorrect(),
                     instance.getUserMade()
                 )

@@ -14,7 +14,7 @@ import java.util.List;
 public interface LaughterInstanceRepository extends CrudRepository<LaughterInstance, Long> {
 
     @Query(value = "select * from laugh_instance where id = ?1", nativeQuery = true)
-    List<LaughterInstance> findById(Integer id);
+    List<LaughterInstance> findById(Long id);
 
     @Query(value = "select * from laugh_instance where s3_key = ?1", nativeQuery = true)
     List<LaughterInstance> findByS3Key(Long s3Key);

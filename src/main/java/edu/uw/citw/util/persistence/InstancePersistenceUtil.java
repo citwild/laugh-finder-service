@@ -2,7 +2,6 @@ package edu.uw.citw.util.persistence;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
-import edu.uw.citw.model.LaughParticipant;
 import edu.uw.citw.persistence.domain.*;
 import edu.uw.citw.persistence.repository.*;
 import org.slf4j.Logger;
@@ -26,22 +25,16 @@ public class InstancePersistenceUtil {
 
     private AudioVideoMappingRepository audioVideoMappingRepository;
     private LaughterInstanceRepository laughterInstanceRepository;
-    private InstanceParticipantsRepository instanceParticipantsRepository;
-    private TypesPerParticipantRepository typesPerParticipantRepository;
     private LaughTypesRepository laughTypesRepository;
 
     @Autowired
     public InstancePersistenceUtil(
             AudioVideoMappingRepository audioVideoMappingRepository,
             LaughterInstanceRepository laughterInstanceRepository,
-            InstanceParticipantsRepository instanceParticipantsRepository,
-            TypesPerParticipantRepository typesPerParticipantRepository,
             LaughTypesRepository laughTypesRepository)
     {
         this.audioVideoMappingRepository = audioVideoMappingRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
-        this.instanceParticipantsRepository = instanceParticipantsRepository;
-        this.typesPerParticipantRepository = typesPerParticipantRepository;
         this.laughterInstanceRepository = laughterInstanceRepository;
         this.laughTypesRepository = laughTypesRepository;
     }
@@ -75,30 +68,6 @@ public class InstancePersistenceUtil {
             for (LaughterInstance instance : instances) {
                 // get participants for this instance
                 LaughInstance result = new LaughInstance(instance);
-                List<InstanceParticipant> participants = instanceParticipantsRepository.findByInstanceId(instance.getId());
-
-                // get the laugh descriptors for each participant
-                List<LaughParticipant> pList = new ArrayList<>();
-                for (InstanceParticipant participant : participants) {
-                    LaughParticipant p = new LaughParticipant();
-                    p.setId(participant.getId());
-                    p.setName(participant.getParticipantName());
-                    p.setIntensity(participant.getIntensity());
-
-                    List<ParticipantType> types = typesPerParticipantRepository.findByParticipantId(participant.getId());
-                    List<String> tags = new ArrayList<>();
-                    for (ParticipantType type : types) {
-                        // add type if available
-                        String val = typesById.get(type.getTypeId());
-                        if (val != null) {
-                            tags.add(val);
-                        }
-                    }
-                    p.setTags(tags);
-
-                    pList.add(p);
-                }
-                result.setParticipants(pList);
                 foundLaughter.addInstance(result);
             }
         }
