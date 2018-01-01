@@ -13,7 +13,19 @@ import java.util.List;
  */
 public interface ModelDataRepository extends CrudRepository<ModelData, Long> {
 
-    @Query(value = "select * from model_data md ...",
+    @Query(value = "select * from model_data md",
             nativeQuery = true)
-    List<ModelData> findLastId();
+    List<ModelData> getAll();
+
+    /**
+     * Should only return one model at any time.
+     */
+    @Query(value = "select * from model_data md where md.currently_in_use = ?1",
+            nativeQuery = true)
+    List<ModelData> findByInUse(boolean inUse);
+
+
+    @Query(value = "select * from model_data md where md.id = ?1",
+            nativeQuery = true)
+    List<ModelData> findById(long id);
 }

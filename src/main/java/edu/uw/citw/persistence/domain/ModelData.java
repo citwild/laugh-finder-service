@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "model_data", schema = "dbo")
@@ -25,6 +26,9 @@ public class ModelData implements Serializable {
 
     @Column(name = "CREATED_BY", nullable = false)
     private String createdBy;
+
+    @Column(name = "CURRENTLY_IN_USE", nullable = false)
+    private boolean inUse;
 
 
     public ModelData() {}
@@ -65,28 +69,32 @@ public class ModelData implements Serializable {
         this.createdBy = createdBy;
     }
 
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ModelData modelData = (ModelData) o;
-
-        if (id != modelData.id) return false;
-        if (!Arrays.equals(modelBinary, modelData.modelBinary)) return false;
-        if (arffData != null ? !arffData.equals(modelData.arffData) : modelData.arffData != null) return false;
-        if (createdDate != null ? !createdDate.equals(modelData.createdDate) : modelData.createdDate != null)
-            return false;
-        return createdBy != null ? createdBy.equals(modelData.createdBy) : modelData.createdBy == null;
+        return id == modelData.id &&
+                inUse == modelData.inUse &&
+                Arrays.equals(modelBinary, modelData.modelBinary) &&
+                Objects.equals(arffData, modelData.arffData) &&
+                Objects.equals(createdDate, modelData.createdDate) &&
+                Objects.equals(createdBy, modelData.createdBy);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+
+        int result = Objects.hash(id, arffData, createdDate, createdBy, inUse);
         result = 31 * result + Arrays.hashCode(modelBinary);
-        result = 31 * result + (arffData != null ? arffData.hashCode() : 0);
-        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
-        result = 31 * result + (createdBy != null ? createdBy.hashCode() : 0);
         return result;
     }
 
@@ -95,9 +103,10 @@ public class ModelData implements Serializable {
         return "ModelData{" +
                 "id=" + id +
                 ", modelBinary=" + Arrays.toString(modelBinary) +
-                ", arffData=" + arffData +
+                ", arffData='" + arffData + '\'' +
                 ", createdDate=" + createdDate +
                 ", createdBy='" + createdBy + '\'' +
+                ", inUse=" + inUse +
                 '}';
     }
 }
