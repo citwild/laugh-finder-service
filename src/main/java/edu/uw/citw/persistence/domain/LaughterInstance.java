@@ -2,6 +2,7 @@ package edu.uw.citw.persistence.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a row within the SAVED_LAUGHTER_TIMESTAMPS table.
@@ -31,6 +32,9 @@ public class LaughterInstance implements Serializable {
 
     @Column(name = "USER_MADE", nullable = false)
     private Boolean userMade;
+
+    @Column(name = "USE_FOR_RETRAIN", nullable = false)
+    private Boolean useForRetrain;
 
     public LaughterInstance() {}
 
@@ -92,30 +96,32 @@ public class LaughterInstance implements Serializable {
         this.userMade = userMade;
     }
 
+    public Boolean getUseForRetrain() {
+        return useForRetrain;
+    }
+
+    public void setUseForRetrain(Boolean useForRetrain) {
+        this.useForRetrain = useForRetrain;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LaughterInstance that = (LaughterInstance) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (s3Key != null ? !s3Key.equals(that.s3Key) : that.s3Key != null) return false;
-        if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
-        if (stopTime != null ? !stopTime.equals(that.stopTime) : that.stopTime != null) return false;
-        if (algCorrect != null ? !algCorrect.equals(that.algCorrect) : that.algCorrect != null) return false;
-        return userMade != null ? userMade.equals(that.userMade) : that.userMade == null;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(s3Key, that.s3Key) &&
+                Objects.equals(startTime, that.startTime) &&
+                Objects.equals(stopTime, that.stopTime) &&
+                Objects.equals(algCorrect, that.algCorrect) &&
+                Objects.equals(userMade, that.userMade) &&
+                Objects.equals(useForRetrain, that.useForRetrain);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (s3Key != null ? s3Key.hashCode() : 0);
-        result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
-        result = 31 * result + (stopTime != null ? stopTime.hashCode() : 0);
-        result = 31 * result + (algCorrect != null ? algCorrect.hashCode() : 0);
-        result = 31 * result + (userMade != null ? userMade.hashCode() : 0);
-        return result;
+
+        return Objects.hash(id, s3Key, startTime, stopTime, algCorrect, userMade, useForRetrain);
     }
 
     @Override
@@ -127,6 +133,7 @@ public class LaughterInstance implements Serializable {
                 ", stopTime=" + stopTime +
                 ", algCorrect=" + algCorrect +
                 ", userMade=" + userMade +
+                ", useForRetrain=" + useForRetrain +
                 '}';
     }
 }
