@@ -23,6 +23,10 @@ import java.util.List;
 @Service
 public class InstanceServiceImpl implements InstanceService {
 
+    private static final String ALG_CORRECT = "algCorrect";
+    private static final String RETRAIN     = "retrain";
+    private static final String TAGS        = "tags";
+
     private LaughterInstanceRepository instanceRepository;
     private TagsRepository tagsRepository;
 
@@ -45,12 +49,16 @@ public class InstanceServiceImpl implements InstanceService {
         LaughterInstance update = result.get(0);
 
         // set the correctness flag
-        if (val.get("algCorrect") != null) {
-            update.setAlgCorrect(val.get("algCorrect").booleanValue());
+        if (val.get(ALG_CORRECT) != null) {
+            update.setAlgCorrect(val.get(ALG_CORRECT).booleanValue());
+        }
+        // set the "use for retraining" flag
+        if (val.get(RETRAIN) != null) {
+            update.setUseForRetrain(val.get(RETRAIN).booleanValue());
         }
 
         // update tags
-        if (val.get("tags") != null) {
+        if (val.get(TAGS) != null) {
             // remove any previous tags
             List<Tag> tags = tagsRepository.findAllPerInstance(id);
             for (Tag tag : tags) {
@@ -58,7 +66,9 @@ public class InstanceServiceImpl implements InstanceService {
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            List<Tag> inputTags = Arrays.asList(mapper.readValue(val.get("tags").toString(), Tag[].class));
+            List<Tag> inputTags = Arrays.asList(
+                    mapper.readValue(val.get(TAGS).toString(), Tag[].class)
+            );
             // assign instance ID
             // TODO: NPE handling if unrecognized tag is provided.
             for (Tag tag : inputTags) {

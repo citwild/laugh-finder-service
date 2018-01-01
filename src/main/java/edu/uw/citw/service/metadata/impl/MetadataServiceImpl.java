@@ -19,6 +19,9 @@ public class MetadataServiceImpl implements MetadataService {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
+    private static final String START   = "start";
+    private static final String STOP    = "stop";
+
     private LaughterInstanceRepository laughterInstanceRepository;
     @Autowired
     public MetadataServiceImpl(
@@ -39,23 +42,21 @@ public class MetadataServiceImpl implements MetadataService {
         submission.setS3Key(videoId.longValue());
         // times 1000 because DB saves values as milliseconds, not seconds
         submission.setStartTime(
-                convertSecondsToMs(val.get("start").asDouble())
+                convertSecondsToMs(val.get(START).asDouble())
         );
         submission.setStopTime(
-                convertSecondsToMs(val.get("stop").asDouble())
+                convertSecondsToMs(val.get(STOP).asDouble())
         );
 
         // following is true because entered by user
         submission.setAlgCorrect(true);
         submission.setUserMade(true);
 
+        // assume "use for retraining" flag is false, unless explicitly set.
+        submission.setUseForRetrain(false);
+
         LaughterInstance result = laughterInstanceRepository.save(submission);
         return result.toString();
-    }
-
-
-    private String getStringValFromJsonNode(JsonNode node, String field) {
-        return (node.get(field).asText().equals("null")) ? null : node.get(field).asText();
     }
 
     protected Long convertSecondsToMs(Double sec) {
