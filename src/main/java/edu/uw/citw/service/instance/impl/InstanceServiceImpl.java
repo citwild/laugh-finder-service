@@ -7,6 +7,7 @@ import edu.uw.citw.persistence.domain.Tag;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.TagsRepository;
 import edu.uw.citw.service.instance.InstanceService;
+import edu.uw.citw.util.JsonNodeAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +28,15 @@ public class InstanceServiceImpl implements InstanceService {
     private static final String RETRAIN     = "retrain";
     private static final String TAGS        = "tags";
 
+    private static final String RETRAINING_SAMPLES_LABEL = "retrainingSamples";
+
+    private JsonNodeAdapter jsonNodeAdapter;
     private LaughterInstanceRepository instanceRepository;
     private TagsRepository tagsRepository;
 
     @Autowired
-    public InstanceServiceImpl(LaughterInstanceRepository instanceRepository, TagsRepository tagsRepository) {
+    public InstanceServiceImpl(JsonNodeAdapter jsonNodeAdapter, LaughterInstanceRepository instanceRepository, TagsRepository tagsRepository) {
+        this.jsonNodeAdapter = jsonNodeAdapter;
         this.instanceRepository = instanceRepository;
         this.tagsRepository = tagsRepository;
     }
@@ -81,5 +86,11 @@ public class InstanceServiceImpl implements InstanceService {
         instanceRepository.save(update);
 
         return "{}";
+    }
+
+    @Override
+    public String getTrainingEligibleInstances() {
+        List<LaughterInstance> retrainingSamples = instanceRepository.getAllMarkedForRetraining();
+        return jsonNodeAdapter.createJsonArray(RETRAINING_SAMPLES_LABEL, retrainingSamples);
     }
 }

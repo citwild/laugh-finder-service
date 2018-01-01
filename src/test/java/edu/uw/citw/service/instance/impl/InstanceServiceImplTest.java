@@ -6,6 +6,7 @@ import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.Tag;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.TagsRepository;
+import edu.uw.citw.util.JsonNodeAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,21 +16,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 
 public class InstanceServiceImplTest {
 
     private InstanceServiceImpl uut;
 
+    private JsonNodeAdapter jna;
     private LaughterInstanceRepository lir;
     private TagsRepository tr;
 
     @Before
     public void setUp() throws Exception {
+        jna = mock(JsonNodeAdapter.class);
         lir = mock(LaughterInstanceRepository.class);
         tr = mock(TagsRepository.class);
 
-        uut = new InstanceServiceImpl(lir, tr);
+        uut = new InstanceServiceImpl(jna, lir, tr);
     }
 
     /**
@@ -57,6 +62,21 @@ public class InstanceServiceImplTest {
     }
 
     /**
+     * Should return expected format.
+     */
+    @Test
+    public void getTrainingEligibleInstances_1() {
+        when(lir.getAllMarkedForRetraining())
+                .thenReturn(getFakeInstanceValue());
+        when(jna.createJsonArray(eq("retrainingSamples"), anyCollection()))
+                .thenCallRealMethod();
+
+        String result = uut.getTrainingEligibleInstances();
+
+        assertThat(result, equalTo(expectedRetrainSampleResult()));
+    }
+
+    /**
      * Simulate the Instance result from the database service
      */
     private List<LaughterInstance> getFakeInstanceValue() {
@@ -67,6 +87,7 @@ public class InstanceServiceImplTest {
         returnedInst.setAlgCorrect(true);
         returnedInst.setS3Key(1L);
         returnedInst.setUserMade(false);
+        returnedInst.setUseForRetrain(true);
         return Arrays.asList(returnedInst);
     }
 
@@ -83,5 +104,18 @@ public class InstanceServiceImplTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode val = mapper.readTree(payload);
         return val;
+    }
+
+    private String expectedRetrainSampleResult() {
+        return "{\"retrainingSamples\":[" +
+                    "{" +
+                        "\"id\":1," +
+                        "\"s3Key\":1," +
+                        "\"startTime\":1000," +
+                        "\"stopTime\":1800," +
+                        "\"algCorrect\":true," +
+                        "\"userMade\":false," +
+                        "\"useForRetrain\":true}" +
+                "]}";
     }
 }

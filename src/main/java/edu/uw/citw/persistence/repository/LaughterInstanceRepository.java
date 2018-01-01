@@ -18,4 +18,7 @@ public interface LaughterInstanceRepository extends CrudRepository<LaughterInsta
 
     @Query(value = "select * from laugh_instance where s3_key = ?1", nativeQuery = true)
     List<LaughterInstance> findByS3Key(Long s3Key);
+
+    @Query(value = "select * from laugh_instance where use_for_retrain = 1", nativeQuery = true)
+    List<LaughterInstance> getAllMarkedForRetraining();
 }
