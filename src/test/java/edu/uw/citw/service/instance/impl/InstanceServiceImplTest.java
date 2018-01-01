@@ -2,8 +2,10 @@ package edu.uw.citw.service.instance.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.Tag;
+import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.TagsRepository;
 import edu.uw.citw.util.JsonNodeAdapter;
@@ -11,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,14 +28,16 @@ public class InstanceServiceImplTest {
     private JsonNodeAdapter jna;
     private LaughterInstanceRepository lir;
     private TagsRepository tr;
+    private AudioVideoMappingRepository avmr;
 
     @Before
     public void setUp() throws Exception {
         jna = mock(JsonNodeAdapter.class);
         lir = mock(LaughterInstanceRepository.class);
         tr = mock(TagsRepository.class);
+        avmr = mock(AudioVideoMappingRepository.class);
 
-        uut = new InstanceServiceImpl(jna, lir, tr);
+        uut = new InstanceServiceImpl(jna, lir, tr, avmr);
     }
 
     /**
@@ -66,8 +69,14 @@ public class InstanceServiceImplTest {
      */
     @Test
     public void getTrainingEligibleInstances_1() {
+        // provide a laughter instance
         when(lir.getAllMarkedForRetraining())
                 .thenReturn(getFakeInstanceValue());
+
+        // expect specific video id
+        when(avmr.findById(1))
+                .thenReturn(getFakeVideoMapping());
+
         when(jna.createJsonArray(eq("retrainingSamples"), anyCollection()))
                 .thenCallRealMethod();
 
@@ -88,7 +97,15 @@ public class InstanceServiceImplTest {
         returnedInst.setS3Key(1L);
         returnedInst.setUserMade(false);
         returnedInst.setUseForRetrain(true);
-        return Arrays.asList(returnedInst);
+        return Collections.singletonList(returnedInst);
+    }
+
+    private List<AudioVideoMapping> getFakeVideoMapping() {
+        AudioVideoMapping video = new AudioVideoMapping();
+        video.setId(1L);
+        video.setBucket("lfassets");
+        video.setVideoFile("video/test-video.mp4");
+        return Collections.singletonList(video);
     }
 
     private List<Tag> getSubmittedTags() {
@@ -109,13 +126,12 @@ public class InstanceServiceImplTest {
     private String expectedRetrainSampleResult() {
         return "{\"retrainingSamples\":[" +
                     "{" +
-                        "\"id\":1," +
-                        "\"s3Key\":1," +
-                        "\"startTime\":1000," +
-                        "\"stopTime\":1800," +
-                        "\"algCorrect\":true," +
-                        "\"userMade\":false," +
-                        "\"useForRetrain\":true}" +
+                        "\"bucket\":\"lfassets\"," +
+                        "\"key\":\"video/test-video.mp4\"," +
+                        "\"startTime\":1.0," +
+                        "\"stopTime\":1.8," +
+                        "\"algCorrect\":true" +
+                    "}" +
                 "]}";
     }
 }
