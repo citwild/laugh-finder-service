@@ -23,6 +23,7 @@ public class MetadataServiceImpl implements MetadataService {
     private static final String STOP    = "stop";
 
     private LaughterInstanceRepository laughterInstanceRepository;
+
     @Autowired
     public MetadataServiceImpl(
             LaughterInstanceRepository laughterInstanceRepository)
