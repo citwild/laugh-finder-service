@@ -19,17 +19,19 @@ public class LaughInstance {
     private long stop;
     private boolean algCorrect;
     private boolean userMade;
+    private boolean retrain;
 
     public LaughInstance(long start, long stop) {
         this.start = start;
         this.stop = stop;
     }
 
-    public LaughInstance(long start, long stop, boolean algCorrect, boolean userMade) {
+    public LaughInstance(long start, long stop, boolean algCorrect, boolean userMade, boolean retrain) {
         this.start = start;
         this.stop = stop;
         this.algCorrect = algCorrect;
         this.userMade = userMade;
+        this.retrain = retrain;
     }
 
     public LaughInstance(LaughterInstance instance) {
@@ -38,6 +40,7 @@ public class LaughInstance {
         this.stop = instance.getStopTime();
         this.algCorrect = instance.getAlgCorrect();
         this.userMade = instance.getUserMade();
+        this.retrain = instance.getUseForRetrain();
     }
 
     public long getId() {
@@ -80,6 +83,14 @@ public class LaughInstance {
         this.userMade = userMade;
     }
 
+    public boolean isRetrain() {
+        return retrain;
+    }
+
+    public void setRetrain(boolean retrain) {
+        this.retrain = retrain;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,12 +100,14 @@ public class LaughInstance {
                 start == that.start &&
                 stop == that.stop &&
                 algCorrect == that.algCorrect &&
-                userMade == that.userMade;
+                userMade == that.userMade &&
+                retrain == that.retrain;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, start, stop, algCorrect, userMade);
+
+        return Objects.hash(id, start, stop, algCorrect, userMade, retrain);
     }
 
     @Override
@@ -105,6 +118,7 @@ public class LaughInstance {
                 ", stop=" + stop +
                 ", algCorrect=" + algCorrect +
                 ", userMade=" + userMade +
+                ", retrain=" + retrain +
                 '}';
     }
 }

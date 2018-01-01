@@ -27,7 +27,8 @@ public class FoundLaughter {
                     start,
                     stop,
                     true,
-                    false
+                    false,
+                        false
                 )
         );
     }
@@ -38,7 +39,8 @@ public class FoundLaughter {
                     instance.getStartTime(),
                     instance.getStopTime(),
                     instance.getAlgCorrect(),
-                    instance.getUserMade()
+                    instance.getUserMade(),
+                    instance.getUseForRetrain()
                 )
         );
     }
