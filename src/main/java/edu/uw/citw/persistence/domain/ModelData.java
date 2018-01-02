@@ -37,6 +37,10 @@ public class ModelData implements Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public byte[] getModelBinary() {
         return modelBinary;
     }

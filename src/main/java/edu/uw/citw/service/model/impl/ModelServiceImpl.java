@@ -1,27 +1,59 @@
 package edu.uw.citw.service.model.impl;
 
+import edu.uw.citw.model.SimpleModelInfo;
+import edu.uw.citw.persistence.domain.ModelData;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.service.model.ModelService;
+import edu.uw.citw.util.JsonNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ModelServiceImpl implements ModelService {
 
     private static final Logger log = LoggerFactory.getLogger(ModelServiceImpl.class);
 
+    private static final String MODELS_LABEL = "models";
+
+    private static final String DATE_FORMAT = "yyyy-mm-dd hh:mm:ss";
+
+    private JsonNodeAdapter jsonAdapter;
     private ModelDataRepository modelRepository;
 
     @Autowired
-    public ModelServiceImpl(ModelDataRepository modelRepository) {
+    public ModelServiceImpl(JsonNodeAdapter jsonAdapter, ModelDataRepository modelRepository) {
+        this.jsonAdapter = jsonAdapter;
         this.modelRepository = modelRepository;
     }
 
     @Override
     public String getAllModels() {
-        return null;
+        List<SimpleModelInfo> result = new ArrayList<>();
+
+        List<ModelData> models = modelRepository.getAll();
+
+        // for each model, strip and prettify some of the output
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        for (ModelData model : models) {
+            String formattedDate = sdf.format(model.getCreatedDate());
+
+            SimpleModelInfo modelInfo = new SimpleModelInfo(
+                    model.getId(),
+                    formattedDate,
+                    model.getCreatedBy(),
+                    model.isInUse()
+            );
+
+            result.add(modelInfo);
+        }
+
+        return jsonAdapter.createJsonArray(MODELS_LABEL, result);
     }
 
     @Override
