@@ -46,6 +46,7 @@ public class LaughterInstance implements Serializable {
 
         this.algCorrect = true;
         this.userMade = false;
+        this.useForRetrain = false;
     }
 
     public Long getId() {

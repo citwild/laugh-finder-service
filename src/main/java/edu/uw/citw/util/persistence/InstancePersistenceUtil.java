@@ -97,7 +97,7 @@ public class InstancePersistenceUtil {
         }
     }
 
-    public LaughterInstance createInstance(@Nonnull LaughInstance laughInstance, long dbId) {
-        return new LaughterInstance(null, dbId, laughInstance.getStart(), laughInstance.getStop());
+    public LaughterInstance createInstance(@Nonnull LaughInstance li, long dbId) {
+        return new LaughterInstance(null, dbId, li.getStart(), li.getStop());
     }
 }
