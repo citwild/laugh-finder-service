@@ -73,6 +73,12 @@
             <artifactId>jsr305</artifactId>
             <version>${findbugs.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
+
 
         <!-- For testing -->
         <dependency>
