@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,7 +39,7 @@ public class ModelServiceImpl implements ModelService {
 
         List<ModelData> models = modelRepository.getAll();
 
-        // for each model, strip and prettify some of the output
+        // for each model, strip out heavy model binary and prettify some of the output
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         for (ModelData model : models) {
             String formattedDate = sdf.format(model.getCreatedDate());
@@ -58,7 +59,19 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public String switchModel(Long id) {
-        return null;
+        // TODO: some error handling here
+
+        // get current model in use
+        ModelData currentlyInUse = modelRepository.findByInUse(true).get(0);
+        currentlyInUse.setInUse(false);
+
+        // get target model
+        ModelData target = modelRepository.findById(id).get(0);
+        target.setInUse(true);
+
+        modelRepository.save(Arrays.asList(currentlyInUse, target));
+
+        return "{\"message\":\"success\"}";
     }
 
     @Override
