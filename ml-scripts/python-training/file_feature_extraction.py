@@ -1,5 +1,5 @@
 import scipy.io.wavfile as wavfile
-import numpy
+import numpy as np
 
 import feature_mfccs_init
 import feature_mfccs
@@ -12,171 +12,204 @@ Extracts the audio features for the given audio file
 """
 
 
-def file_feature_extraction(audioFile):
+def extract_multiple_per_video(audio_file, starts=[], stops=[], win=0.032, step=0.016, amplitude_filter=False,
+                               diff_filter=False):
     # read in digital signal from audio file
-    audioInfo = wavfile.read(audioFile)
-    fs = audioInfo[0] # fs = frames/second = rate
-    signal = audioInfo[1] # signal = data
+    audio_info = wavfile.read(audio_file)
+
+    if len(starts) == len(stops):
+        for i in range(len(starts)):
+            file_feature_extraction(audio_info, win, step, amplitude_filter, diff_filter)
+
+    else:
+        print("ruh-roh")
+
+
+def file_feature_extraction(audio_info, win=0.800, step=0.100, amplitude_filter=False, diff_filter=False):
+    fs = audio_info[0]
+    signal = audio_info[1]
 
     # Converting stereo signal to MONO signal
-    if (len(signal[0]) > 1):
-        signal = numpy.float_(numpy.sum(signal, axis=1)) / 2
+    if len(signal[0]) > 1:
+        signal = np.float_(np.sum(signal, axis=1)) / 2
 
     # short-term feature extraction
-    numberOfSamples = len(signal)
-    duration = numpy.float_(numberOfSamples) / fs  # in seconds
+    number_of_samples = len(signal)
+
+    # convert window length and step from seconds to samples
+    window_length = np.int(np.round(win * fs))
+    step_in_samples = np.int(np.round(step * fs))
 
     # compute the total number of frames
-    numOfFrames = 1
+    num_of_frames = np.int(np.floor((number_of_samples - window_length) / step_in_samples) + 1)
 
     # number of features to be computed:
-    # MFCCs = 13 + Energy = 1 + ZeroCrossingRate = 1 + EnergyEntropy = 1 + Spectral Centroid and Spread = 2 + Spectral Entropy = 1 + Spectral Rolloff = 1
-
-    numbOfFeatures = 20
-    # print numOfFrames, numbOfFeatures
-    # import pdb; pdb.set_trace()
-    Features = numpy.zeros(numbOfFeatures)
+    num_of_features = 21
+    features = np.zeros((num_of_frames, num_of_features))
 
     # Frequency-domain audio features
-    # MFCC
-    windowLength = len(signal)
-    Ham = numpy.hamming(windowLength)
-    mfccParams = feature_mfccs_init.feature_mfccs_init(windowLength, fs)
+    ham = np.hamming(window_length)
+    mfcc_params = feature_mfccs_init.feature_mfccs_init(window_length, fs)
 
-    Win = numpy.int(windowLength)
-    nFFT = Win / 2
+    win = np.int(window_length)
+    nfft = win / 2
 
-    curPos = 1
+    cur_pos = 1
 
-    # get current frame:\
-    frame = signal
-    frameprev = frame.copy()
+    ampl_vals = []
+    diff_vals = []
 
-    ampl_val = numpy.max(frame)
+    for i in range(0, num_of_frames):
+        # get current frame:\
+        frame = signal[cur_pos - 1: cur_pos + window_length - 1]
+        if i == 0:
+            frameprev = frame.copy()
 
-    frame = frame * Ham
-    frameFFT = getDFT.getDFT(frame, fs)
+        ampl_val = np.max(frame)
+        ampl_vals.append(ampl_val)
 
-    X = numpy.abs(numpy.fft.fft(frame))
-    X = X[0:nFFT]                                    # normalize fft
-    X = X / len(X)
+        diff_val = np.subtract(frameprev, frame)
+        diff_vals.append(np.mean(diff_val))
 
+        frameprev = frame.copy()
+        frame = frame * ham
+        frameFFT = getDFT.getDFT(frame, fs)
 
-    Xprev = X.copy()
+        X = np.abs(np.fft.fft(frame))
+        X = X[0:nfft]  # normalize fft
+        X = X / len(X)
 
-    if numpy.sum(numpy.abs(frame)) > numpy.spacing(1):
-        MFCCs = feature_mfccs.feature_mfccs(frameFFT, mfccParams)
-        Features[0:13] = MFCCs
-    else:
-        Features[:] = numpy.zeros(numbOfFeatures, 1)
-    Features[13] = stEnergy(frame)
-    Features[14] = stZCR(frame)
-    Features[15] = stEnergyEntropy(frame)
-    [Features[16], Features[17]] = stSpectralCentroidAndSpread(X,fs)
-    Features[18] = stSpectralEntropy(X)
-    Features[19] = stSpectralRollOff(X,0.90,fs)
-    return Features
+        if i == 0:
+            Xprev = X.copy()
+
+        if np.sum(np.abs(frame)) > np.spacing(1):
+            MFCCs = feature_mfccs.feature_mfccs(frameFFT, mfcc_params)
+            features[i][0:13] = MFCCs
+        else:
+            features[:, i] = np.zeros(num_of_features, 1)
+
+        features[i][13] = stEnergy(frame)
+        features[i][14] = stZCR(frame)
+        features[i][15] = stEnergyEntropy(frame)
+        [features[i][16], features[i][17]] = stSpectralCentroidAndSpread(X, fs)
+        features[i][18] = stSpectralEntropy(X)
+        features[i][19] = stSpectralRollOff(X, 0.90, fs)
+
+        cur_pos = cur_pos + step_in_samples
+
+    ampl_threshold = np.percentile(ampl_vals, 93)
+    diff_threshold = np.percentile(diff_vals, 80)
+
+    for i in range(0, num_of_frames):
+        if amplitude_filter and ampl_vals[i] < ampl_threshold:
+            features[i][20] = 1.0
+        elif diff_filter and diff_vals[i] > diff_threshold:
+            features[i][20] = 1.0
+        else:
+            features[i][20] = 0.0
+
+    return features
 
 
 # Spectral Centroid and Spread
-def stSpectralCentroidAndSpread(X,fs):
+def stSpectralCentroidAndSpread(x, fs):
     """Computes spectral centroid of frame (given abs(FFT))"""
 
-    ind = (numpy.arange(1, len(X) + 1)) * (fs/(2.0 * len(X)))
+    ind = (np.arange(1, len(x) + 1)) * (fs / (2.0 * len(x)))
 
-    Xt = X.copy()
-    Xt = Xt / Xt.max()
-    NUM = numpy.sum(ind * Xt)
-    DEN = numpy.sum(Xt) + eps
+    xt = x.copy()
+    xt = xt / xt.max()
+    num = np.sum(ind * xt)
+    den = np.sum(xt) + eps
 
     # Centroid:
-    C = (NUM / DEN)
+    c = (num / den)
 
     # Spread:
-    S = numpy.sqrt(numpy.sum(((ind - C) ** 2) * Xt) / DEN)
+    s = np.sqrt(np.sum(((ind - c) ** 2) * xt) / den)
 
     # Normalize:
-    C /= (fs / 2.0)
-    S /= (fs / 2.0)
+    c /= (fs / 2.0)
+    s /= (fs / 2.0)
 
-    return (C, S)
+    return c, s
 
 
-#Spectral Entropy
-def stSpectralEntropy(X, numOfShortBlocks=10):
+# Spectral Entropy
+def stSpectralEntropy(x, num_of_short_blocks=10):
     """Computes the spectral entropy"""
-    L = len(X)                         # number of frame samples
-    Eol = numpy.sum(X ** 2)            # total spectral energy
+    L = len(x)  # number of frame samples
+    Eol = np.sum(x ** 2)  # total spectral energy
 
-    subWinLength = numpy.int(numpy.floor(L / numOfShortBlocks))   # length of sub-frame
-    if L != subWinLength * numOfShortBlocks:
-        X = X[0:subWinLength * numOfShortBlocks]
+    sub_win_length = np.int(np.floor(L / num_of_short_blocks))  # length of sub-frame
+    if L != sub_win_length * num_of_short_blocks:
+        x = x[0:sub_win_length * num_of_short_blocks]
 
-    subWindows = X.reshape(subWinLength, numOfShortBlocks, order='F').copy()  # define sub-frames (using matrix reshape)
-    s = numpy.sum(subWindows ** 2, axis=0) / (Eol + eps)                      # compute spectral sub-energies
-    En = -numpy.sum(s*numpy.log2(s + eps))                                    # compute spectral entropy
+    # define sub-frames (using matrix reshape)
+    sub_windows = x.reshape(sub_win_length, num_of_short_blocks, order='F').copy()
+    # compute spectral sub-energies
+    s = np.sum(sub_windows ** 2, axis=0) / (Eol + eps)
+    # compute spectral entropy
+    en = -np.sum(s * np.log2(s + eps))
 
-    return En
+    return en
 
 
 # Spectral Flux
-def stSpectralFlux(X, Xprev):
-    """
-    Computes the spectral flux feature of the current frame
-    ARGUMENTS:
-        X:        the abs(fft) of the current frame
-        Xpre:        the abs(fft) of the previous frame
-    """
+def stSpectralFlux(x, xprev):
     # compute the spectral flux as the sum of square distances:
-    sumX = numpy.sum(X + eps)
-    sumPrevX = numpy.sum(Xprev + eps)
-    F = numpy.sum((X / sumX - Xprev/sumPrevX) ** 2)
+    sum_x = np.sum(x + eps)
+    sum_prev_x = np.sum(xprev + eps)
+    f = np.sum((x / sum_x - xprev / sum_prev_x) ** 2)
 
-    return F
+    return f
+
 
 # Spectral Rolloff
 def stSpectralRollOff(X, c, fs):
     """Computes spectral roll-off"""
-    totalEnergy = numpy.sum(X ** 2)
+    totalEnergy = np.sum(X ** 2)
     fftLength = len(X)
-    Thres = c*totalEnergy
-    # Ffind the spectral rolloff as the frequency position where the respective spectral energy is equal to c*totalEnergy
-    CumSum = numpy.cumsum(X ** 2) + eps
-    [a, ] = numpy.nonzero(CumSum > Thres)
+    Thres = c * totalEnergy
+    # Find the spectral rolloff as the frequency position where the respective spectral energy is equal to c*totalEnergy
+    CumSum = np.cumsum(X ** 2) + eps
+    [a, ] = np.nonzero(CumSum > Thres)
     if len(a) > 0:
-        mC = numpy.float64(a[0]) / (numpy.float(fftLength))
+        mC = np.float64(a[0]) / (np.float(fftLength))
     else:
         mC = 0.0
     return (mC)
+
 
 # Time-domain audio features
 # Energy feature extraction
 def stEnergy(frame):
     """Computes signal energy of frame"""
-    return numpy.sum(frame ** 2) / numpy.float64(len(frame))
+    return np.sum(frame ** 2) / np.float64(len(frame))
+
 
 # Zero crossing rate feature extraction
 def stZCR(frame):
     """Computes zero crossing rate of frame"""
     count = len(frame)
-    countZ = numpy.sum(numpy.abs(numpy.diff(numpy.sign(frame)))) / 2
-    return (numpy.float64(countZ) / numpy.float64(count-1.0))
+    countZ = np.sum(np.abs(np.diff(np.sign(frame)))) / 2
+    return (np.float64(countZ) / np.float64(count - 1.0))
+
 
 # Energy Entropy
 def stEnergyEntropy(frame, numOfShortBlocks=10):
     """Computes entropy of energy"""
-    Eol = numpy.sum(frame ** 2)    # total frame energy
+    Eol = np.sum(frame ** 2)  # total frame energy
     L = len(frame)
-    subWinLength = numpy.int(numpy.floor(L / numOfShortBlocks))
+    subWinLength = np.int(np.floor(L / numOfShortBlocks))
     if L != subWinLength * numOfShortBlocks:
-            frame = frame[0:subWinLength * numOfShortBlocks]
+        frame = frame[0:subWinLength * numOfShortBlocks]
     # subWindows is of size [numOfShortBlocks x L]
     subWindows = frame.reshape(subWinLength, numOfShortBlocks, order='F').copy()
 
     # Compute normalized sub-frame energies:
-    s = numpy.sum(subWindows ** 2, axis=0) / (Eol + eps)
+    s = np.sum(subWindows ** 2, axis=0) / (Eol + eps)
 
     # Compute entropy of the normalized sub-frame energies:
-    Entropy = -numpy.sum(s * numpy.log2(s + eps))
-    return Entropy
-
+    entropy = -np.sum(s * np.log2(s + eps))
+    return entropy

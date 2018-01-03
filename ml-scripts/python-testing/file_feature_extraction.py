@@ -26,12 +26,11 @@ Extracts the audio features for the given audio file
 def file_feature_extraction(file, win=0.032, step=0.016, amplitudeFilter=False, diffFilter=False):
     # read in digital signal from audio file
     audioInfo = read(file)
-
-    fs = audioInfo[0]     # fs = frames/second = rate
+    fs = audioInfo[0] # fs = frames/second = rate
     signal = audioInfo[1] # signal = data
 
     # Converting stereo signal to MONO signal
-    if (len(signal[0]) > 1):
+    if len(signal[0]) > 1:
         signal = np.float_(np.sum(signal, axis=1)) / 2
 
     # short-term feature extraction
@@ -46,11 +45,7 @@ def file_feature_extraction(file, win=0.032, step=0.016, amplitudeFilter=False, 
     numOfFrames = np.int(np.floor((numberOfSamples - windowLength) / stepInSamples) + 1)
 
     # number of features to be computed:
-    # MFCCs = 13 + Energy = 1 + ZeroCrossingRate = 1 + EnergyEntropy = 1 + Spectral Centroid and Spread = 2 + Spectral Entropy = 1 + Spectral Rolloff = 1
-    # + Filter check = 1
     numbOfFeatures = 21
-    # print numOfFrames, numbOfFeatures
-    # import pdb; pdb.set_trace()
     Features = np.zeros((numOfFrames, numbOfFeatures))
 
     # Frequency-domain audio features
