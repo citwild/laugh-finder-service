@@ -60,5 +60,6 @@ def execute():
 
 
 if __name__ == '__main__':
+    # TODO: How is the service going to supply a dict of videos and their timestamps?
     instancesPerVideo = {}
     execute()

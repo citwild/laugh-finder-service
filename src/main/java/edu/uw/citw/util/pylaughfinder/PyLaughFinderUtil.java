@@ -29,6 +29,14 @@ public class PyLaughFinderUtil {
 
     public PyLaughFinderUtil() {}
 
+    /**
+     * This runs the Python "training" script, which grabs examples from Azure blob and the database
+     *   and creates an ARFF file to be read into a model.
+     */
+    public String getArffFromSamples() {
+
+    }
+
     @Nonnull
     public Process runPythonLaughFinderScript(
             @Nonnull String bucket,
@@ -37,7 +45,7 @@ public class PyLaughFinderUtil {
     {
         log.debug("Running Python script to search for laughter");
 
-        String[] command = getCommand(bucket, key);
+        String[] command = getTestingCommand(bucket, key);
 
         try {
             Process proc = Runtime
@@ -65,6 +73,8 @@ public class PyLaughFinderUtil {
         }
     }
 
+
+
     public void printPythonLaughFinderOutput(Process proc) {
         try {
             // log any output
@@ -85,7 +95,22 @@ public class PyLaughFinderUtil {
     }
 
     @Nonnull
-    public String[] getCommand(@Nonnull String bucket, @Nonnull String key) {
+    public String[] getTestingCommand(@Nonnull String bucket, @Nonnull String key) {
+        log.info("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
+                mainScript, bucket, key, testDir, PHASE);
+
+        return new String[] {
+                "python3", mainScript,
+                "--bucket", bucket,
+                "--key", key,
+                "--arff", testDir,
+                "--phase", PHASE
+        };
+    }
+
+
+    @Nonnull
+    public String[] getTrainingCommand(@Nonnull String bucket, @Nonnull String key) {
         log.info("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
                 mainScript, bucket, key, testDir, PHASE);
 
@@ -116,10 +141,10 @@ public class PyLaughFinderUtil {
 
     // for logging System.exec command
     private String printCommandArray(String[] cmd) {
-        String val = "";
+        StringBuilder val = new StringBuilder();
         for (String str : cmd) {
-            val += str + ", ";
+            val.append(str).append(", ");
         }
-        return val;
+        return val.toString();
     }
 }

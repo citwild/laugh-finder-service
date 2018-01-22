@@ -2,11 +2,13 @@ package edu.uw.citw.util.weka;
 
 import org.springframework.stereotype.Component;
 import weka.classifiers.lazy.IBk;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
 import javax.annotation.Nonnull;
+import java.io.*;
 
 
 /**
@@ -44,11 +46,86 @@ public class WekaModelUtil {
         return iBk;
     }
 
+    public String generateArff(@Nonnull Instances inputInstances) {
+        BufferedReader arffReader;
+        try {
+            arffReader = new BufferedReader(
+                    new StringReader(getBaseArff())
+            );
+
+            // Note, you can read in existing arff String and append using setClassIndex
+            Instances instances = new Instances(arffReader);
+            instances.addAll(inputInstances);
+
+            return instances.toString();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public void backupAndGenerateModel() {
+//        BufferedReader arffReader;
+//        try {
+//            arffReader = new BufferedReader(new FileReader(
+//                    Constants.TRAIN_ARFF_FILE));
+//            Instances instances = new Instances(arffReader);
+//            instances.setClassIndex(instances.numAttributes() - 1);
+//
+//            Classifier ibk = new IBk(2);
+//            Evaluation eval = new Evaluation(instances);
+//            eval.crossValidateModel(ibk, instances, 10, new Random(1));
+//            ibk.buildClassifier(instances);
+//            ObjectOutputStream oos = new ObjectOutputStream(
+//                    new FileOutputStream(Constants.MODEL_FILE));
+//            oos.writeObject(ibk);
+//            oos.flush();
+//            oos.close();
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+    }
+
     public void saveModel(@Nonnull String modelOutputPath, @Nonnull IBk iBk) throws Exception {
         SerializationHelper.write(modelOutputPath, iBk);
     }
 
     public String getKnnOptions() {
         return KNN_OPTIONS;
+    }
+
+    private String getBaseArff() {
+        return "@relation Laughter_detection_capture_training\n" +
+                "@attribute MFCC1 numeric\n" +
+                "@attribute MFCC2 numeric\n" +
+                "@attribute MFCC3 numeric\n" +
+                "@attribute MFCC4 numeric\n" +
+                "@attribute MFCC5 numeric\n" +
+                "@attribute MFCC6 numeric\n" +
+                "@attribute MFCC7 numeric\n" +
+                "@attribute MFCC8 numeric\n" +
+                "@attribute MFCC9 numeric\n" +
+                "@attribute MFCC10 numeric\n" +
+                "@attribute MFCC11 numeric\n" +
+                "@attribute MFCC12 numeric\n" +
+                "@attribute MFCC13 numeric\n" +
+                "@attribute ENERGY numeric\n" +
+                "@attribute ZCR numeric\n" +
+                "@attribute ENERGY_ENTROPY numeric\n" +
+                "@attribute SPECTRAL_CENTROID numeric\n" +
+                "@attribute SPECTRAL_SPREAD numeric\n" +
+                "@attribute SPECTRAL_ENTROPY numeric\n" +
+                "@attribute SPECTRAL_ROLLOFF numeric\n" +
+                "@attribute class {YES,NO}\n" +
+                "@data\n";
     }
 }

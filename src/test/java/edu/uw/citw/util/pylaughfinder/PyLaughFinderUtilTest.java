@@ -22,7 +22,7 @@ public class PyLaughFinderUtilTest {
 
     @Test
     public void getCommand_ShouldProvideExpectedCommand() throws Exception {
-        String[] result = unitUnderTest.getCommand("testBucket", "testKey");
+        String[] result = unitUnderTest.getTestingCommand("testBucket", "testKey");
 
         assertEquals("testScript.py", result[1]); // script location
         assertEquals("testBucket", result[3]); // bucket

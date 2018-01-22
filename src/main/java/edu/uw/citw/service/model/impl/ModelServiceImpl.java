@@ -5,6 +5,7 @@ import edu.uw.citw.persistence.domain.ModelData;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.service.model.ModelService;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.weka.WekaModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,13 @@ public class ModelServiceImpl implements ModelService {
 
     private JsonNodeAdapter jsonAdapter;
     private ModelDataRepository modelRepository;
+    private WekaModelUtil modelUtil;
 
     @Autowired
-    public ModelServiceImpl(JsonNodeAdapter jsonAdapter, ModelDataRepository modelRepository) {
+    public ModelServiceImpl(JsonNodeAdapter jsonAdapter, ModelDataRepository modelRepository, WekaModelUtil modelUtil) {
         this.jsonAdapter = jsonAdapter;
         this.modelRepository = modelRepository;
+        this.modelUtil = modelUtil;
     }
 
     @Override
@@ -74,8 +77,11 @@ public class ModelServiceImpl implements ModelService {
         return "{\"message\":\"success\"}";
     }
 
+    
+
     @Override
     public String retrainNewModel() {
+
         return null;
     }
 }

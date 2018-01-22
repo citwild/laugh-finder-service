@@ -3,6 +3,7 @@ package edu.uw.citw.service.model.impl;
 import edu.uw.citw.persistence.domain.ModelData;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.weka.WekaModelUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,13 +25,14 @@ public class ModelServiceImplTest {
 
     private JsonNodeAdapter jna;
     private ModelDataRepository mr;
+    private WekaModelUtil wmu;
 
     @Before
     public void setUp() throws Exception {
         jna = mock(JsonNodeAdapter.class);
         mr = mock(ModelDataRepository.class);
 
-        uut = new ModelServiceImpl(jna, mr);
+        uut = new ModelServiceImpl(jna, mr, wmu);
     }
 
     /**
