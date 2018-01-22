@@ -77,7 +77,14 @@ public class ModelServiceImpl implements ModelService {
         return "{\"message\":\"success\"}";
     }
 
-    
+    public void reTrainNewModel() {
+        // get all training samples
+        // submit milliseconds, videos to python
+        // python script creates ARFF samples
+        // use WEKA API to generate model
+        // save model, arff, user, time, inUse=false to database
+    }
+
 
     @Override
     public String retrainNewModel() {

@@ -1,4 +1,3 @@
-import scipy.io.wavfile as wavfile
 import numpy as np
 
 import feature_mfccs_init
@@ -10,19 +9,6 @@ eps = 0.00000001
 """
 Extracts the audio features for the given audio file
 """
-
-
-def extract_multiple_per_video(audio_file, starts=[], stops=[], win=0.032, step=0.016, amplitude_filter=False,
-                               diff_filter=False):
-    # read in digital signal from audio file
-    audio_info = wavfile.read(audio_file)
-
-    if len(starts) == len(stops):
-        for i in range(len(starts)):
-            file_feature_extraction(audio_info, win, step, amplitude_filter, diff_filter)
-
-    else:
-        print("ruh-roh")
 
 
 def file_feature_extraction(audio_info, win=0.800, step=0.100, amplitude_filter=False, diff_filter=False):
