@@ -1,7 +1,13 @@
 package edu.uw.citw.service.model.impl;
 
+import edu.uw.citw.model.RetrainSampleFile;
+import edu.uw.citw.model.RetrainSampleInstance;
 import edu.uw.citw.model.SimpleModelInfo;
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
+import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
+import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.service.model.ModelService;
 import edu.uw.citw.util.JsonNodeAdapter;
@@ -12,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -22,20 +26,34 @@ public class ModelServiceImpl implements ModelService {
     private static final Logger log = LoggerFactory.getLogger(ModelServiceImpl.class);
 
     private static final String MODELS_LABEL = "models";
-
     private static final String DATE_FORMAT = "yyyy-mm-dd hh:mm:ss";
 
     private JsonNodeAdapter jsonAdapter;
     private ModelDataRepository modelRepository;
     private WekaModelUtil modelUtil;
+    private LaughterInstanceRepository instanceRepository;
+    private AudioVideoMappingRepository avRepository;
 
     @Autowired
-    public ModelServiceImpl(JsonNodeAdapter jsonAdapter, ModelDataRepository modelRepository, WekaModelUtil modelUtil) {
+    public ModelServiceImpl(
+            JsonNodeAdapter jsonAdapter,
+            ModelDataRepository modelRepository,
+            WekaModelUtil modelUtil,
+            LaughterInstanceRepository instanceRepository,
+            AudioVideoMappingRepository avRepository) {
         this.jsonAdapter = jsonAdapter;
         this.modelRepository = modelRepository;
         this.modelUtil = modelUtil;
+        this.instanceRepository = instanceRepository;
+        this.avRepository = avRepository;
     }
 
+    /**
+     * Used to populate a dropdown list in the UI. Should make the DB smaller so it's not
+     *   returning a bunch of giant model bianaries from the DB and then removing them...
+     *
+     * TODO: Make a view in the database that excludes the binary and ARFF data. Then read from that.
+     */
     @Override
     public String getAllModels() {
         List<SimpleModelInfo> result = new ArrayList<>();
@@ -78,11 +96,61 @@ public class ModelServiceImpl implements ModelService {
     }
 
     public void reTrainNewModel() {
+        // TODO: maybe just create a DB view that creates JSON per every update?
         // get all training samples
+
+
+
         // submit milliseconds, videos to python
+//        modelUtil.
         // python script creates ARFF samples
         // use WEKA API to generate model
         // save model, arff, user, time, inUse=false to database
+    }
+
+    protected String getReTrainSamplesAsJson() {
+        StringBuilder result = new StringBuilder();
+
+        // get instances and map them
+        List<LaughterInstance> instances = instanceRepository.getAllMarkedForRetraining();
+        Map<Long, List<LaughterInstance>> instanceMap = new HashMap<>();
+        for (LaughterInstance instance : instances) {
+            if (instanceMap.containsKey(instance.getS3Key())) {
+                instanceMap.get(instance.getS3Key()).add(instance);
+            } else {
+                List<LaughterInstance> list = new ArrayList<>();
+                list.add(instance);
+                instanceMap.put(instance.getS3Key(), list);
+            }
+        }
+
+        // Get list of assets
+        List<AudioVideoMapping> assets = new ArrayList<>();
+        for (Long key : instanceMap.keySet()) {
+            assets.addAll(avRepository.findById(key.intValue()));
+        }
+
+        // For every asset, model data and add instances.
+        result.append("{\"files\": [");
+        for (AudioVideoMapping asset : assets) {
+            List<LaughterInstance> list = instanceMap.get(asset.getId());
+            List<RetrainSampleInstance> samples = new ArrayList<>();
+
+            for (LaughterInstance instance : list) {
+                samples.add(new RetrainSampleInstance(instance.getStartTime(), instance.getStopTime(), instance.getAlgCorrect()));
+            }
+
+            RetrainSampleFile file = new RetrainSampleFile(
+                    asset.getBucket(),
+                    asset.getAudioFile(),
+                    samples
+            );
+
+            result.append(file.toString()).append(",");
+        }
+        result.append("]}");
+
+        return result.toString();
     }
 
 

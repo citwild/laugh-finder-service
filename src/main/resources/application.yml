@@ -3,8 +3,6 @@
 baseDir: "/home/miles/Documents/workspace"
 
 spring:
-  profiles: "dev"
-
   datasource:
     driver-class-name: "com.mysql.jdbc.Driver"
     url: "jdbc:mysql://localhost:3306/uwbwfe"
@@ -12,6 +10,9 @@ spring:
     password: "ImJustAMachine?!"
     testWhileIdle: "true"
     validationQuery: "SELECT 1"
+
+
+retrainScript: "{{baseDir}}/lf-python-scripts/training/main.py"
 
 training:
   model:

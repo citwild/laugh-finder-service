@@ -1,6 +1,10 @@
 package edu.uw.citw.service.model.impl;
 
+import edu.uw.citw.persistence.domain.AudioVideoMapping;
+import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
+import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.weka.WekaModelUtil;
@@ -8,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -26,13 +31,18 @@ public class ModelServiceImplTest {
     private JsonNodeAdapter jna;
     private ModelDataRepository mr;
     private WekaModelUtil wmu;
+    private LaughterInstanceRepository lir;
+    private AudioVideoMappingRepository amr;
 
     @Before
     public void setUp() throws Exception {
         jna = mock(JsonNodeAdapter.class);
         mr = mock(ModelDataRepository.class);
+        wmu = mock(WekaModelUtil.class);
+        lir = mock(LaughterInstanceRepository.class);
+        amr = mock(AudioVideoMappingRepository.class);
 
-        uut = new ModelServiceImpl(jna, mr, wmu);
+        uut = new ModelServiceImpl(jna, mr, wmu, lir, amr);
     }
 
     /**
@@ -49,6 +59,32 @@ public class ModelServiceImplTest {
         String result = uut.getAllModels();
 
         assertThat(result, equalTo(expectedResult()));
+    }
+
+    /**
+     * Should create expected format
+     */
+    @Test
+    public void getReTrainSamplesAsJson_1() {
+        when(lir.getAllMarkedForRetraining()).thenReturn(
+                Arrays.asList(
+                        new LaughterInstance(1L, 2L, 123456L, 123466L),
+                        new LaughterInstance(2L, 3L, 123456L, 123466L)
+                )
+        );
+        AudioVideoMapping avm1 = new AudioVideoMapping("bucket1", "vid1.mp4", "aud1.wav");
+        avm1.setId(2L);
+        AudioVideoMapping avm2 = new AudioVideoMapping("bucket1", "vid1.mp4", "aud1.wav");
+        avm2.setId(3L);
+
+        when(amr.findById(2)).thenReturn(Collections.singletonList(avm1));
+        when(amr.findById(3)).thenReturn(Collections.singletonList(avm2));
+
+        String result = uut.getReTrainSamplesAsJson();
+
+        assertThat(result, equalTo(
+                "{\"files\": [{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},]}"
+        ));
     }
 
     private List<ModelData> getFakeModelList() {

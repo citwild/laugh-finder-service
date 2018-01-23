@@ -24,18 +24,13 @@ public class PyLaughFinderUtil {
 
     @Value("${testing.mainScript}")
     private String mainScript;
+    @Value("${retrainScript}")
+    private String retrainScript;
     @Value("${testDir}")
     private String testDir;
 
     public PyLaughFinderUtil() {}
 
-    /**
-     * This runs the Python "training" script, which grabs examples from Azure blob and the database
-     *   and creates an ARFF file to be read into a model.
-     */
-    public String getArffFromSamples() {
-
-    }
 
     @Nonnull
     public Process runPythonLaughFinderScript(
@@ -74,6 +69,10 @@ public class PyLaughFinderUtil {
     }
 
 
+    public Process runReTrainingScript() {
+        return null;
+    }
+
 
     public void printPythonLaughFinderOutput(Process proc) {
         try {
@@ -109,17 +108,17 @@ public class PyLaughFinderUtil {
     }
 
 
+    /**
+     * Handles running the python code for re-training. Needs a JSON of the videos to use and
+     *   their timestamps. See main.py of the training code to see.
+     */
     @Nonnull
-    public String[] getTrainingCommand(@Nonnull String bucket, @Nonnull String key) {
-        log.info("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
-                mainScript, bucket, key, testDir, PHASE);
+    public String[] getTrainingCommand(@Nonnull String jsonSamples) {
+        log.info("Using values: \n\tmainScript: {}, \n\tsamples: {}", mainScript, jsonSamples);
 
         return new String[] {
                 "python3", mainScript,
-                "--bucket", bucket,
-                "--key", key,
-                "--arff", testDir,
-                "--phase", PHASE
+                "--samples", jsonSamples
         };
     }
 
