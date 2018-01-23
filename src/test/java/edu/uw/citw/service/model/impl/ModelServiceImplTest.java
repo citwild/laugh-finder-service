@@ -7,6 +7,7 @@ import edu.uw.citw.persistence.repository.AudioVideoMappingRepository;
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
 import edu.uw.citw.util.weka.WekaModelUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ public class ModelServiceImplTest {
     private WekaModelUtil wmu;
     private LaughterInstanceRepository lir;
     private AudioVideoMappingRepository amr;
+    private PyLaughFinderUtil plu;
 
     @Before
     public void setUp() throws Exception {
@@ -41,8 +43,9 @@ public class ModelServiceImplTest {
         wmu = mock(WekaModelUtil.class);
         lir = mock(LaughterInstanceRepository.class);
         amr = mock(AudioVideoMappingRepository.class);
+        plu = mock(PyLaughFinderUtil.class);
 
-        uut = new ModelServiceImpl(jna, mr, wmu, lir, amr);
+        uut = new ModelServiceImpl(jna, mr, wmu, lir, amr, plu);
     }
 
     /**

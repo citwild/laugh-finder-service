@@ -43,23 +43,8 @@ public class PyLaughFinderUtil {
         String[] command = getTestingCommand(bucket, key);
 
         try {
-            Process proc = Runtime
-                    .getRuntime()
-                    .exec(command);
-
-            // check exit code
-            try {
-                int exitValue = proc.waitFor();
-
-                printPythonLaughFinderOutput(proc);
-
-                if (exitValue != 0) {
-                    throw new IOException("Python script exited with non-zero code; command used: "
-                            + printCommandArray(command));
-                }
-            } catch (InterruptedException e) {
-                log.error("There was a failure getting the exit code of the Python Script", e);
-            }
+            Process proc = Runtime.getRuntime().exec(command);
+            runProcess(proc, command);
 
             return proc;
         } catch (IOException e) {
@@ -69,8 +54,18 @@ public class PyLaughFinderUtil {
     }
 
 
-    public Process runReTrainingScript() {
-        return null;
+    public Process runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
+        String[] command = getTrainingCommand(jsonSamples);
+
+        try {
+            Process proc = Runtime.getRuntime().exec(command);
+            runProcess(proc, command);
+
+            return proc;
+        } catch (IOException e) {
+            log.error("There was a failure training a new model: {}", e);
+            throw e;
+        }
     }
 
 
@@ -145,5 +140,20 @@ public class PyLaughFinderUtil {
             val.append(str).append(", ");
         }
         return val.toString();
+    }
+
+    private void runProcess(Process proc, String[] command) throws IOException {
+        try {
+            int exitValue = proc.waitFor();
+
+            printPythonLaughFinderOutput(proc);
+
+            if (exitValue != 0) {
+                throw new IOException("Python script exited with non-zero code; command used: "
+                        + printCommandArray(command));
+            }
+        } catch (InterruptedException e) {
+            log.error("There was a failure getting the exit code of the Python Script", e);
+        }
     }
 }

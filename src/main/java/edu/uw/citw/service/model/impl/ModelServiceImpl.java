@@ -11,12 +11,15 @@ import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
 import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.service.model.ModelService;
 import edu.uw.citw.util.JsonNodeAdapter;
+import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
 import edu.uw.citw.util.weka.WekaModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +36,7 @@ public class ModelServiceImpl implements ModelService {
     private WekaModelUtil modelUtil;
     private LaughterInstanceRepository instanceRepository;
     private AudioVideoMappingRepository avRepository;
+    private PyLaughFinderUtil pythonUtil;
 
     @Autowired
     public ModelServiceImpl(
@@ -40,12 +44,14 @@ public class ModelServiceImpl implements ModelService {
             ModelDataRepository modelRepository,
             WekaModelUtil modelUtil,
             LaughterInstanceRepository instanceRepository,
-            AudioVideoMappingRepository avRepository) {
+            AudioVideoMappingRepository avRepository,
+            PyLaughFinderUtil pythonUtil) {
         this.jsonAdapter = jsonAdapter;
         this.modelRepository = modelRepository;
         this.modelUtil = modelUtil;
         this.instanceRepository = instanceRepository;
         this.avRepository = avRepository;
+        this.pythonUtil = pythonUtil;
     }
 
     /**
@@ -79,7 +85,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public String switchModel(Long id) {
+    public String switchModel(@Nonnull Long id) {
         // TODO: some error handling here
 
         // get current model in use
@@ -98,13 +104,20 @@ public class ModelServiceImpl implements ModelService {
     public void reTrainNewModel() {
         // TODO: maybe just create a DB view that creates JSON per every update?
         // get all training samples
-
-
+        String json = getReTrainSamplesAsJson();
 
         // submit milliseconds, videos to python
-//        modelUtil.
+        try {
+            pythonUtil.runReTrainingScript(json);
+        } catch (IOException e) {
+            log.error("Re-training failed, exiting process entirely.");
+            return;
+        }
+
         // python script creates ARFF samples
+
         // use WEKA API to generate model
+
         // save model, arff, user, time, inUse=false to database
     }
 
