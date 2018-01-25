@@ -2,6 +2,7 @@ package edu.uw.citw.model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class RetrainSampleFile {
 
@@ -63,10 +64,11 @@ public class RetrainSampleFile {
             "\"bucket\": \"" + bucket + "\", " +
             "\"instances\": ["
         );
+        StringJoiner joiner = new StringJoiner(",");
         for (RetrainSampleInstance instance : instances) {
-            sb.append(instance.toString()).append(",");
+            joiner.add(instance.toString());
         }
-        sb.append("]}");
+        sb.append(joiner.toString()).append("]}");
         return sb.toString();
     }
 }

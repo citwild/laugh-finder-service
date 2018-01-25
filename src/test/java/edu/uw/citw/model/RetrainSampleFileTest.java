@@ -25,7 +25,7 @@ public class RetrainSampleFileTest {
         );
 
         assertThat(uut.toString(), equalTo(
-                "{\"key\" = \"video/someone.mp4\",\"bucket\" = \"lfassets\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]}"
+                "{\"key\": \"video/someone.mp4\", \"bucket\": \"lfassets\", \"instances\": [{\"start\": 123.456, \"stop\": 123.466, \"correct\": \"Y\"},{\"start\": 123.456, \"stop\": 123.466, \"correct\": \"Y\"}]}"
         ));
     }
 }
