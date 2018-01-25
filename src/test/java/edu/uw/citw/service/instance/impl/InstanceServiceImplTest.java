@@ -65,6 +65,27 @@ public class InstanceServiceImplTest {
     }
 
     /**
+     * Should return expected format.
+     */
+     @Test
+     public void getTrainingEligibleInstances_1() {
+        // provide a laughter instance
+        when(lir.getAllMarkedForRetraining())
+            .thenReturn(getFakeInstanceValue());
+
+        // expect specific video id
+        when(avmr.findById(1))
+            .thenReturn(getFakeVideoMapping());
+
+        when(jna.createJsonArray(eq("retrainingSamples"), anyCollection()))
+            .thenCallRealMethod();
+
+        String result = uut.getTrainingEligibleInstances();
+        assertThat(result, equalTo(expectedRetrainSampleResult()));
+    }
+
+
+    /**
      * Simulate the Instance result from the database service
      */
     private List<LaughterInstance> getFakeInstanceValue() {

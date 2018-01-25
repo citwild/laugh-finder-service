@@ -3,6 +3,7 @@ package edu.uw.citw.service.instance.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uw.citw.model.RetrainSampleFile;
+import edu.uw.citw.model.RetrainSampleUrlData;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
 import edu.uw.citw.persistence.domain.LaughterInstance;
 import edu.uw.citw.persistence.domain.Tag;
@@ -95,6 +96,47 @@ public class InstanceServiceImpl implements InstanceService {
         instanceRepository.save(update);
 
         return "{}";
+    }
+
+    public String getTrainingEligibleInstances() {
+        // value to be returned
+        List<RetrainSampleUrlData> samples = new ArrayList<>();
+
+        List<LaughterInstance> eligibleSamples = instanceRepository.getAllMarkedForRetraining();
+
+        // for each instance, map them by s3_key
+        Map<Long, List<LaughterInstance>> instancesPerVideo = new HashMap<>();
+        for (LaughterInstance sample : eligibleSamples) {
+
+            long videoKey = sample.getS3Key();
+            instancesPerVideo.computeIfAbsent(videoKey, k -> new ArrayList<>());
+
+            List<LaughterInstance> updatedList = instancesPerVideo.get(videoKey);
+            updatedList.add(sample);
+            instancesPerVideo.put(videoKey, updatedList);
+        }
+
+        // for each s3 key, grab video deets
+        for (Map.Entry<Long, List<LaughterInstance>> entry : instancesPerVideo.entrySet()) {
+            // assumes we find a single matching result
+            List<AudioVideoMapping> vidResult = assetRepository.findById(entry.getKey().intValue());
+            AudioVideoMapping video = vidResult.get(0);
+
+            // for each instance, create result using instance and video deets
+            for (LaughterInstance instance : entry.getValue()) {
+                samples.add(
+                    new RetrainSampleUrlData(
+                        video.getBucket(),
+                        video.getVideoFile(),
+                        convertMsToSeconds(instance.getStartTime()),
+                        convertMsToSeconds(instance.getStopTime()),
+                        instance.getAlgCorrect()
+                    )
+                );
+            }
+        }
+
+        return jsonNodeAdapter.createJsonArray(RETRAINING_SAMPLES_LABEL, samples);
     }
 
     private Double convertMsToSeconds(Long sec) {
