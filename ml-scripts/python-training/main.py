@@ -45,7 +45,9 @@ def generateArffHeader():
 def createArff(features, labels):
     arff = generateArffHeader()
     for x in range(len(features)):
-        arff += (' '.join(str(val) for val in features[x]) + " " + labels[x] + "\n")
+        # Uses features[x][0] because only searching a single value
+        sample = (' '.join(str(round(val, 11)) for val in features[x][0]) + " " + labels[x] + "\n")
+        arff += sample
 
     return arff
 
