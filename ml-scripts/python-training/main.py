@@ -121,4 +121,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Execute
-    execute(args.samples)
+    print(execute(args.samples))
