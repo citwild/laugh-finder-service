@@ -63,6 +63,6 @@ public class InstanceController {
     public String updateInstance() throws IOException {
         log.debug("Retrieving instances eligible for retraining");
 
-        return instanceService.getTrainingEligibleInstances();
+        return "";
     }
 }

@@ -97,48 +97,6 @@ public class InstanceServiceImpl implements InstanceService {
         return "{}";
     }
 
-    @Override
-    public String getTrainingEligibleInstances() {
-        // value to be returned
-        List<RetrainSampleFile> samples = new ArrayList<>();
-
-        List<LaughterInstance> eligibleSamples = instanceRepository.getAllMarkedForRetraining();
-
-        // for each instance, map them by s3_key
-        Map<Long, List<LaughterInstance>> instancesPerVideo = new HashMap<>();
-        for (LaughterInstance sample : eligibleSamples) {
-
-            long videoKey = sample.getS3Key();
-            instancesPerVideo.computeIfAbsent(videoKey, k -> new ArrayList<>());
-
-            List<LaughterInstance> updatedList = instancesPerVideo.get(videoKey);
-            updatedList.add(sample);
-            instancesPerVideo.put(videoKey, updatedList);
-        }
-
-        // for each s3 key, grab video deets
-        for (Map.Entry<Long, List<LaughterInstance>> entry : instancesPerVideo.entrySet()) {
-            // assumes we find a single matching result
-            List<AudioVideoMapping> vidResult = assetRepository.findById(entry.getKey().intValue());
-            AudioVideoMapping video = vidResult.get(0);
-
-            // for each instance, create result using instance and video deets
-//            for (LaughterInstance instance : entry.getValue()) {
-//                samples.add(
-//                    new RetrainSampleFile(
-//                        video.getBucket(),
-//                        video.getVideoFile(),
-//                        convertMsToSeconds(instance.getStartTime()),
-//                        convertMsToSeconds(instance.getStopTime()),
-//                        instance.getAlgCorrect()
-//                    )
-//                );
-//            }
-        }
-
-        return jsonNodeAdapter.createJsonArray(RETRAINING_SAMPLES_LABEL, samples);
-    }
-
     private Double convertMsToSeconds(Long sec) {
         double result = (double) sec;
         return result / 1000;

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -106,17 +107,24 @@ public class ModelServiceImpl implements ModelService {
         // get all training samples
         String json = getReTrainSamplesAsJson();
 
-        // submit milliseconds, videos to python
+        // submit milliseconds & videos to python, python script creates ARFF samples
+        String arff = "";
         try {
-            pythonUtil.runReTrainingScript(json);
+            arff = pythonUtil.runReTrainingScript(json);
         } catch (IOException e) {
-            log.error("Re-training failed, exiting process entirely.");
+            log.error("Unable to create the ARFF file. Exiting process.");
             return;
         }
 
-        // python script creates ARFF samples
-
         // use WEKA API to generate model
+        try {
+            modelUtil.classifyAndGetModel(
+                    new ByteArrayInputStream(arff.getBytes())
+            );
+        } catch (Exception e) {
+            log.error("Unable to create the model. Exiting process.");
+        }
+
 
         // save model, arff, user, time, inUse=false to database
     }

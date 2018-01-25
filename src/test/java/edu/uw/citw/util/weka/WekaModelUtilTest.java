@@ -32,7 +32,7 @@ public class WekaModelUtilTest {
 
     @Test
     public void readArffFile_ShouldProvideTheExpectedInstances() throws Exception {
-        Instances result = uut.readArffFile(inputArffPath);
+        Instances result = uut.readArff(inputArffPath);
         assertEquals(194, result.size());
     }
 
@@ -64,15 +64,5 @@ public class WekaModelUtilTest {
         String expected = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
                           "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
         assertEquals(expected, uut.getKnnOptions());
-    }
-
-    @Test
-    public void name() {
-        String result = uut.generateArff(new Instances(
-                "Laughter",
-                new ArrayList(),
-                1
-        ));
-        System.out.println(result);
     }
 }

@@ -54,39 +54,28 @@ public class PyLaughFinderUtil {
     }
 
 
-    public Process runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
+    public String runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
+        StringBuilder result = new StringBuilder();
         String[] command = getTrainingCommand(jsonSamples);
 
         try {
             Process proc = Runtime.getRuntime().exec(command);
             runProcess(proc, command);
 
-            return proc;
+            // get output
+            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            while ((line = inputStream.readLine()) != null) {
+                result.append(line);
+                log.info("\t" + line);
+            }
+            return result.toString();
         } catch (IOException e) {
             log.error("There was a failure training a new model: {}", e);
             throw e;
         }
     }
 
-
-    public void printPythonLaughFinderOutput(Process proc) {
-        try {
-            // log any output
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = inputStream.readLine()) != null) {
-                log.info("\t" + line);
-            }
-
-            // log any errors
-            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-            while ((line = errorStream.readLine()) != null) {
-                log.error("\t" + line);
-            }
-        } catch (IOException e) {
-            log.error("There was a failure printing the Python script's output", e);
-        }
-    }
 
     @Nonnull
     public String[] getTestingCommand(@Nonnull String bucket, @Nonnull String key) {
@@ -117,6 +106,7 @@ public class PyLaughFinderUtil {
         };
     }
 
+
     public String getMainScript() {
         return mainScript;
     }
@@ -145,8 +135,6 @@ public class PyLaughFinderUtil {
     private void runProcess(Process proc, String[] command) throws IOException {
         try {
             int exitValue = proc.waitFor();
-
-            printPythonLaughFinderOutput(proc);
 
             if (exitValue != 0) {
                 throw new IOException("Python script exited with non-zero code; command used: "
