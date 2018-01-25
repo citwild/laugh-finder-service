@@ -52,8 +52,8 @@ public class ModelController {
     @Nullable
     @ResponseBody
     @PostMapping(value = "/retrain")
-    public String retrainNewModel() throws IOException {
+    public void retrainNewModel() throws IOException {
         log.debug("Retraining a new model");
-        return modelService.retrainNewModel();
+        modelService.retrainNewModel();
     }
 }

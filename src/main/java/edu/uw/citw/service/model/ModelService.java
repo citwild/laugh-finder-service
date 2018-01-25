@@ -6,5 +6,5 @@ public interface ModelService {
 
     String switchModel(Long id);
 
-    String retrainNewModel();
+    void retrainNewModel();
 }

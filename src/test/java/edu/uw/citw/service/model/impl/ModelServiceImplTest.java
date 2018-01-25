@@ -10,8 +10,11 @@ import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
 import edu.uw.citw.util.weka.WekaModelUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import weka.classifiers.lazy.IBk;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -88,6 +91,16 @@ public class ModelServiceImplTest {
         assertThat(result, equalTo(
                 "{\"files\": [{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},]}"
         ));
+    }
+
+    /**
+     * I just wrote this to make sure the byte output was similar to previous.
+     */
+    @Ignore
+    @Test
+    public void getModelOutput_1() {
+        ByteArrayOutputStream result = uut.getModelOutput(mock(IBk.class));
+        assertThat(result.toString(), equalTo(""));
     }
 
     private List<ModelData> getFakeModelList() {

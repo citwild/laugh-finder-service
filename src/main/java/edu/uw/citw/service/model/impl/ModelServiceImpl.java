@@ -17,10 +17,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import weka.classifiers.lazy.IBk;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -102,7 +106,8 @@ public class ModelServiceImpl implements ModelService {
         return "{\"message\":\"success\"}";
     }
 
-    public void reTrainNewModel() {
+    @Override
+    public void retrainNewModel() {
         // TODO: maybe just create a DB view that creates JSON per every update?
         // get all training samples
         String json = getReTrainSamplesAsJson();
@@ -112,22 +117,46 @@ public class ModelServiceImpl implements ModelService {
         try {
             arff = pythonUtil.runReTrainingScript(json);
         } catch (IOException e) {
-            log.error("Unable to create the ARFF file. Exiting process.");
+            log.error("Unable to create the ARFF file. Exiting process.", e);
             return;
         }
 
         // use WEKA API to generate model
+        ByteArrayOutputStream bytes = null;
         try {
-            modelUtil.classifyAndGetModel(
-                    new ByteArrayInputStream(arff.getBytes())
-            );
+            IBk model = modelUtil.classifyAndGetModel(new ByteArrayInputStream(arff.getBytes()));
+            bytes = getModelOutput(model);
         } catch (Exception e) {
-            log.error("Unable to create the model. Exiting process.");
+            log.error("Unable to create the model. Exiting process.", e);
         }
 
-
         // save model, arff, user, time, inUse=false to database
+        ModelData newModel = new ModelData();
+        assert bytes != null;
+        newModel.setModelBinary(bytes.toByteArray());
+        newModel.setArffData(arff);
+        newModel.setCreatedDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        newModel.setCreatedBy("default");
+        newModel.setInUse(false);
+
+        modelRepository.save(newModel);
     }
+
+
+    protected ByteArrayOutputStream getModelOutput(IBk model) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(model);
+            oos.flush();
+            oos.close();
+        } catch (IOException e) {
+            log.error("Unable to serialize model.", e);
+            return null;
+        }
+        return baos;
+    }
+
 
     protected String getReTrainSamplesAsJson() {
         StringBuilder result = new StringBuilder();
@@ -172,12 +201,5 @@ public class ModelServiceImpl implements ModelService {
         result.append("]}");
 
         return result.toString();
-    }
-
-
-    @Override
-    public String retrainNewModel() {
-
-        return null;
     }
 }
