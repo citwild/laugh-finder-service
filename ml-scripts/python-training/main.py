@@ -1,7 +1,10 @@
+
 __author__ = 'Shalini Ramachandra'
 
 import argparse
-import json
+import ujson
+from pydub import AudioSegment
+from io import BytesIO
 
 from file_feature_extraction import file_feature_extraction
 from get_azure_blob import get_wav_file
@@ -48,6 +51,7 @@ def createArff(features, labels):
 
 
 def execute(json_input):
+
     videos = parse_json(json_input)
 
     labels = []  # for correctness
@@ -58,15 +62,24 @@ def execute(json_input):
 
         # Get audio from store
         audio_file = get_wav_file(video['bucket'], video['key'])
+        audio_file = AudioSegment.from_wav(audio_file)
 
         # For each sample in audio file, process and append to ARFF
         for sample in video['instances']:
-            # slice audio file using ffmpeg
-            audio_sample = None
+            # grab sample and export into byte string
+            audio_sample = BytesIO()
+            audio_file[
+                int(sample['start'] * 1000)
+                :int(sample['stop'] * 1000)
+            ].export(
+                audio_sample,
+                format='wav'
+            )
 
             feature_array.append(
                 file_feature_extraction(
-                    audio_sample,
+                    # re_read_file,
+                    BytesIO(audio_sample.getvalue()),
                     win=(sample['stop'] - sample['start'])  # set custom window
                 )
             )
@@ -77,7 +90,7 @@ def execute(json_input):
 
 # Parses input JSON into videos and their timestamp samples
 def parse_json(input_json):
-    return json.loads(input_json)['files']
+    return ujson.loads(input_json)['files']
 
 
 """

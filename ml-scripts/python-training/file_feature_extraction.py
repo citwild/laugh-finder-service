@@ -1,3 +1,4 @@
+from scipy.io import wavfile
 import numpy as np
 
 import feature_mfccs_init
@@ -11,7 +12,8 @@ Extracts the audio features for the given audio file
 """
 
 
-def file_feature_extraction(audio_info, win=0.800, step=0.100, amplitude_filter=False, diff_filter=False):
+def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False, diff_filter=False):
+    audio_info = wavfile.read(file)
     fs = audio_info[0]
     signal = audio_info[1]
 
@@ -38,7 +40,7 @@ def file_feature_extraction(audio_info, win=0.800, step=0.100, amplitude_filter=
     mfcc_params = feature_mfccs_init.feature_mfccs_init(window_length, fs)
 
     win = np.int(window_length)
-    nfft = win / 2
+    nfft = int(win / 2)
 
     cur_pos = 1
 
