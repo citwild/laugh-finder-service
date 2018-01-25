@@ -113,7 +113,7 @@ public class ModelServiceImpl implements ModelService {
         String json = getReTrainSamplesAsJson();
 
         // submit milliseconds & videos to python, python script creates ARFF samples
-        String arff = "";
+        String arff;
         try {
             arff = pythonUtil.runReTrainingScript(json);
         } catch (IOException e) {
@@ -181,7 +181,7 @@ public class ModelServiceImpl implements ModelService {
         }
 
         // For every asset, model data and add instances.
-        result.append("{\"files\": [");
+        result.append("'{\"files\": [");
         for (AudioVideoMapping asset : assets) {
             List<LaughterInstance> list = instanceMap.get(asset.getId());
             List<RetrainSampleInstance> samples = new ArrayList<>();
@@ -198,7 +198,7 @@ public class ModelServiceImpl implements ModelService {
 
             result.append(file.toString()).append(",");
         }
-        result.append("]}");
+        result.append("]}'");
 
         return result.toString();
     }

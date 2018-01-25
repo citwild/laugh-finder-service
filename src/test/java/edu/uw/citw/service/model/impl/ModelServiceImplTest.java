@@ -89,7 +89,7 @@ public class ModelServiceImplTest {
         String result = uut.getReTrainSamplesAsJson();
 
         assertThat(result, equalTo(
-                "{\"files\": [{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},{\"key\" = \"aud1.wav\",\"bucket\" = \"bucket1\",\"instances\" = [{\"start\"=123.456,\"stop\"=123.466,\"correct\"=\"Y\"},]},]}"
+                "'{\"files\": [{\"key\": \"aud1.wav\", \"bucket\": \"bucket1\", \"instances\": [{\"start\": 123.456, \"stop\": 123.466, \"correct\": \"Y\"},]},{\"key\": \"aud1.wav\", \"bucket\": \"bucket1\", \"instances\": [{\"start\": 123.456, \"stop\": 123.466, \"correct\": \"Y\"},]},]}'"
         ));
     }
 

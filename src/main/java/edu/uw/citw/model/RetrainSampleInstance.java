@@ -60,7 +60,7 @@ public class RetrainSampleInstance {
 
     @Override
     public String toString() {
-        return "{\"start\"=" + start + ",\"stop\"=" + stop + ",\"correct\"=\"" + correct + "\"" + '}';
+        return "{\"start\": " + start + ", \"stop\": " + stop + ", \"correct\": \"" + correct + "\"" + '}';
     }
 
     // TODO: This should be a utility class method or something. Used in a bunch of places.

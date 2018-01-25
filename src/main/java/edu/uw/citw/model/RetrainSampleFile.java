@@ -59,9 +59,9 @@ public class RetrainSampleFile {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(
-            "{\"key\" = \"" + key + "\"," +
-            "\"bucket\" = \"" + bucket + "\"," +
-            "\"instances\" = ["
+            "{\"key\": \"" + key + "\", " +
+            "\"bucket\": \"" + bucket + "\", " +
+            "\"instances\": ["
         );
         for (RetrainSampleInstance instance : instances) {
             sb.append(instance.toString()).append(",");
