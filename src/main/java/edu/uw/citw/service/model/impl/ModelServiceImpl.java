@@ -181,7 +181,7 @@ public class ModelServiceImpl implements ModelService {
         }
 
         // For every asset, model data and add instances.
-        result.append("'{\"files\": [");
+        result.append("{\"files\": [");
         StringJoiner joiner = new StringJoiner(",");
         for (AudioVideoMapping asset : assets) {
             List<LaughterInstance> list = instanceMap.get(asset.getId());
@@ -200,7 +200,7 @@ public class ModelServiceImpl implements ModelService {
             joiner.add(file.toString());
         }
         result.append(joiner.toString());
-        result.append("]}'");
+        result.append("]}");
 
         return result.toString();
     }
