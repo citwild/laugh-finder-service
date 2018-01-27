@@ -23,6 +23,7 @@ def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False,
 
     # short-term feature extraction
     number_of_samples = len(signal)
+    duration = np.float_(numberOfSamples) / fs  # in seconds
 
     # convert window length and step from seconds to samples
     window_length = np.int(np.round(win * fs))
@@ -84,6 +85,8 @@ def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False,
         features[i][19] = stSpectralRollOff(X, 0.90, fs)
 
         cur_pos = cur_pos + step_in_samples
+        frameFFTPrev = frameFFT
+        Xprev = X.copy()
 
     ampl_threshold = np.percentile(ampl_vals, 93)
     diff_threshold = np.percentile(diff_vals, 80)

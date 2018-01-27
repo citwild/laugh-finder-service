@@ -103,6 +103,7 @@ def file_feature_extraction(file, win=0.032, step=0.016, amplitudeFilter=False, 
 
     ampl_threshold = np.percentile(ampl_vals, 93)
     diff_threshold = np.percentile(diff_vals, 80)
+
     for i in range(0, numOfFrames):
         if amplitudeFilter and ampl_vals[i] < ampl_threshold:
             Features[i][20] = 1.0
