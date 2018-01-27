@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringJoiner;
 
 /**
  * Handles running Python code.
@@ -46,6 +47,18 @@ public class PyLaughFinderUtil {
             Process proc = Runtime.getRuntime().exec(command);
             runProcess(proc, command);
 
+            // get output
+            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            while ((line = inputStream.readLine()) != null) {
+                log.info("\t" + line);
+            }
+            // log any errors
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            while ((line = errorStream.readLine()) != null) {
+                log.error("\t" + line);
+            }
+
             return proc;
         } catch (IOException e) {
             log.error("There was a failure analyzing the audio file: {}", key, e);
@@ -69,9 +82,15 @@ public class PyLaughFinderUtil {
                 result.append(line);
                 log.info("\t" + line);
             }
+            // log any errors
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            while ((line = errorStream.readLine()) != null) {
+                log.error("\t" + line);
+            }
+
             return result.toString();
         } catch (IOException e) {
-            log.error("There was a failure training a new model: {}", e);
+            log.error("There was a failure training a new model: ", e);
             throw e;
         }
     }
@@ -98,10 +117,10 @@ public class PyLaughFinderUtil {
      */
     @Nonnull
     public String[] getTrainingCommand(@Nonnull String jsonSamples) {
-        log.info("Using values: \n\tmainScript: {}, \n\tsamples: {}", mainScript, jsonSamples);
+        log.info("Using values: \n\tmainScript: {}, \n\tsamples: {}", retrainScript, jsonSamples);
 
         return new String[] {
-                "python3", mainScript,
+                "python3", retrainScript,
                 "--samples", jsonSamples
         };
     }
@@ -125,9 +144,9 @@ public class PyLaughFinderUtil {
 
     // for logging System.exec command
     private String printCommandArray(String[] cmd) {
-        StringBuilder val = new StringBuilder();
+        StringJoiner val = new StringJoiner(",");
         for (String str : cmd) {
-            val.append(str).append(", ");
+            val.add(str);
         }
         return val.toString();
     }
