@@ -9,4 +9,6 @@ public interface InstanceService {
     String deleteInstance(Long id);
 
     String updateInstance(Long id, JsonNode val) throws IOException;
+
+    String getTrainingEligibleInstances();
 }

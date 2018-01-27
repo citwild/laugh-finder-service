@@ -1,13 +1,13 @@
 import unittest
-import main
-import logging
+import main as uut
 import logging.config
 
 """
 Test the main python script
 """
-class MainTest(unittest.TestCase):
 
+
+class MainTest(unittest.TestCase):
     logging.config.fileConfig("../resources/logging.conf")
     log = logging.getLogger("logger")
 
@@ -42,6 +42,58 @@ class MainTest(unittest.TestCase):
 
     @data"""
 
-    def generateWekaHeader_MustContainCorrectFormat(self):
-        self.log.info("Testing format of Weka file header")
-        self.assertEquals(main.generateWekaHeader(), self.headerOutput)
+    # Should create the expected header
+    # def test_generateArffHeader_1(self):
+    #     self.log.info("Testing format of Weka file header")
+    #     self.assertEquals(uut.generateArffHeader(), self.headerOutput)
+
+    # Should read a
+    def test_parse_json_1(self):
+        input = '''
+            {
+                "files": [
+                    {
+                        "key": "lfassets",
+                        "bucket": "video/some1.mp4",
+                        "instances": [
+                            {
+                                "start": 10.200,
+                                "stop": 11.000,
+                                "correct": "Y"
+                            }
+                        ]
+                    },
+                    {
+                        "key": "lfassets",
+                        "bucket": "video/some2.mp4",
+                        "instances": [
+                            {
+                                "start": 8.000,
+                                "stop": 8.800,
+                                "correct": "N"
+                            }
+                        ]
+                    }
+                ]
+            }
+        '''
+        result = uut.parse_json(input)
+
+        self.assertEqual("lfassets", result[0]['key'])
+        self.assertEqual("video/some2.mp4", result[1]['bucket'])
+        self.assertEqual(10.200, result[0]['instances'][0]['start'])
+
+    # Should produce expected output
+    def test_createArff_1(self):
+        print(
+            uut.createArff(
+                [
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                ],
+                [
+                    'YES',
+                    'NO'
+                ]
+            )
+        )

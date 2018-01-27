@@ -56,4 +56,13 @@ public class InstanceController {
         JsonNode val = mapper.readTree(payload);
         return instanceService.updateInstance(id, val);
     }
+
+    @Nullable
+    @ResponseBody
+    @GetMapping(value = "/training-eligible-samples")
+    public String updateInstance() throws IOException {
+        log.debug("Retrieving instances eligible for retraining");
+
+        return instanceService.getTrainingEligibleInstances();
+    }
 }

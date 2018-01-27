@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringJoiner;
 
 /**
  * Handles running Python code.
@@ -24,10 +25,13 @@ public class PyLaughFinderUtil {
 
     @Value("${testing.mainScript}")
     private String mainScript;
+    @Value("${retrainScript}")
+    private String retrainScript;
     @Value("${testDir}")
     private String testDir;
 
     public PyLaughFinderUtil() {}
+
 
     @Nonnull
     public Process runPythonLaughFinderScript(
@@ -37,26 +41,11 @@ public class PyLaughFinderUtil {
     {
         log.debug("Running Python script to search for laughter");
 
-        String[] command = getCommand(bucket, key);
+        String[] command = getTestingCommand(bucket, key);
 
         try {
-            Process proc = Runtime
-                    .getRuntime()
-                    .exec(command);
-
-            // check exit code
-            try {
-                int exitValue = proc.waitFor();
-
-                printPythonLaughFinderOutput(proc);
-
-                if (exitValue != 0) {
-                    throw new IOException("Python script exited with non-zero code; command used: "
-                            + printCommandArray(command));
-                }
-            } catch (InterruptedException e) {
-                log.error("There was a failure getting the exit code of the Python Script", e);
-            }
+            Process proc = Runtime.getRuntime().exec(command);
+            runProcess(proc, command);
 
             return proc;
         } catch (IOException e) {
@@ -65,27 +54,33 @@ public class PyLaughFinderUtil {
         }
     }
 
-    public void printPythonLaughFinderOutput(Process proc) {
+
+    public String runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
+        StringBuilder result = new StringBuilder();
+        String[] command = getTrainingCommand(jsonSamples);
+
         try {
-            // log any output
+            Process proc = Runtime.getRuntime().exec(command);
+            runProcess(proc, command);
+
+            // get output
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = inputStream.readLine()) != null) {
+                result.append(line + "\n");
                 log.info("\t" + line);
             }
 
-            // log any errors
-            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-            while ((line = errorStream.readLine()) != null) {
-                log.error("\t" + line);
-            }
+            return result.toString();
         } catch (IOException e) {
-            log.error("There was a failure printing the Python script's output", e);
+            log.error("There was a failure training a new model: ", e);
+            throw e;
         }
     }
 
+
     @Nonnull
-    public String[] getCommand(@Nonnull String bucket, @Nonnull String key) {
+    public String[] getTestingCommand(@Nonnull String bucket, @Nonnull String key) {
         log.info("Using values: \n\tmainScript: {}, \n\tbucket: {}, \n\tkey: {}, \n\tarff: {}, \n\tphase: {}",
                 mainScript, bucket, key, testDir, PHASE);
 
@@ -97,6 +92,22 @@ public class PyLaughFinderUtil {
                 "--phase", PHASE
         };
     }
+
+
+    /**
+     * Handles running the python code for re-training. Needs a JSON of the videos to use and
+     *   their timestamps. See main.py of the training code to see.
+     */
+    @Nonnull
+    public String[] getTrainingCommand(@Nonnull String jsonSamples) {
+        log.info("Using values: \n\tmainScript: {}, \n\tsamples: {}", retrainScript, jsonSamples);
+
+        return new String[] {
+                "python3", retrainScript,
+                "--samples", jsonSamples
+        };
+    }
+
 
     public String getMainScript() {
         return mainScript;
@@ -116,10 +127,32 @@ public class PyLaughFinderUtil {
 
     // for logging System.exec command
     private String printCommandArray(String[] cmd) {
-        String val = "";
+        StringJoiner val = new StringJoiner(",");
         for (String str : cmd) {
-            val += str + ", ";
+            val.add(str);
         }
-        return val;
+        return val.toString();
+    }
+
+    private void runProcess(Process proc, String[] command) throws IOException {
+        try {
+            int exitValue = proc.waitFor();
+
+            // log any errors
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+            if (exitValue != 0) {
+                // Log process error output
+                String line;
+                while ((line = errorStream.readLine()) != null) {
+                    log.error("\t" + line);
+                }
+
+                throw new IOException("Python script exited with non-zero code; command used: "
+                        + printCommandArray(command));
+            }
+        } catch (InterruptedException e) {
+            log.error("There was a failure getting the exit code of the Python Script", e);
+        }
     }
 }
