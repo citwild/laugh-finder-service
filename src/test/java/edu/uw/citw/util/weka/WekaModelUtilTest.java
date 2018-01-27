@@ -37,7 +37,7 @@ public class WekaModelUtilTest {
     }
 
     @Test
-    public void classifyAndSaveModel_ShouldReadTheExpectedFile() throws Exception {
+    public void classifyAndGetModel_ShouldReadTheExpectedFile() throws Exception {
         String expectedString = "IB1 instance-based classifier\nusing 6 nearest neighbour(s) for classification\n";
         IBk result = uut.classifyAndGetModel(inputArffPath);
         assertThat(result.toString(), hasToString(expectedString));
@@ -57,12 +57,5 @@ public class WekaModelUtilTest {
             file.delete();
         }
         testFilesDir.delete();
-    }
-
-    @Test
-    public void knnOptions_ShouldBeAsExpected() throws Exception {
-        String expected = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
-                          "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
-        assertEquals(expected, uut.getKnnOptions());
     }
 }

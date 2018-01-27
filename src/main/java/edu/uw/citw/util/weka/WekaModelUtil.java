@@ -3,6 +3,7 @@ package edu.uw.citw.util.weka;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import weka.classifiers.Evaluation;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
@@ -10,6 +11,7 @@ import weka.core.converters.ConverterUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
+import java.util.Random;
 
 
 /**
@@ -22,10 +24,6 @@ import java.io.InputStream;
 public class WekaModelUtil {
 
     private static Logger log = LoggerFactory.getLogger(WekaModelUtil.class);
-
-    // copied from the Weka app when building the model manually
-    private final String KNN_OPTIONS = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +
-                                       "\\\"weka.core.EuclideanDistance -R first-last\\\"\"";
 
 
     public Instances readArff(@Nonnull InputStream inputData) throws Exception {
@@ -61,11 +59,10 @@ public class WekaModelUtil {
 
 
     private IBk processData(Instances data) throws Exception {
-        // set classifier
-        IBk iBk = new IBk();
-        // establish algorithm options
-        iBk.setOptions(weka.core.Utils.splitOptions(KNN_OPTIONS));
-        // train
+        // Going to do this Shalini's way
+        IBk iBk = new IBk(6);
+        Evaluation eval = new Evaluation(data);
+        eval.crossValidateModel(iBk, data, 10, new Random(1));
         iBk.buildClassifier(data);
 
         return iBk;
@@ -74,9 +71,5 @@ public class WekaModelUtil {
 
     public void saveModel(@Nonnull String modelOutputPath, @Nonnull IBk iBk) throws Exception {
         SerializationHelper.write(modelOutputPath, iBk);
-    }
-
-    public String getKnnOptions() {
-        return KNN_OPTIONS;
     }
 }
