@@ -57,7 +57,7 @@ public class InstancePersistenceUtilTest {
         stubFoundLaughter.addInstance(1000, 2000);
         stubFoundLaughter.addInstance(3000, 4000);
 
-        unitUnderTest.saveInstances(stubFoundLaughter, 1234);
+        unitUnderTest.saveInstances(stubFoundLaughter, 1234, 1L);
 
         // verify database save method invoked
         verify(laughterInstanceRepository, atLeast(2)).save((LaughterInstance) any());
@@ -68,7 +68,7 @@ public class InstancePersistenceUtilTest {
         LaughInstance stubLaughInstance = new LaughInstance(1000, 2000);
         long stubKey = 1234;
 
-        LaughterInstance result = unitUnderTest.createInstance(stubLaughInstance, stubKey);
+        LaughterInstance result = unitUnderTest.createInstance(stubLaughInstance, stubKey, 1L);
 
         assertTrue(stubLaughInstance.getStart() == result.getStartTime());
         assertTrue(stubLaughInstance.getStop() == result.getStopTime());

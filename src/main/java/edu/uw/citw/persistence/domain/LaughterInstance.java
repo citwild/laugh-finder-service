@@ -36,13 +36,17 @@ public class LaughterInstance implements Serializable {
     @Column(name = "USE_FOR_RETRAIN", nullable = false)
     private Boolean useForRetrain;
 
+    @Column(name = "MODEL_USED", nullable = false)
+    private Long modelUsed;
+
     public LaughterInstance() {}
 
-    public LaughterInstance(Long id, Long s3Key, Long startTime, Long stopTime) {
+    public LaughterInstance(Long id, Long s3Key, Long startTime, Long stopTime, Long modelUsed) {
         this.id = id;
         this.s3Key = s3Key;
         this.startTime = startTime;
         this.stopTime = stopTime;
+        this.modelUsed = modelUsed;
 
         this.algCorrect = true;
         this.userMade = false;
@@ -105,6 +109,14 @@ public class LaughterInstance implements Serializable {
         this.useForRetrain = useForRetrain;
     }
 
+    public Long getModelUsed() {
+        return modelUsed;
+    }
+
+    public void setModelUsed(Long modelUsed) {
+        this.modelUsed = modelUsed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,13 +128,14 @@ public class LaughterInstance implements Serializable {
                 Objects.equals(stopTime, that.stopTime) &&
                 Objects.equals(algCorrect, that.algCorrect) &&
                 Objects.equals(userMade, that.userMade) &&
-                Objects.equals(useForRetrain, that.useForRetrain);
+                Objects.equals(useForRetrain, that.useForRetrain) &&
+                Objects.equals(modelUsed, that.modelUsed);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, s3Key, startTime, stopTime, algCorrect, userMade, useForRetrain);
+        return Objects.hash(id, s3Key, startTime, stopTime, algCorrect, userMade, useForRetrain, modelUsed);
     }
 
     @Override
@@ -135,6 +148,7 @@ public class LaughterInstance implements Serializable {
                 ", algCorrect=" + algCorrect +
                 ", userMade=" + userMade +
                 ", useForRetrain=" + useForRetrain +
+                ", modelUsed=" + modelUsed +
                 '}';
     }
 }

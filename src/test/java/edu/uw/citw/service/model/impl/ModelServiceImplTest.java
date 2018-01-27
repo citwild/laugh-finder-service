@@ -74,8 +74,8 @@ public class ModelServiceImplTest {
     public void getReTrainSamplesAsJson_1() {
         when(lir.getAllMarkedForRetraining()).thenReturn(
                 Arrays.asList(
-                        new LaughterInstance(1L, 2L, 123456L, 123466L),
-                        new LaughterInstance(2L, 3L, 123456L, 123466L)
+                        new LaughterInstance(1L, 2L, 123456L, 123466L, 1L),
+                        new LaughterInstance(2L, 3L, 123456L, 123466L, 1L)
                 )
         );
         AudioVideoMapping avm1 = new AudioVideoMapping("bucket1", "vid1.mp4", "aud1.wav");

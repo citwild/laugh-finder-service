@@ -91,13 +91,13 @@ public class InstancePersistenceUtil {
         return result;
     }
 
-    public void saveInstances(@Nonnull FoundLaughter foundLaughter, long dbId) {
+    public void saveInstances(@Nonnull FoundLaughter foundLaughter, long vidId, long modelId) {
         for (LaughInstance laughInstance : foundLaughter.getInstances()) {
-            laughterInstanceRepository.save(createInstance(laughInstance, dbId));
+            laughterInstanceRepository.save(createInstance(laughInstance, vidId, modelId));
         }
     }
 
-    public LaughterInstance createInstance(@Nonnull LaughInstance li, long dbId) {
-        return new LaughterInstance(null, dbId, li.getStart(), li.getStop());
+    public LaughterInstance createInstance(@Nonnull LaughInstance li, long vidId, long modelId) {
+        return new LaughterInstance(null, vidId, li.getStart(), li.getStop(), modelId);
     }
 }

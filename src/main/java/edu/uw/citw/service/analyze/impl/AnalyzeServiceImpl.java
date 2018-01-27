@@ -2,6 +2,8 @@ package edu.uw.citw.service.analyze.impl;
 
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
+import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.service.analyze.AnalyzeService;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
@@ -33,21 +35,22 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private InstancePersistenceUtil instancePersistenceUtil;
     private PyLaughFinderUtil pyLaughFinderUtil;
     private JsonNodeAdapter jsonNodeAdapter;
+    private ModelDataRepository modelDataRepository;
 
-    @Value("${testing.arff.path}")
-    private String arffLocation;
 
     @Autowired
     public AnalyzeServiceImpl(
             TestingEngine testEngine,
             InstancePersistenceUtil instancePersistenceUtil,
             PyLaughFinderUtil pyLaughFinderUtil,
-            JsonNodeAdapter jsonNodeAdapter)
+            JsonNodeAdapter jsonNodeAdapter,
+            ModelDataRepository modelDataRepository)
     {
         this.testEngine = testEngine;
         this.instancePersistenceUtil = instancePersistenceUtil;
         this.pyLaughFinderUtil = pyLaughFinderUtil;
         this.jsonNodeAdapter = jsonNodeAdapter;
+        this.modelDataRepository = modelDataRepository;
     }
 
     @Override
@@ -60,28 +63,36 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         // otherwise, laughter instances don't exist; will run algorithm
         if (!result.isPresent()) {
             log.debug("No pre-existing timestamps found; running search algorithm");
-            result = findLaughterInstances(mapping.getBucket(), mapping.getAudioFile(), mapping.getId());
+
+            // get id of model currently in use (expect only one result)
+            List<ModelData> models = modelDataRepository.findByInUse(true);
+            Long modelId = models.get(0).getId();
+
+            // find instances in the given asset
+            result = findLaughterInstances(mapping.getBucket(), mapping.getAudioFile(), mapping.getId(), modelId);
         }
 
         return jsonNodeAdapter.createJsonObject(FOUND_LAUGHTERS_LABEL, (result.isPresent()) ? result.get() : null);
     }
 
     @Nonnull
-    public Optional<FoundLaughter> findLaughterInstances(@Nonnull String bucket, @Nonnull String key, @Nonnull long dbId) throws IOException {
+    public Optional<FoundLaughter> findLaughterInstances(@Nonnull String bucket, @Nonnull String key, long vidId, long modelId) throws IOException {
         log.debug("Beginning search for laughter in a given bucket/key");
         // prepare response; label is bucket and key
         FoundLaughter result = new FoundLaughter(bucket + "/" + key);
 
+        // run the testing script, writes to ARFF file on file system
+        // TODO: this can just read from the output like re-training does
         pyLaughFinderUtil.runPythonLaughFinderScript(bucket, key);
 
-        log.debug("Getting laughter from arff file, returning result");
-        testEngine.setArffPath(arffLocation);
         try {
+            log.debug("Getting laughter instances from ARFF file, returning result");
+
             List<long[]> laughterList = testEngine.getLaughters();
             result = addLaughterInstances(laughterList, result);
 
             // add instances to DB for quick retrieval
-            instancePersistenceUtil.saveInstances(result, dbId);
+            instancePersistenceUtil.saveInstances(result, vidId, modelId);
 
             return Optional.of(result);
 
@@ -103,13 +114,4 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         }
         return result;
     }
-
-    public String getArffLocation() {
-        return arffLocation;
-    }
-
-    public void setArffLocation(String arffLocation) {
-        this.arffLocation = arffLocation;
-    }
-
 }

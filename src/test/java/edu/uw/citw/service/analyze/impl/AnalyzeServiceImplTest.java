@@ -3,6 +3,8 @@ package edu.uw.citw.service.analyze.impl;
 import edu.uw.citw.model.FoundLaughter;
 import edu.uw.citw.model.LaughInstance;
 import edu.uw.citw.persistence.domain.AudioVideoMapping;
+import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.ModelDataRepository;
 import edu.uw.citw.util.JsonNodeAdapter;
 import edu.uw.citw.util.persistence.InstancePersistenceUtil;
 import edu.uw.citw.util.pylaughfinder.PyLaughFinderUtil;
@@ -13,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,10 +26,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzeServiceImplTest {
 
-    private TestingEngine testingEngine;
-    private InstancePersistenceUtil instancePersistenceUtil;
-    private PyLaughFinderUtil pyLaughFinderUtil;
-    private JsonNodeAdapter jsonNodeAdapter;
+    private TestingEngine te;
+    private InstancePersistenceUtil ipu;
+    private PyLaughFinderUtil plfu;
+    private JsonNodeAdapter jna;
+    private ModelDataRepository mdr;
 
     private AnalyzeServiceImpl unitUnderTest;
 
@@ -34,15 +38,13 @@ public class AnalyzeServiceImplTest {
     public void setUp()
     throws Exception
     {
-        testingEngine = mock(TestingEngine.class);
-        instancePersistenceUtil = mock(InstancePersistenceUtil.class);
-        pyLaughFinderUtil = mock(PyLaughFinderUtil.class);
-        jsonNodeAdapter = mock(JsonNodeAdapter.class);
+        te = mock(TestingEngine.class);
+        ipu = mock(InstancePersistenceUtil.class);
+        plfu = mock(PyLaughFinderUtil.class);
+        jna = mock(JsonNodeAdapter.class);
+        mdr = mock(ModelDataRepository.class);
 
-        unitUnderTest = new AnalyzeServiceImpl(testingEngine, instancePersistenceUtil, pyLaughFinderUtil, jsonNodeAdapter);
-
-        // set values only initialized by Spring context
-        unitUnderTest.setArffLocation("testArff.arff");
+        unitUnderTest = new AnalyzeServiceImpl(te, ipu, plfu, jna, mdr);
     }
 
     /**
@@ -53,18 +55,20 @@ public class AnalyzeServiceImplTest {
     throws Exception
     {
         // pretend database didn't find anything
-        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+        when(ipu.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.empty());
         // pretend python code is run
-        when(pyLaughFinderUtil.runPythonLaughFinderScript(anyString(), anyString()))
+        when(plfu.runPythonLaughFinderScript(anyString(), anyString()))
                 .thenReturn(null);
-        when(testingEngine.getLaughters())
+        when(te.getLaughters())
                 .thenReturn(getStubInstances());
+        when(mdr.findByInUse(true))
+                .thenReturn(Collections.singletonList(new ModelData()));
 
         // run test
         unitUnderTest.getLaughterInstancesFromAudio(getStubAudioVideoMapping());
 
-        verify(pyLaughFinderUtil, times(1))
+        verify(plfu, times(1))
                 .runPythonLaughFinderScript(anyString(), anyString());
     }
 
@@ -76,13 +80,13 @@ public class AnalyzeServiceImplTest {
     throws Exception
     {
         // pretend database found something
-        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+        when(ipu.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.of(new FoundLaughter("test")));
 
         // run test
         unitUnderTest.getLaughterInstancesFromAudio(getStubAudioVideoMapping());
 
-        verify(pyLaughFinderUtil, never())
+        verify(plfu, never())
                 .runPythonLaughFinderScript(anyString(), anyString());
     }
 
@@ -93,14 +97,14 @@ public class AnalyzeServiceImplTest {
     public void getLaughterInstancesFromAudio_shouldUseVideoIdWhenSearchingForInstances()
     throws Exception
     {
-        when(instancePersistenceUtil.getInstancesByBucketAndKey(anyString(), anyString()))
+        when(ipu.getInstancesByBucketAndKey(anyString(), anyString()))
                 .thenReturn(Optional.of(new FoundLaughter("test")));
 
         AudioVideoMapping map = getStubAudioVideoMapping();
 
         unitUnderTest.getLaughterInstancesFromAudio(map);
 
-        verify(instancePersistenceUtil, atLeastOnce())
+        verify(ipu, atLeastOnce())
                 .getInstancesByBucketAndKey(map.getBucket(), map.getVideoFile());
     }
 

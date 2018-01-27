@@ -1,5 +1,7 @@
 package edu.uw.citw.util.test;
 
+import edu.uw.citw.persistence.domain.ModelData;
+import edu.uw.citw.persistence.repository.ModelDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,7 @@ import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,10 +36,17 @@ public class TestingEngine {
     private String modelPath;
     @Value("${testing.window}")
     private String windowSize;
+    @Value("${testing.arff.path}")
+    private String arffPath;
 
-    private String        arffPath;
     private Instances     instances;
     private List<Boolean> isPresentList;
+
+    private ModelDataRepository modelDataRepository;
+
+    public TestingEngine(ModelDataRepository modelDataRepository) {
+        this.modelDataRepository = modelDataRepository;
+    }
 
     /**
      * Get the laughter segments from the ARFF files.
@@ -46,19 +56,27 @@ public class TestingEngine {
         List<long[]> laughtersInMilliSecs = new ArrayList<>();
 
         try {
+            log.debug("Getting instances out of ARFF file from python test script.");
             BufferedReader arffReader = new BufferedReader(new FileReader(this.arffPath));
             instances = new Instances(arffReader);
             instances.setClassIndex(instances.numAttributes() - 1);
-            Classifier model = (Classifier) weka.core.SerializationHelper
-                    .read(modelPath);
 
-            // Test the model
+            log.debug("Getting binary of model currently in use.");
+            List<ModelData> modelBytes = modelDataRepository.findByInUse(true);
+
+            log.debug("Reading binary of model.");
+            Classifier model = (Classifier) weka.core.SerializationHelper
+                    .read(
+                        new ByteArrayInputStream(modelBytes.get(0).getModelBinary())
+                    );
+
+            log.debug("Examining the ARFF instances.");
             Evaluation test        = new Evaluation(instances);
             double[]   predictions = test.evaluateModel(model, instances);
 
             boolean[] isLaughterList = this.merge(predictions, isPresentList);
 
-            log.debug("Laughter time frames...");
+            log.debug("Grabbing laughter time frames.");
             int start, end;
 
             for (int i = 0; i < isLaughterList.length; i++) {
