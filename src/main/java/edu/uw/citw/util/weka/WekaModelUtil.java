@@ -1,5 +1,7 @@
 package edu.uw.citw.util.weka;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
@@ -18,6 +20,8 @@ import java.io.InputStream;
  */
 @Component
 public class WekaModelUtil {
+
+    private static Logger log = LoggerFactory.getLogger(WekaModelUtil.class);
 
     // copied from the Weka app when building the model manually
     private final String KNN_OPTIONS = "-K 6 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A " +

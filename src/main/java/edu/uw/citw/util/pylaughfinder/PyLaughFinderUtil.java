@@ -47,18 +47,6 @@ public class PyLaughFinderUtil {
             Process proc = Runtime.getRuntime().exec(command);
             runProcess(proc, command);
 
-            // get output
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = inputStream.readLine()) != null) {
-                log.info("\t" + line);
-            }
-            // log any errors
-            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-            while ((line = errorStream.readLine()) != null) {
-                log.error("\t" + line);
-            }
-
             return proc;
         } catch (IOException e) {
             log.error("There was a failure analyzing the audio file: {}", key, e);
@@ -79,13 +67,8 @@ public class PyLaughFinderUtil {
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = inputStream.readLine()) != null) {
-                result.append(line);
+                result.append(line + "\n");
                 log.info("\t" + line);
-            }
-            // log any errors
-            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-            while ((line = errorStream.readLine()) != null) {
-                log.error("\t" + line);
             }
 
             return result.toString();
@@ -155,7 +138,16 @@ public class PyLaughFinderUtil {
         try {
             int exitValue = proc.waitFor();
 
+            // log any errors
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
             if (exitValue != 0) {
+                // Log process error output
+                String line;
+                while ((line = errorStream.readLine()) != null) {
+                    log.error("\t" + line);
+                }
+
                 throw new IOException("Python script exited with non-zero code; command used: "
                         + printCommandArray(command));
             }

@@ -124,6 +124,7 @@ public class ModelServiceImpl implements ModelService {
         // use WEKA API to generate model
         ByteArrayOutputStream bytes = null;
         try {
+            log.info("Going to convert this string to a WEKA model: {}", arff);
             IBk model = modelUtil.classifyAndGetModel(new ByteArrayInputStream(arff.getBytes()));
             bytes = getModelOutput(model);
         } catch (Exception e) {
