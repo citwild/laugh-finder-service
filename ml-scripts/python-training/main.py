@@ -80,7 +80,6 @@ def execute(json_input):
 
             feature_array.append(
                 file_feature_extraction(
-                    # re_read_file,
                     BytesIO(audio_sample.getvalue()),
                     win=(sample['stop'] - sample['start'])  # set custom window
                 )
