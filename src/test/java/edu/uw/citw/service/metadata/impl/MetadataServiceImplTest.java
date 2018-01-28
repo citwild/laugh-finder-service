@@ -1,6 +1,7 @@
 package edu.uw.citw.service.metadata.impl;
 
 import edu.uw.citw.persistence.repository.LaughterInstanceRepository;
+import edu.uw.citw.persistence.repository.ModelDataRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,14 +14,16 @@ import static org.hamcrest.Matchers.equalTo;
 public class MetadataServiceImplTest {
 
     private LaughterInstanceRepository lir;
+    private ModelDataRepository mdr;
 
     private MetadataServiceImpl uut;
 
     @Before
     public void setUp() throws Exception {
         lir = mock(LaughterInstanceRepository.class);
+        mdr = mock(ModelDataRepository.class);
 
-        uut = new MetadataServiceImpl(lir);
+        uut = new MetadataServiceImpl(lir, mdr);
     }
 
     @Test
