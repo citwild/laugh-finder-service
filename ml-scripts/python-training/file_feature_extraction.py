@@ -23,14 +23,14 @@ def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False,
 
     # short-term feature extraction
     number_of_samples = len(signal)
-    duration = np.float_(numberOfSamples) / fs  # in seconds
+    duration = np.float_(number_of_samples) / fs  # in seconds
 
     # convert window length and step from seconds to samples
     window_length = np.int(np.round(win * fs))
     step_in_samples = np.int(np.round(step * fs))
 
-    # compute the total number of frames
-    num_of_frames = np.int(np.floor((number_of_samples - window_length) / step_in_samples) + 1)
+    # Total frames is one since we're slicing the file in main.py
+    num_of_frames = 1
 
     # number of features to be computed:
     num_of_features = 21
@@ -61,7 +61,17 @@ def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False,
         diff_vals.append(np.mean(diff_val))
 
         frameprev = frame.copy()
-        frame = frame * ham
+
+        try:
+            frame = frame * ham
+
+        # Hacky handling of incorrect dot-product dimensions
+        #   Occurs because of remainders when handling steps, frames, etc.
+        except ValueError:
+            ham = ham[:-1]
+            frame = frame * ham
+
+
         frameFFT = getDFT.getDFT(frame, fs)
 
         X = np.abs(np.fft.fft(frame))
@@ -72,7 +82,14 @@ def file_feature_extraction(file, win=0.800, step=0.100, amplitude_filter=False,
             Xprev = X.copy()
 
         if np.sum(np.abs(frame)) > np.spacing(1):
-            MFCCs = feature_mfccs.feature_mfccs(frameFFT, mfcc_params)
+            try:
+                MFCCs = feature_mfccs.feature_mfccs(frameFFT, mfcc_params)
+
+            # Hacky handling of incorrect dot-product dimensions
+            except ValueError:
+                frameFFT = frameFFT[:-1]
+                MFCCs = feature_mfccs.feature_mfccs(frameFFT, mfcc_params)
+
             features[i][0:13] = MFCCs
         else:
             features[:, i] = np.zeros(num_of_features, 1)

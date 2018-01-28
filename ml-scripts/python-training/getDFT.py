@@ -33,7 +33,7 @@ def getDFT(signal, Fs, PLOT=None):
     else:
       # ... or return the whole spectrum
       #     (in the range -fs/2 to fs/2)
-      FFT = fftshift(FFT)
+      FFT = fft.fftshift(FFT)
       if mod(N, 2) == 0:            # define the frequency axis:
         Freq = arange(-N/2, N/2)    # if N is even
       else:
