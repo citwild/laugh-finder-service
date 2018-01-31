@@ -115,10 +115,12 @@ Webservice will call this function, providing a JSON of videos and their timesta
 }
 """
 if __name__ == '__main__':
-    # Get JSON of samples
-    parser = argparse.ArgumentParser(description='Arguments for generating a re-trained ARFF model.')
-    parser.add_argument('--samples', dest='samples', help="All retraining samples in a JSON string.", required=True)
-    args = parser.parse_args()
 
-    # Execute
-    print(execute(args.samples))
+
+    # Get ARFF conversion of samples found in all provided audio segments
+    arffData = execute(args.samples)
+
+    # Create an ARFF file for input into WEKA (on the Laugh Finder Service)
+    with open('retrainArff.arff', 'w') as outputArff:
+        outputArff.write(arffData)
+

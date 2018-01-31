@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.StringJoiner;
 
 /**
@@ -23,22 +23,25 @@ public class PyLaughFinderUtil {
 
     private static final String PHASE = "0";
 
+    // Testing files
     @Value("${testing.mainScript}")
     private String mainScript;
-    @Value("${retrainScript}")
-    private String retrainScript;
     @Value("${testDir}")
     private String testDir;
+
+    // Re-training files
+    @Value("${retrainScript}")
+    private String retrainScript;
+    @Value("${retrainInputJson}")
+    private String retrainInputJson;
+    @Value("${retrainOutputArff}")
+    private String retrainOutputArff;
 
     public PyLaughFinderUtil() {}
 
 
     @Nonnull
-    public Process runPythonLaughFinderScript(
-            @Nonnull String bucket,
-            @Nonnull String key)
-    throws IOException
-    {
+    public Process runPythonLaughFinderScript(@Nonnull String bucket, @Nonnull String key) throws IOException {
         log.debug("Running Python script to search for laughter");
 
         String[] command = getTestingCommand(bucket, key);
@@ -56,20 +59,19 @@ public class PyLaughFinderUtil {
 
 
     public String runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
-        StringBuilder result = new StringBuilder();
-        String[] command = getTrainingCommand(jsonSamples);
+        // Save json to file (can be very large, would overflow input buffer of process exec)
+        Files.write(Paths.get(retrainInputJson), jsonSamples.getBytes());
 
         try {
+            String[] command = new String[] {"python3", retrainScript};
+
+            // Run retraining, expect ARFF file of samples produced
             Process proc = Runtime.getRuntime().exec(command);
             runProcess(proc, command);
 
-            // get output
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = inputStream.readLine()) != null) {
-                result.append(line + "\n");
-                log.info("\t" + line);
-            }
+            // Read output file of retrain script
+            StringBuilder result = new StringBuilder();
+            Files.lines(Paths.get(retrainOutputArff)).forEach(result::append);
 
             return result.toString();
         } catch (IOException e) {
@@ -92,22 +94,6 @@ public class PyLaughFinderUtil {
                 "--phase", PHASE
         };
     }
-
-
-    /**
-     * Handles running the python code for re-training. Needs a JSON of the videos to use and
-     *   their timestamps. See main.py of the training code to see.
-     */
-    @Nonnull
-    public String[] getTrainingCommand(@Nonnull String jsonSamples) {
-        log.info("Using values: \n\tmainScript: {}, \n\tsamples: {}", retrainScript, jsonSamples);
-
-        return new String[] {
-                "python3", retrainScript,
-                "--samples", jsonSamples
-        };
-    }
-
 
     public String getMainScript() {
         return mainScript;
@@ -138,16 +124,13 @@ public class PyLaughFinderUtil {
         try {
             int exitValue = proc.waitFor();
 
-            // log any errors
             BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-
             if (exitValue != 0) {
                 // Log process error output
                 String line;
                 while ((line = errorStream.readLine()) != null) {
                     log.error("\t" + line);
                 }
-
                 throw new IOException("Python script exited with non-zero code; command used: "
                         + printCommandArray(command));
             }

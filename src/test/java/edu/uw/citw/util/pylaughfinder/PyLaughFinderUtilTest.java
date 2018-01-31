@@ -5,24 +5,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PyLaughFinderUtilTest {
 
-    private PyLaughFinderUtil unitUnderTest;
+    private PyLaughFinderUtil uut;
 
     @Before
     public void setUp() throws Exception {
-        unitUnderTest = new PyLaughFinderUtil();
+        uut = new PyLaughFinderUtil();
 
-        unitUnderTest.setMainScript("testScript.py");
-        unitUnderTest.setTestDir("testDir");
+        uut.setMainScript("testScript.py");
+        uut.setTestDir("testDir");
     }
 
     @Test
     public void getCommand_ShouldProvideExpectedCommand() throws Exception {
-        String[] result = unitUnderTest.getTestingCommand("testBucket", "testKey");
+        String[] result = uut.getTestingCommand("testBucket", "testKey");
 
         assertEquals("testScript.py", result[1]); // script location
         assertEquals("testBucket", result[3]); // bucket
