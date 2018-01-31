@@ -116,9 +116,12 @@ Webservice will call this function, providing a JSON of videos and their timesta
 """
 if __name__ == '__main__':
 
+    # Read in audio segments to extract features from (produced by Laugh Finder Service)
+    with open('retrainSamples.json', 'r') as inputSamples:
+        samples = inputSamples.read()
 
     # Get ARFF conversion of samples found in all provided audio segments
-    arffData = execute(args.samples)
+    arffData = execute(samples)
 
     # Create an ARFF file for input into WEKA (on the Laugh Finder Service)
     with open('retrainArff.arff', 'w') as outputArff:
