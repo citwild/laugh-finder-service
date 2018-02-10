@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.StringJoiner;
 
@@ -60,7 +61,11 @@ public class PyLaughFinderUtil {
 
     public String runReTrainingScript(@Nonnull String jsonSamples) throws IOException {
         // Save json to file (can be very large, would overflow input buffer of process exec)
-        Files.write(Paths.get(retrainInputJson), jsonSamples.getBytes());
+        Path inputJson = Paths.get(retrainInputJson);
+        if (Files.exists(inputJson)) {
+            Files.delete(inputJson);
+        }
+        Files.write(inputJson, jsonSamples.getBytes());
 
         try {
             String[] command = new String[] {"python3", retrainScript};
@@ -71,9 +76,11 @@ public class PyLaughFinderUtil {
 
             // Read output file of retrain script
             StringBuilder result = new StringBuilder();
-            Files.lines(Paths.get(retrainOutputArff)).forEach(result::append);
+            Files.lines(Paths.get(retrainOutputArff)).forEach(
+                    line -> result.append(line).append("\n")
+            );
 
-            return result.toString();
+            return result.append("\n").toString();
         } catch (IOException e) {
             log.error("There was a failure training a new model: ", e);
             throw e;
